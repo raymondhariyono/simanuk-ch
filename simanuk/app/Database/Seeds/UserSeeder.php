@@ -5,7 +5,7 @@ namespace App\Database\Seeds;
 use CodeIgniter\Database\Seeder;
 use CodeIgniter\I18n\Time;
 use CodeIgniter\Shield\Entities\User;
-use App\Models\ExtendedUserModel; // gunakan model baru
+use App\Models\ExtendedUserModel;
 
 class UserSeeder extends Seeder
 {
@@ -15,48 +15,64 @@ class UserSeeder extends Seeder
 
         $data = [
             [
-                'email'         => 'admin@sarpras.test',
-                'username'      => 'admin',
+                'email'         => 'admin1@sarpras.test',
+                'username'      => 'admin_satu',
                 'password'      => 'admin123',
-                'nama_lengkap'  => 'Admin Sarpras',
-                'organisasi'    => 'Bagian Umum',
+                'id_role'       => 1, // pastikan role ID 1 ada di tabel roles
+                'nama_lengkap'  => 'Administrator Sistem',
+                'organisasi'    => 'Himpunan Mahasiswa Teknologi Informasi',
                 'kontak'        => '081234567890',
-                'id_role'       => 1,
                 'active'        => 1,
                 'created_at'    => Time::now(),
+                'updated_at'    => Time::now(),
+            ],
+            [
+                'email'         => 'admin2@sarpras.test',
+                'username'      => 'admin_dua',
+                'password'      => 'admin223',
+                'id_role'       => 1, // pastikan role ID 1 ada di tabel roles
+                'nama_lengkap'  => 'Administrator Sistem',
+                'organisasi'    => 'Himpunan Mahasiswa Teknologi Informasi',
+                'kontak'        => '081234567890',
+                'active'        => 1,
+                'created_at'    => Time::now(),
+                'updated_at'    => Time::now(),
             ],
             [
                 'email'         => 'tu@sarpras.test',
                 'username'      => 'tu',
                 'password'      => 'tu123',
-                'nama_lengkap'  => 'Petugas Tata Usaha',
-                'organisasi'    => 'Tata Usaha FTI',
-                'kontak'        => '081298765432',
-                'id_role'       => 2,
+                'id_role'       => 2, // pastikan role ID 2 ada di tabel roles
+                'nama_lengkap'  => 'Adi',
+                'organisasi'    => 'Tata Usaha',
+                'kontak'        => '089876543210',
                 'active'        => 1,
                 'created_at'    => Time::now(),
+                'updated_at'    => Time::now(),
             ],
             [
                 'email'         => 'ukm@sarpras.test',
-                'username'      => 'ukm',
+                'username'      => 'ukm_musik',
                 'password'      => 'ukm123',
-                'nama_lengkap'  => 'Ketua UKM Musik',
-                'organisasi'    => 'UKM Musik Kampus',
-                'kontak'        => '082112345678',
                 'id_role'       => 3,
+                'nama_lengkap'  => 'Rudy Sanjaya',
+                'organisasi'    => 'UKM Musik',
+                'kontak'        => '087777777777',
                 'active'        => 1,
                 'created_at'    => Time::now(),
+                'updated_at'    => Time::now(),
             ],
             [
                 'email'         => 'pimpinan@sarpras.test',
-                'username'      => 'pimpinan',
+                'username'      => 'pimpinan1',
                 'password'      => 'pimpinan123',
-                'nama_lengkap'  => 'Dekan FTI',
-                'organisasi'    => 'Fakultas Teknologi Informasi',
-                'kontak'        => '085211223344',
                 'id_role'       => 4,
+                'nama_lengkap'  => 'Surya',
+                'organisasi'    => 'Dekan Fakultas Teknik',
+                'kontak'        => '087878787878',
                 'active'        => 1,
                 'created_at'    => Time::now(),
+                'updated_at'    => Time::now(),
             ],
         ];
 
