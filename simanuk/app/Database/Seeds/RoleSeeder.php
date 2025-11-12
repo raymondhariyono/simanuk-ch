@@ -3,19 +3,36 @@
 namespace App\Database\Seeds;
 
 use CodeIgniter\Database\Seeder;
-use CodeIgniter\I18n\Time;
 
 class RoleSeeder extends Seeder
 {
-    public function run()
-    {
-        $data = [
-            ['nama_role' => 'Admin', 'created_at' => Time::now()],
-            ['nama_role' => 'TU', 'created_at' => Time::now()],
-            ['nama_role' => 'Peminjam', 'created_at' => Time::now()],
-            ['nama_role' => 'Pimpinan', 'created_at' => Time::now()],
-        ];
+   public function run()
+   {
+      $db = \Config\Database::connect();
 
-        $this->db->table('roles')->insertBatch($data);
-    }
+      $roles = [
+         ['nama_role' => 'admin'],
+         ['nama_role' => 'tu'],
+         ['nama_role' => 'peminjam'],
+         ['nama_role' => 'pemimpin'],
+      ];
+
+      foreach ($roles as $role) {
+         $exists = $db->table('roles')
+            ->where('nama_role', $role['nama_role'])
+            ->get()
+            ->getRow();
+
+         if (! $exists) {
+            $db->table('roles')->insert([
+               'nama_role'        => $role['nama_role'],
+               'created_at'  => date('Y-m-d H:i:s'),
+               'updated_at'  => date('Y-m-d H:i:s'),
+            ]);
+            echo "Role '{$role['nama_role']}' berhasil dibuat\n";
+         } else {
+            echo "Role '{$role['nama_role']}' sudah ada\n";
+         }
+      }
+   }
 }

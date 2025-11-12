@@ -46,18 +46,9 @@ class Auth extends ShieldAuth
      * --------------------------------------------------------------------
      */
     public array $views = [
-        // views tambahan yang menyesuaikan desain
-        'login'                       => 'auth/login',
-        'forgot'                    => 'auth/forgot',
-        'reset'                    => 'auth/reset',
-        'layout'                    => 'auth/layout',
-        'emailForgot'    => 'auth/emails/forgot',
-        'emailActivation' => 'auth/emails/activation',
-        'emailReset'    => 'auth/emails/reset',
-
-        // 'login'                       => '\CodeIgniter\Shield\Views\login',
+        'login'                       => '\CodeIgniter\Shield\Views\login',
         'register'                    => '\CodeIgniter\Shield\Views\register',
-        // 'layout'                      => '\CodeIgniter\Shield\Views\layout',
+        'layout'                      => '\CodeIgniter\Shield\Views\layout',
         'action_email_2fa'            => '\CodeIgniter\Shield\Views\email_2fa_show',
         'action_email_2fa_verify'     => '\CodeIgniter\Shield\Views\email_2fa_verify',
         'action_email_2fa_email'      => '\CodeIgniter\Shield\Views\Email\email_2fa_email',
@@ -166,7 +157,7 @@ class Auth extends ShieldAuth
      * --------------------------------------------------------------------
      * Determines whether users can register for the site.
      */
-    public bool $allowRegistration = false;
+    public bool $allowRegistration = true;
 
     /**
      * --------------------------------------------------------------------
@@ -442,14 +433,7 @@ class Auth extends ShieldAuth
      *
      * @var class-string<UserModel>
      */
-    // ganti jadi ExtendedUser
-    public string $userProvider = \App\Models\ExtendedUserModel::class;
-
-    // manipulasi untuk grouping
-    public array $entities = [
-        'user' => \App\Entities\User::class,
-    ];
-
+    public string $userProvider = UserModel::class;
 
     /**
      * Returns the URL that a user should be redirected
