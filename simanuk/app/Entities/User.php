@@ -22,9 +22,9 @@ class User extends ShieldUser
    ];
 
    protected $attributes = [
-      'email'        => null,
       'username'     => null,
       'nama_lengkap' => null,
+      'email'        => null,
       'no_hp'        => null,
       'id_role'      => null,
       'status'       => null,
