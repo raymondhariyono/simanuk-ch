@@ -3,55 +3,88 @@
 namespace App\Database\Seeds;
 
 use CodeIgniter\Database\Seeder;
-use App\Models\UserModel;
+use CodeIgniter\I18n\Time;
+use CodeIgniter\Shield\Entities\User;
+use App\Models\ExtendedUserModel;
 
 class UserSeeder extends Seeder
 {
     public function run()
     {
-        $userModel = new UserModel();
+        $users = new ExtendedUserModel();
+        $users = auth()->getProvider();
 
-        $users = [
+        $data = [
             [
-                'id_role' => 1, // Peminjam
-                'nama_lengkap' => 'Rudy Sanjaya',
-                'username' => 'rudys',
-                'password' => 'rudy123',
-                'organisasi' => 'UKM Musik',
-                'email' => 'ukm@ukm.test',
-                'kontak' => '081234567890',
+                'email'         => 'admin1@sarpras.test',
+                'username'      => 'admin_satu',
+                'password'      => 'admin123',
+                'id_role'       => 1, // pastikan role ID 1 ada di tabel roles
+                'nama_lengkap'  => 'Administrator Sistem',
+                'organisasi'    => 'Himpunan Mahasiswa Teknologi Informasi',
+                'kontak'        => '081234567890',
+                'active'        => 1,
+                'created_at'    => Time::now(),
+                'updated_at'    => Time::now(),
+                'group'         => 'Admin', // Nama grup di Shield
             ],
             [
-                'id_role' => 2, // Admin
-                'nama_lengkap' => 'Admin Sarpras Ibnu',
-                'username' => 'admin',
-                'password' => 'admin123',
-                'organisasi' => 'Fakultas Teknik Prodi Teknologi Informasi',
-                'email' => 'admin@sarpras.test',
-                'kontak' => '081234567891',
+                'email'         => 'tu@sarpras.test',
+                'username'      => 'tu',
+                'password'      => 'tu123',
+                'id_role'       => 2, // pastikan role ID 2 ada di tabel roles
+                'nama_lengkap'  => 'Adi',
+                'organisasi'    => 'Tata Usaha',
+                'kontak'        => '089876543210',
+                'active'        => 1,
+                'created_at'    => Time::now(),
+                'updated_at'    => Time::now(),
+                'group'         => 'TU',
             ],
             [
-                'id_role' => 3, // TU
-                'nama_lengkap' => 'Staff TU Udin',
-                'username' => 'tu',
-                'password' => 'tu123',
-                'organisasi' => 'Tata Usaha FT',
-                'email' => 'tu@tu.test',
-                'kontak' => '081234567892',
+                'email'         => 'ukm@sarpras.test',
+                'username'      => 'ukm_musik',
+                'password'      => 'ukm123',
+                'id_role'       => 3,
+                'nama_lengkap'  => 'Rudy Sanjaya',
+                'organisasi'    => 'UKM Musik',
+                'kontak'        => '087777777777',
+                'active'        => 1,
+                'created_at'    => Time::now(),
+                'updated_at'    => Time::now(),
+                'group'         => 'Peminjam',
             ],
             [
-                'id_role' => 4, // Pimpinan
-                'nama_lengkap' => 'Dekan Fakultas Teknik',
-                'username' => 'pimpinan',
-                'password' => 'pimpinan123',
-                'organisasi' => 'Pimpinan FT',
-                'email' => 'pimpinan@ft.test',
-                'kontak' => '081234567893',
+                'email'         => 'pimpinan@sarpras.test',
+                'username'      => 'pimpinan1',
+                'password'      => 'pimpinan123',
+                'id_role'       => 4,
+                'nama_lengkap'  => 'Surya',
+                'organisasi'    => 'Dekan Fakultas Teknik',
+                'kontak'        => '087878787878',
+                'active'        => 1,
+                'created_at'    => Time::now(),
+                'updated_at'    => Time::now(),
+                'group'         => 'Pimpinan',
             ]
         ];
 
-        foreach ($users as $user) {
-            $userModel->insert($user);
+        foreach ($data as $userData) {
+            $user = new User($userData);
+            // Buat entitas user
+            $user = new User([
+                'email'        => $userData['email'],
+                'username'     => $userData['username'],
+                'nama_lengkap' => $userData['nama_lengkap'],
+                'organisasi'   => $userData['organisasi'],
+                'kontak'       => $userData['kontak'],
+            ]);
+
+            // Simpan user dan tambahkan password
+            $users->withGroup($userData['group'])->save($user);
+            $user = $users->findById($users->getInsertID());
+            $user->setPassword($userData['password']);
+            $users->save($user);
         }
     }
 }

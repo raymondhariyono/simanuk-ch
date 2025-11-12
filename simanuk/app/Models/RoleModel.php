@@ -8,10 +8,10 @@ class RoleModel extends Model
 {
    protected $table            = 'roles';
    protected $primaryKey       = 'id_role';
-   protected $allowedFields = ['nama_role', 'created_at', 'updated_at'];
    protected $useAutoIncrement = true;
    protected $returnType       = 'array';
    protected $useSoftDeletes   = false;
+   protected $allowedFields    = ['nama_role'];
 
    protected bool $allowEmptyInserts = false;
 
@@ -20,4 +20,5 @@ class RoleModel extends Model
    protected $dateFormat    = 'datetime';
    protected $createdField  = 'created_at';
    protected $updatedField  = 'updated_at';
+   protected $deletedField  = 'deleted_at';
 }

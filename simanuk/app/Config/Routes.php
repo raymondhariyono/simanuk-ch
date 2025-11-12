@@ -1,7 +1,6 @@
 <?php
 
-use App\Controllers\AuthController;
-use App\Filters\AuthFilter;
+use App\Controllers\Auth\LoginController;
 use CodeIgniter\Router\RouteCollection;
 
 /**
@@ -10,17 +9,11 @@ use CodeIgniter\Router\RouteCollection;
 
 $routes->get('/', 'Home::index');
 // shield GET & POST
-// service('auth')->routes($routes);
-
-$routes->get('/login', [AuthController::class, 'login']);
-$routes->post('/login', [AuthController::class, 'login']);
-$routes->get('/logout', [AuthController::class, 'logout']);
-$routes->get('/forgot-password', [AuthController::class, 'forgotPassword']);
-
-// Dashboard route dengan protection
-$routes->group('', ['filter' => AuthFilter::class], function ($routes) {
-   $routes->get('/dashboard', 'Dashboard::index');
-   // Tambahkan route protected lainnya di sini
+service('auth')->routes($routes);
+// redirect setelah login
+$routes->group('', ['namespace' => 'CodeIgniter\Shield\Controllers'], static function ($routes) {
+   $routes->get('login', 'LoginController::loginView');
+   $routes->post('login', 'LoginController::loginAction');
 });
 
 // 3. Rute untuk dasbor yang berbeda (juga dilindungi)
