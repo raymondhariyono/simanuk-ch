@@ -45,8 +45,6 @@ class Filters extends BaseFilters
         'force-reset' => \CodeIgniter\Shield\Filters\ForcePasswordResetFilter::class,
         'jwt' => \CodeIgniter\Shield\Filters\JWTAuth::class,
 
-        'session' => \CodeIgniter\Shield\Filters\SessionAuth::class,
-        'group'   => \CodeIgniter\Shield\Filters\GroupFilter::class,
         // FILTER ROLE KOSTUM
         'role' => \App\Filters\RoleFilter::class,
     ];
@@ -126,9 +124,7 @@ class Filters extends BaseFilters
     public array $filters = [
         'auth-rates' => [
             'before' => [
-                'login*',
-                'register',
-                'auth/*'
+                'login*', 'register', 'auth/*'
             ]
         ]
     ];
