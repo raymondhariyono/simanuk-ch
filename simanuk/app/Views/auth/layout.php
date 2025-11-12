@@ -12,10 +12,6 @@
 
    <?= $this->renderSection('content') ?>
 
-   <footer>
-      <small>&copy; <?= date('Y') ?> Aplikasi Saya</small>
-   </footer>
-
 </body>
 
 </html>

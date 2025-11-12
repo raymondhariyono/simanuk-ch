@@ -38,7 +38,7 @@
             <!-- url forgot-password -->
          </div>
 
-         <button type="submit"
+         <button type="submit" <?= lang('Auth.login') ?>
             class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md font-semibold">
             Masuk
          </button>
