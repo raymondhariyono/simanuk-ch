@@ -12,6 +12,7 @@ class UserSeeder extends Seeder
     public function run()
     {
         $users = new ExtendedUserModel();
+        $users = auth()->getProvider();
 
         $data = [
             [
@@ -25,18 +26,7 @@ class UserSeeder extends Seeder
                 'active'        => 1,
                 'created_at'    => Time::now(),
                 'updated_at'    => Time::now(),
-            ],
-            [
-                'email'         => 'admin2@sarpras.test',
-                'username'      => 'admin_dua',
-                'password'      => 'admin223',
-                'id_role'       => 1, // pastikan role ID 1 ada di tabel roles
-                'nama_lengkap'  => 'Administrator Sistem',
-                'organisasi'    => 'Himpunan Mahasiswa Teknologi Informasi',
-                'kontak'        => '081234567890',
-                'active'        => 1,
-                'created_at'    => Time::now(),
-                'updated_at'    => Time::now(),
+                'group'         => 'Admin', // Nama grup di Shield
             ],
             [
                 'email'         => 'tu@sarpras.test',
@@ -49,6 +39,7 @@ class UserSeeder extends Seeder
                 'active'        => 1,
                 'created_at'    => Time::now(),
                 'updated_at'    => Time::now(),
+                'group'         => 'TU',
             ],
             [
                 'email'         => 'ukm@sarpras.test',
@@ -61,6 +52,7 @@ class UserSeeder extends Seeder
                 'active'        => 1,
                 'created_at'    => Time::now(),
                 'updated_at'    => Time::now(),
+                'group'         => 'Peminjam',
             ],
             [
                 'email'         => 'pimpinan@sarpras.test',
@@ -73,11 +65,25 @@ class UserSeeder extends Seeder
                 'active'        => 1,
                 'created_at'    => Time::now(),
                 'updated_at'    => Time::now(),
-            ],
+                'group'         => 'Pimpinan',
+            ]
         ];
 
         foreach ($data as $userData) {
             $user = new User($userData);
+            // Buat entitas user
+            $user = new User([
+                'email'        => $userData['email'],
+                'username'     => $userData['username'],
+                'nama_lengkap' => $userData['nama_lengkap'],
+                'organisasi'   => $userData['organisasi'],
+                'kontak'       => $userData['kontak'],
+            ]);
+
+            // Simpan user dan tambahkan password
+            $users->withGroup($userData['group'])->save($user);
+            $user = $users->findById($users->getInsertID());
+            $user->setPassword($userData['password']);
             $users->save($user);
         }
     }

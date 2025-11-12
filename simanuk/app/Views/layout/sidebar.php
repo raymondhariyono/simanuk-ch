@@ -7,7 +7,7 @@
 
    <nav class="py-4">
       <!-- dinamis berdasarkan grup (role) -->
-      <?php if (auth()->user()->inGroup('Admin')) : ?>
+      <?php if (auth()->user()->hasRole('Admin')) : ?>
          <!-- === MENU ADMIN === -->
          <a href="<?= site_url('admin/dashboard') ?>" class="block px-4 py-2 hover:bg-gray-700">Dashboard</a>
          <a href="<?= site_url('admin/inventaris') ?>" class="block px-4 py-2 hover:bg-gray-700">Kelola Inventaris</a>
@@ -16,7 +16,7 @@
          <a href="<?= site_url('admin/verifikasi/pengembalian') ?>" class="block px-4 py-2 hover:bg-gray-700">Verifikasi Pengembalian</a>
          <a href="<?= site_url('admin/laporan/generate') ?>" class="block px-4 py-2 hover:bg-gray-700">Generate Laporan</a>
 
-      <?php elseif (auth()->user()->inGroup('TU')) : ?>
+      <?php elseif (auth()->user()->hasRole('TU')) : ?>
          <!-- === MENU TATA USAHA === -->
          <a href="<?= site_url('tu/dashboard') ?>" class="block px-4 py-2 hover:bg-gray-700">Dashboard</a>
          <a href="<?= site_url('tu/verifikasi/peminjaman') ?>" class="block px-4 py-2 hover:bg-gray-700">Verifikasi Peminjaman</a>
@@ -24,7 +24,7 @@
          <a href="<?= site_url('tu/kelola/akun') ?>" class="block px-4 py-2 hover:bg-gray-700">Kelola Akun Pengguna</a>
          <a href="<?= site_url('tu/laporan/generate') ?>" class="block px-4 py-2 hover:bg-gray-700">Generate Laporan</a>
 
-      <?php elseif (auth()->user()->inGroup('Peminjam')) : ?>
+      <?php elseif (auth()->user()->hasRole('Peminjam')) : ?>
          <!-- === MENU PEMINJAM === -->
          <a href="<?= site_url('peminjam/dashboard') ?>" class="block px-4 py-2 hover:bg-gray-700">Dashboard</a>
          <a href="<?= site_url('peminjam/katalog') ?>" class="block px-4 py-2 hover:bg-gray-700">Katalog Sarpras</a>
@@ -32,7 +32,7 @@
          <a href="<?= site_url('peminjam/riwayat') ?>" class="block px-4 py-2 hover:bg-gray-700">Pengembalian</a>
          <a href="<?= site_url('peminjam/lapor/kerusakan') ?>" class="block px-4 py-2 hover:bg-gray-700">Buat Laporan Kerusakan</a>
 
-      <?php elseif (auth()->user()->inGroup('Pimpinan')) : ?>
+      <?php elseif (auth()->user()->hasRole('Pimpinan')) : ?>
          <!-- === MENU PIMPINAN === -->
          <a href="<?= site_url('pimpinan/dashboard') ?>" class="block px-4 py-2 hover:bg-gray-700">Dashboard</a>
          <a href="<?= site_url('pimpinan/laporan/view') ?>" class="block px-4 py-2 hover:bg-gray-700">Lihat Laporan</a>

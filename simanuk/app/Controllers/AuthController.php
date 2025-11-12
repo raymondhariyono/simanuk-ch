@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Controllers\BaseController;
+use App\Entities\User;
 
 class AuthController extends BaseController
 {
@@ -15,21 +16,22 @@ class AuthController extends BaseController
         // auth()->user(), helper Shield untuk mendapatkan user yang sedang login
         // inGroup('...'), helper Shield untuk mengecek grup (role)
 
-        $user = auth('session')->user();
+        /** @var \App\Entities\User $user */
+        $user = auth()->user();
 
-        if ($user->inGroup('Admin')) {
+        if ($user->hasRole('Admin')) {
             return redirect()->to('/admin/dashboard');
         }
 
-        if ($user->inGroup('TU')) {
+        if ($user->hasRole('TU')) {
             return redirect()->to('/tu/dashboard');
         }
 
-        if ($user->inGroup('Peminjam')) {
+        if ($user->hasRole('Peminjam')) {
             return redirect()->to('/peminjam/dashboard');
         }
 
-        if ($user->inGroup('Pimpinan')) {
+        if ($user->hasRole('Pimpinan')) {
             return redirect()->to('/pimpinan/dashboard');
         }
 

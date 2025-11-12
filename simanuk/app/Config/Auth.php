@@ -433,7 +433,14 @@ class Auth extends ShieldAuth
      *
      * @var class-string<UserModel>
      */
-    public string $userProvider = UserModel::class;
+    // ganti jadi ExtendedUser
+    public string $userProvider = \App\Models\ExtendedUserModel::class;
+
+    // manipulasi untuk grouping
+    public array $entities = [
+        'user' => \App\Entities\User::class,
+    ];
+
 
     /**
      * Returns the URL that a user should be redirected

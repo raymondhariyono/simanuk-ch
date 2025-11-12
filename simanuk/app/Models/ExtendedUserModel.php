@@ -23,4 +23,12 @@ class ExtendedUserModel extends ShieldUserModel
       'created_at',
       'updated_at',
    ];
+
+   public function getUserWithRole($userId)
+   {
+      return $this->select('users.*, roles.nama_role')
+         ->join('roles', 'roles.id_role = users.id_role', 'left')
+         ->where('users.id', $userId)
+         ->first();
+   }
 }
