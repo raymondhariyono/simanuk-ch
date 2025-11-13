@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controllers\Peminjam;
+namespace App\Controllers\Pimpinan;
 
 use App\Controllers\BaseController;
 
@@ -19,9 +19,9 @@ class DashboardController extends BaseController
       // $userData = $this->userModel->getUserWithRole($user->id);
 
       $data = [
-         'title' => 'Dashboard Peminjam',
+         'title' => 'Dashboard Pimpinan',
       ];
 
-      return view('peminjam/dashboard_view', $data);
+      return view('pimpinan/dashboard_view', $data);
    }
 }

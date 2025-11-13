@@ -45,8 +45,9 @@ class Filters extends BaseFilters
         'force-reset' => \CodeIgniter\Shield\Filters\ForcePasswordResetFilter::class,
         'jwt' => \CodeIgniter\Shield\Filters\JWTAuth::class,
 
-        // FILTER ROLE KOSTUM
+        // FILTER KOSTUM
         'role' => \App\Filters\RoleFilter::class,
+        'guest' => \App\Filters\LoginPageFilter::class,
     ];
 
     /**
@@ -85,16 +86,10 @@ class Filters extends BaseFilters
      */
     public array $globals = [
         'before' => [
-            // 'honeypot',
-            // 'csrf',
-            // 'invalidchars',
-            'session' => ['except' => ['login*', 'register', 'auth/a/*', 'logout']],
-            'force-reset' => ['except' => ['login*', 'register', 'auth/a/*', 'change-password', 'logout']]
+            'session' => ['except' => ['login', 'login*', 'register', 'auth/a/*', 'logout']],
+            'force-reset' => ['except' => ['login', 'login*', 'register', 'auth/a/*', 'change-password', 'logout']]
         ],
-        'after' => [
-            // 'honeypot',
-            // 'secureheaders',
-        ],
+        'after' => [],
     ];
 
     /**
@@ -126,6 +121,11 @@ class Filters extends BaseFilters
             'before' => [
                 'login*', 'register', 'auth/*'
             ]
-        ]
+        ],
+        'guest' => [
+            'before' => [
+                'login*', 'register', 'auth/*'
+            ]
+        ],
     ];
 }

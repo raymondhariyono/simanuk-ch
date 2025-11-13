@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controllers\Peminjam;
+namespace App\Controllers\TU;
 
 use App\Controllers\BaseController;
 
@@ -16,12 +16,11 @@ class DashboardController extends BaseController
    public function index()
    {
       $user = auth()->user();
-      // $userData = $this->userModel->getUserWithRole($user->id);
 
       $data = [
-         'title' => 'Dashboard Peminjam',
+         'title' => 'Dashboard TU',
       ];
 
-      return view('peminjam/dashboard_view', $data);
+      return view('tu/dashboard_view', $data);
    }
 }

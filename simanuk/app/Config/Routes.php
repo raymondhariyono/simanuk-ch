@@ -8,6 +8,15 @@ use CodeIgniter\Router\RouteCollection;
 $routes->get('/', 'Home::index');
 // shield GET & POST
 service('auth')->routes($routes);
+
+// Shield routes dengan filter guest
+$routes->group('', ['filter' => 'guest'], static function ($routes) {
+   service('auth')->routes($routes, ['except' => ['logout']]); // Exclude logout dari filter guest
+});
+
+// Logout route (tanpa filter guest)
+$routes->get('logout', '\CodeIgniter\Shield\Controllers\LoginController::logoutAction', ['as' => 'logout']);
+
 // redirect setelah login
 $routes->get('/auth/redirect', 'AuthController::redirect', ['filter' => 'session']);
 
