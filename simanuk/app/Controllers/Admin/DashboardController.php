@@ -4,7 +4,6 @@ namespace App\Controllers\Admin;
 
 use App\Controllers\BaseController;
 use CodeIgniter\Shield\Models\GroupModel;
-use \App\Models\ExtendedUserModel;
 
 class DashboardController extends BaseController
 {
@@ -12,7 +11,7 @@ class DashboardController extends BaseController
 
    public function __construct()
    {
-      $this->userModel = ExtendedUserModel::class;
+      $this->userModel = auth()->getProvider();
    }
 
    public function index()

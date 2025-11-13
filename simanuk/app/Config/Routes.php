@@ -12,15 +12,15 @@ service('auth')->routes($routes);
 $routes->get('/auth/redirect', 'Auth::redirect', ['filter' => 'session']);
 
 // 3. Rute untuk dasbor yang berbeda (juga dilindungi)
-$routes->group('admin', ['filter' => 'session', 'group:Admin'], static function ($routes) {
+$routes->group('admin', ['filter' => ['session', 'role:Admin']], static function ($routes) {
    $routes->get('dashboard', 'Admin\DashboardController::index');
 });
 
-$routes->group('peminjam', ['filter' => 'session', 'group:Peminjam'], static function ($routes) {
+$routes->group('peminjam', ['filter' => ['session', 'role:Peminjam']], static function ($routes) {
    $routes->get('dashboard', 'Peminjam\DashboardController::index');
 });
 
-$routes->group('pimpinan', ['filter' => 'session', 'group:Pimpinan'], static function ($routes) {
+$routes->group('pimpinan', ['filter' => ['session', 'role:Pimpinan']], static function ($routes) {
    $routes->get('dashboard', 'Pimpinan\DashboardController::index');
 });
 
@@ -28,7 +28,7 @@ $routes->group('pimpinan', ['filter' => 'session', 'group:Pimpinan'], static fun
 // DILINDUNGI: Rute untuk Tata Usaha (UC03)
 // Hanya dapat diakses oleh user yang berada di grup 'TU'
 // ----------------------------------------------------
-$routes->group('tu', ['filter' => 'session', 'group:TU'], static function ($routes) {
+$routes->group('tu', ['filter' => ['session', 'role:TU']], static function ($routes) {
    $routes->get('dashboard', 'TU\DashboardController::index');
 
    // ** KELOLA AKUN PENGGUNA **

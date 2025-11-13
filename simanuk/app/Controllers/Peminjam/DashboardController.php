@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Controllers\Admin;
+namespace App\Controllers\Peminjam;
 
 use App\Controllers\BaseController;
 use CodeIgniter\Shield\Models\GroupModel;
@@ -12,7 +12,7 @@ class DashboardController extends BaseController
 
    public function __construct()
    {
-      $this->userModel = ExtendedUserModel::class;
+      $this->userModel = auth()->getProvider();
    }
 
    public function index()

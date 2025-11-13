@@ -81,7 +81,8 @@ class UserController extends BaseController
       $groupName = $role->nama_role;
 
       // 4. Simpan user dan langsung tambahkan ke grup Shield
-      $this->userModel->withGroup($groupName)->save($user);
+      // $this->userModel->withGroup($groupName)->save($user); // tidak usah seperti ini
+      $this->userModel->save($user);
 
       return redirect()->to(site_url('tu/kelola/akun'))->with('message', 'Akun pengguna berhasil dibuat.');
    }

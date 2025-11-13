@@ -11,8 +11,8 @@ class UserSeeder extends Seeder
     public function run()
     {
         // 1. Dapatkan User Provider (ExtendedUserModel) dari service auth
-        // $users = provider auth()->getProvider();
-        $userModel = new ExtendedUserModel();
+        // $userModel = new ExtendedUserModel();
+        $userModel = auth()->getProvider();
 
         // 2. Siapkan data. Hapus 'group', 'active', dan timestamps.
         //    Pastikan 'id_role' sesuai dengan 'RoleSeeder' Anda.
