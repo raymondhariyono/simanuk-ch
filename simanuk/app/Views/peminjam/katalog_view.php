@@ -64,7 +64,7 @@
                      <?php if ($barang['status_ketersediaan'] == 'Tersedia'): ?>
                         <span class="absolute top-2 right-2 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full">Tersedia</span>
                      <?php else: ?>
-                        <span class="absolute top-2 right-2 bg-yellow-500 text-black text-xs font-bold px-2 py-1 rounded-full">Dipinjam</span>
+                        <span class="absolute top-2 right-2 bg-yellow-400 text-black text-xs font-bold px-2 py-1 rounded-full">Dipinjam</span>
                      <?php endif; ?>
                   </div>
                   <div class="p-4 flex-1 flex flex-col">
