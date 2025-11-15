@@ -6,42 +6,6 @@
 
 <?= $this->section('content'); ?>
 
-<?php
-// --- DATA DUMMY ---
-$items = [
-   [
-      'nama' => 'Proyektor Epson EB-S41',
-      'kategori' => 'Elektronik',
-      'gambar' => 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
-      'status' => 'Tersedia'
-   ],
-   [
-      'nama' => 'Laptop Dell Latitude',
-      'kategori' => 'Elektronik',
-      'gambar' => 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
-      'status' => 'Dipinjam'
-   ],
-   [
-      'nama' => 'Kabel HDMI',
-      'kategori' => 'ATK',
-      'gambar' => 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
-      'status' => 'Tersedia'
-   ],
-   [
-      'nama' => 'Bola Sepak',
-      'kategori' => 'Olahraga',
-      'gambar' => 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
-      'status' => 'Tersedia'
-   ],
-   [
-      'nama' => 'Bola Sepak',
-      'kategori' => 'Olahraga',
-      'gambar' => 'https://images.unsplash.com/photo-1496181133206-80ce9b88a853?ixlib=rb-4.0.3&auto=format&fit=crop&w=400&q=80',
-      'status' => 'Tersedia'
-   ]
-];
-?>
-
 <div class="flex min-h-screen">
    <!-- AREA KONTEN -->
    <div class="flex-1 flex flex-col min-h-screen overflow-hidden">
@@ -82,28 +46,31 @@ $items = [
                   </select>
                </div>
 
-               <a href="#" class="bg-blue-600 text-white py-2 px-4 rounded-lg font-semibold hover:bg-blue-700 w-full md:w-auto text-center whitespace-nowrap">
-                  Ajukan Pengembalian
+               <a href="#" class="bg-blue-600 text-white py-2 px-4 rounded-lg font-semibold hover:bg-blue-700 w-full md:w-auto text-center whitespace-nowrap flex items-center justify-center">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                     <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+                  </svg>
+                  Ajukan Peminjaman
                </a>
             </div>
 
          </div>
          <!-- GRID KATALOG (DESKTOP) -->
          <div class="hidden sm:grid sm:grid-cols-2 md:grid-cols-4 gap-6">
-            <?php foreach ($items as $item): ?>
+            <?php foreach ($sarana as $barang): ?>
                <div class="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col">
                   <div class="relative">
-                     <img src="<?= htmlspecialchars($item['gambar']) ?>" alt="<?= htmlspecialchars($item['nama']) ?>" class="w-full h-48 object-cover">
-                     <?php if ($item['status'] == 'Tersedia'): ?>
-                        <span class="absolute top-2 left-2 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full">Tersedia</span>
+                     <img src="" alt="<?= htmlspecialchars($barang['nama_sarana']) ?>" class="w-full h-48 object-cover">
+                     <?php if ($barang['status_ketersediaan'] == 'Tersedia'): ?>
+                        <span class="absolute top-2 right-2 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full">Tersedia</span>
                      <?php else: ?>
-                        <span class="absolute top-2 left-2 bg-yellow-500 text-white text-xs font-bold px-2 py-1 rounded-full">Dipinjam</span>
+                        <span class="absolute top-2 right-2 bg-yellow-400 text-black text-xs font-bold px-2 py-1 rounded-full">Dipinjam</span>
                      <?php endif; ?>
                   </div>
                   <div class="p-4 flex-1 flex flex-col">
                      <div class="flex-1">
-                        <h3 class="text-lg font-bold text-gray-900"><?= htmlspecialchars($item['nama']) ?></h3>
-                        <p class="text-sm text-gray-600"><?= htmlspecialchars($item['kategori']) ?></p>
+                        <h3 class="text-lg font-bold text-gray-900"><?= htmlspecialchars($barang['nama_sarana']) ?></h3>
+                        <p class="text-sm text-gray-600"><?= htmlspecialchars($barang['nama_kategori']) ?></p>
                      </div>
                      <a href="#" class="mt-4 block w-full text-center bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">
                         Lihat Detail
@@ -115,12 +82,12 @@ $items = [
 
          <!-- SLIDER (MOBILE) -->
          <div class="sm:hidden flex overflow-x-auto space-x-4 p-1 snap-x snap-mandatory">
-            <?php foreach ($items as $item): ?>
+            <?php foreach ($sarana as $barang): ?>
                <div class="min-w-[16rem] snap-center shrink-0">
                   <div class="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col h-full">
                      <div class="relative">
-                        <img src="<?= htmlspecialchars($item['gambar']) ?>" alt="<?= htmlspecialchars($item['nama']) ?>" class="w-full h-48 object-cover">
-                        <?php if ($item['status'] == 'Tersedia'): ?>
+                        <img src="" alt="<?= htmlspecialchars($barang['nama_sarana']) ?>" class="w-full h-48 object-cover">
+                        <?php if ($barang['status_ketersediaan'] == 'Tersedia'): ?>
                            <span class="absolute top-2 left-2 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full">Tersedia</span>
                         <?php else: ?>
                            <span class="absolute top-2 left-2 bg-yellow-500 text-white text-xs font-bold px-2 py-1 rounded-full">Dipinjam</span>
@@ -128,8 +95,8 @@ $items = [
                      </div>
                      <div class="p-4 flex-1 flex flex-col">
                         <div class="flex-1">
-                           <h3 class="text-lg font-bold text-gray-900"><?= htmlspecialchars($item['nama']) ?></h3>
-                           <p class="text-sm text-gray-600"><?= htmlspecialchars($item['kategori']) ?></p>
+                           <h3 class="text-lg font-bold text-gray-900"><?= htmlspecialchars($barang['nama_sarana']) ?></h3>
+                           <p class="text-sm text-gray-600"><?= htmlspecialchars($barang['nama_kategori']) ?></p>
                         </div>
                         <a href="#" class="mt-4 block w-full text-center bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">
                            Lihat Detail

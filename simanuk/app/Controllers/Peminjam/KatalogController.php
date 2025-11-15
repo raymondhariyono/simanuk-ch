@@ -3,24 +3,24 @@
 namespace App\Controllers\Peminjam;
 
 use App\Controllers\BaseController;
-use App\Models\InventarisModel;
+use App\Models\SaranaModel;
 
 class KatalogController extends BaseController
 {
-   protected $inventarisModel;
+   protected $saranaModel;
 
    public function __construct()
    {
-      $this->inventarisModel = new InventarisModel();
+      $this->saranaModel = new SaranaModel();
    }
 
    public function index()
    {
-      // $barang = $this->inventarisModel->getInventaris();
+      $sarana = $this->saranaModel->getSaranaForKatalog();
 
       $data = [
          'title' => 'Katalog Inventarisasi',
-         // 'barang' => $barang,
+         'sarana' => $sarana,
          'showSidebar' => true, // flag untuk sidebar
          'breadcrumbs' => [
             [
