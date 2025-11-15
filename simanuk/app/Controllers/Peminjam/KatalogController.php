@@ -16,12 +16,21 @@ class KatalogController extends BaseController
 
    public function index()
    {
-      $barang = $this->inventarisModel->getInventaris();
+      // $barang = $this->inventarisModel->getInventaris();
 
       $data = [
          'title' => 'Katalog Inventarisasi',
-         'barang' => $barang,
+         // 'barang' => $barang,
          'showSidebar' => true, // flag untuk sidebar
+         'breadcrumbs' => [
+            [
+               'name' => 'Beranda',
+               'url' => site_url('admin/dashboard')
+            ],
+            [
+               'name' => 'Katalog Inventarisasi',
+            ]
+         ]
       ];
 
       return view('peminjam/katalog_view', $data);

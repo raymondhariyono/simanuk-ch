@@ -19,33 +19,19 @@
       </div>
    <?php endif; ?>
 
-   <!-- Breadcrumb -->
-   <nav class="flex mb-4" aria-label="Breadcrumb">
-      <ol class="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
-         <li class="inline-flex items-center">
-            <a href="<?= base_url('dashboard') ?>" class="inline-flex items-center text-sm font-medium text-gray-700 hover:text-blue-600">
-               Dashboard
-            </a>
-         </li>
-         <li>
-            <div class="flex items-center">
-               <svg class="rtl:rotate-180 w-3 h-3 text-gray-400 mx-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 6 10"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 9 4-4-4-4"/></svg>
-               <span class="ms-1 text-sm font-medium text-gray-500 md:ms-2">Profile</span>
-            </div>
-         </li>
-      </ol>
-   </nav>
+   <?php if (isset($breadcrumbs)) : ?>
+      <?= render_breadcrumb($breadcrumbs); ?>
+   <?php endif; ?>
 
-   <div class="mb-6">
+   <!-- <div class="mb-6">
       <a href="javascript:history.back()" class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
          </svg>
          Kembali
       </a>
-   </div>
+   </div> -->
 
-   
    <div class="flex min-h-screen">
       <div class="flex-1 flex flex-col overflow-hidden">
          <main class="flex-1 p-6 md:p-8 overflow-y-auto">

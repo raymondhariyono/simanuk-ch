@@ -21,6 +21,15 @@ class ProfileController extends BaseController
          'title' => 'Manajemen Akun Pengguna',
          'showSidebar' => false, // Flag untuk menyembunyikan sidebar
          'user' => $user,
+         'breadcrumbs' => [
+            [
+               'name' => 'Beranda',
+               'url' => site_url('admin/dashboard')
+            ],
+            [
+               'name' => 'Profil Pengguna',
+            ]
+         ]
       ];
 
       return view('profile/profile_view', $data);
