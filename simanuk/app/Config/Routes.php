@@ -28,6 +28,8 @@ $routes->group('admin', ['filter' => ['session', 'role:Admin']], static function
 $routes->group('peminjam', ['filter' => ['session', 'role:Peminjam']], static function ($routes) {
    $routes->get('dashboard', 'Peminjam\DashboardController::index');
    $routes->get('katalog', 'Peminjam\KatalogController::index');
+   $routes->get('histori-peminjaman', 'Peminjam\HistoriPeminjamanController::index');
+   $routes->get('histori-pengembalian', 'Peminjam\HistoriPengembalianController::index');
 });
 
 $routes->group('pimpinan', ['filter' => ['session', 'role:Pimpinan']], static function ($routes) {
