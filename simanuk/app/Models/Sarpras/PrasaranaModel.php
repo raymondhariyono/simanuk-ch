@@ -1,0 +1,73 @@
+<?php
+
+namespace App\Models\Sarpras;
+
+use CodeIgniter\Model;
+
+class PrasaranaModel extends Model
+{
+   protected $table = 'prasarana';
+   protected $primaryKey = 'id_prasarana';
+
+   protected $useAutoIncrement = true;
+   protected $returnType = 'array';
+
+   protected $useSoftDeletes   = false; // Sesuaikan dengan kebutuhan (di migrasi tidak ada deleted_at)
+   protected $protectFields    = true;
+
+   protected $allowedFields    = [
+      'id_kategori',    // FK
+      'id_lokasi',      // FK
+      'nama_prasarana',
+      'kode_prasarana',
+      'luas_ruangan',
+      'kapasitas_orang',
+      'jenis_ruangan',
+      'fasilitas',
+      'lantai',
+      'tata_letak',
+      'deskripsi',
+      'status_ketersediaan'
+   ];
+
+   // Dates
+   protected $useTimestamps = true;
+   protected $dateFormat    = 'datetime';
+   protected $createdField  = 'created_at';
+   protected $updatedField  = 'updated_at';
+
+   public function getPrasaranaForKatalog($id = null)
+   {
+      $builder = $this->select('prasarana.*, kategori.nama_kategori, lokasi.nama_lokasi, lokasi.alamat, prasarana.nama_prasarana');
+
+      // join tabel kategori
+      $builder->join('kategori', 'kategori.id_kategori = prasarana.id_kategori');
+
+      // join tabel lokasi
+      $builder->join('lokasi', 'lokasi.id_lokasi = prasarana.id_lokasi');
+
+      // // join kategori dan lokasi ke tabel praprasarana
+      // // karena id_praprasarana bisa null, gunakan LEFT JOIN
+      // $builder->join('prasarana', 'prasarana.id_prasarana = prasarana.id_prasarana', 'LEFT');
+
+      // Jika ID diberikan, kembalikan satu baris (first)
+      if ($id !== null) {
+         return $builder->where('prasarana.id_prasarana', $id)->first();
+      }
+
+      // Jika tidak, kembalikan semua (findAll)
+      return $builder->findAll();
+   }
+
+   public function getPrasaranaWithFieldKategori($kode_prasarana = false)
+   {
+      if ($kode_prasarana == false) {
+         return $this->where;
+      }
+   }
+
+   public function getInventarisById($id_event)
+   {
+      return $this->where(['id_event' => $id_event])->first();
+   }
+}
