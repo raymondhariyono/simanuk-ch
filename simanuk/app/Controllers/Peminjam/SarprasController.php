@@ -5,7 +5,7 @@ namespace App\Controllers\Peminjam;
 use App\Controllers\BaseController;
 use App\Models\SaranaModel;
 
-class KatalogController extends BaseController
+class SarprasController extends BaseController
 {
    protected $saranaModel;
 

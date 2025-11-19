@@ -72,7 +72,7 @@ if (auth()->loggedIn()) {
                   class="w-full p-2 pl-10 pr-10 border rounded-md focus:ring-2 focus:ring-blue-400 focus:border-blue-400">
             </div>
 
-            <div class="mt-2 mb-6 text-right">
+            <div class="mt-2 mb-6 text-left">
                <a href="#" class="text-sm text-blue-600 hover:underline">Lupa Password?</a>
             </div>
 

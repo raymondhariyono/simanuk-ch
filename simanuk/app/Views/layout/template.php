@@ -4,7 +4,7 @@
 <head>
    <meta charset="UTF-8">
    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-   <title><?= $this->renderSection('title') ?> | Sistem Manajemen Sarpras</title>
+   <title><?= $this->renderSection('title') ?> | Sistem Manajemen Sarpras </title> 
    <script src="https://cdn.tailwindcss.com"></script>
    <style>
       /* Sembunyikan scrollbar untuk layout utama */
@@ -19,7 +19,7 @@
    </style>
 </head>
 
-<body class="bg-gray-100 font-sans">
+<body class="bg-gray-100 font-inter">
    <div class="flex h-screen bg-gray-200">
       <?php
       // Tampilkan sidebar hanya jika showSidebar bernilai true atau tidak didefinisikan
