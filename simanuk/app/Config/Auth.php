@@ -26,6 +26,7 @@ use CodeIgniter\Shield\Authentication\Passwords\NothingPersonalValidator;
 use CodeIgniter\Shield\Authentication\Passwords\PwnedValidator;
 use CodeIgniter\Shield\Authentication\Passwords\ValidatorInterface;
 use CodeIgniter\Shield\Models\UserModel;
+use App\Models\ExtendedUserModel;
 
 class Auth extends ShieldAuth
 {
@@ -46,10 +47,7 @@ class Auth extends ShieldAuth
      * --------------------------------------------------------------------
      */
     public array $views = [
-        // view yang dimodifikasi
-        'login'                       => 'App\Views\auth\login',
-        'layout'                      => 'App\Views\auth\layout',
-        
+        'login'                       => '\CodeIgniter\Shield\Views\login',
         'register'                    => '\CodeIgniter\Shield\Views\register',
         'layout'                      => '\CodeIgniter\Shield\Views\layout',
         'action_email_2fa'            => '\CodeIgniter\Shield\Views\email_2fa_show',
@@ -78,7 +76,7 @@ class Auth extends ShieldAuth
      */
     public array $redirects = [
         'register'          => '/',
-        'login'             => '/auth/redirect',
+        'login'             => '/',
         'logout'            => 'login',
         'force_reset'       => '/',
         'permission_denied' => '/',
@@ -289,8 +287,6 @@ class Auth extends ShieldAuth
     public array $validFields = [
         'email',
         // 'username',
-        // 'password',
-        // 'login',
     ];
 
     /**
@@ -438,7 +434,7 @@ class Auth extends ShieldAuth
      *
      * @var class-string<UserModel>
      */
-    public string $userProvider = UserModel::class;
+    public string $userProvider = ExtendedUserModel::class;
 
     /**
      * Returns the URL that a user should be redirected

@@ -32,9 +32,18 @@ $routes->group('admin', ['filter' => ['session', 'role:Admin']], static function
 // ----------------------------------------------------
 $routes->group('peminjam', ['filter' => ['session', 'role:Peminjam']], static function ($routes) {
    $routes->get('dashboard', 'Peminjam\DashboardController::index');
+   // katalog sarpras
    $routes->get('sarpras', 'Peminjam\SarprasController::index');
-   // route detail sarpras
+   // detail dari tiap katalog sarpras
    $routes->get('sarpras/detail/(:segment)', 'Peminjam\SarprasController::detail/$1');
+   // histori peminjaman
+   $routes->get('histori-peminjaman', 'Peminjam\HistoriPeminjamanController::index');
+   // histori pengembalian
+   $routes->get('histori-pengembalian', 'Peminjam\HistoriPengembalianController::index');
+});
+
+$routes->group('pimpinan', ['filter' => ['session', 'role:Pimpinan']], static function ($routes) {
+   $routes->get('dashboard', 'Pimpinan\DashboardController::index');
 });
 
 // ----------------------------------------------------
