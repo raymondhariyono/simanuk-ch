@@ -36,7 +36,7 @@ class PrasaranaModel extends Model
    protected $createdField  = 'created_at';
    protected $updatedField  = 'updated_at';
 
-   public function getPrasaranaForKatalog($id = null)
+   public function getPrasaranaForKatalog($kode_prasarana = false)
    {
       $builder = $this->select('prasarana.*, kategori.nama_kategori, lokasi.nama_lokasi, lokasi.alamat, prasarana.nama_prasarana');
 
@@ -51,23 +51,11 @@ class PrasaranaModel extends Model
       // $builder->join('prasarana', 'prasarana.id_prasarana = prasarana.id_prasarana', 'LEFT');
 
       // Jika ID diberikan, kembalikan satu baris (first)
-      if ($id !== null) {
-         return $builder->where('prasarana.id_prasarana', $id)->first();
+      if ($kode_prasarana !== false) {
+         return $builder->where('prasarana.kode_prasarana', $kode_prasarana)->first();
       }
 
       // Jika tidak, kembalikan semua (findAll)
       return $builder->findAll();
-   }
-
-   public function getPrasaranaWithFieldKategori($kode_prasarana = false)
-   {
-      if ($kode_prasarana == false) {
-         return $this->where;
-      }
-   }
-
-   public function getInventarisById($id_event)
-   {
-      return $this->where(['id_event' => $id_event])->first();
    }
 }
