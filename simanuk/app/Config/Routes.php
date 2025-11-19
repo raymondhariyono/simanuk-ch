@@ -20,15 +20,25 @@ $routes->get('logout', '\CodeIgniter\Shield\Controllers\LoginController::logoutA
 // redirect setelah login
 $routes->get('/auth/redirect', 'AuthController::redirect', ['filter' => 'session']);
 
-// 3. Rute untuk dasbor yang berbeda (juga dilindungi)
+// ----------------------------------------------------
+// Rute untuk Admin
+// ----------------------------------------------------
 $routes->group('admin', ['filter' => ['session', 'role:Admin']], static function ($routes) {
    $routes->get('dashboard', 'Admin\DashboardController::index');
 });
 
+// ----------------------------------------------------
+// Rute untuk Peminjam (UKM & Ormawa) 
+// ----------------------------------------------------
 $routes->group('peminjam', ['filter' => ['session', 'role:Peminjam']], static function ($routes) {
    $routes->get('dashboard', 'Peminjam\DashboardController::index');
-   $routes->get('katalog', 'Peminjam\KatalogController::index');
+   // katalog sarpras
+   $routes->get('sarpras', 'Peminjam\SarprasController::index');
+   // detail dari tiap katalog sarpras
+   $routes->get('sarpras/detail/(:segment)', 'Peminjam\SarprasController::detail/$1');
+   // histori peminjaman
    $routes->get('histori-peminjaman', 'Peminjam\HistoriPeminjamanController::index');
+   // histori pengembalian
    $routes->get('histori-pengembalian', 'Peminjam\HistoriPengembalianController::index');
 });
 
@@ -37,8 +47,7 @@ $routes->group('pimpinan', ['filter' => ['session', 'role:Pimpinan']], static fu
 });
 
 // ----------------------------------------------------
-// DILINDUNGI: Rute untuk Tata Usaha (UC03)
-// Hanya dapat diakses oleh user yang berada di grup 'TU'
+// Rute untuk Tata Usaha 
 // ----------------------------------------------------
 $routes->group('tu', ['filter' => ['session', 'role:TU']], static function ($routes) {
    $routes->get('dashboard', 'TU\DashboardController::index');
@@ -51,6 +60,15 @@ $routes->group('tu', ['filter' => ['session', 'role:TU']], static function ($rou
    $routes->post('kelola/akun/update/(:num)', 'TU\UserController::update/$1'); // UPDATE - Proses Update
    $routes->post('kelola/akun/delete/(:num)', 'TU\UserController::delete/$1'); // DELETE
 });
+
+// ----------------------------------------------------
+// Rute untuk Pimpinan 
+// ----------------------------------------------------
+$routes->group('pimpinan', ['filter' => ['session', 'role:Pimpinan']], static function ($routes) {
+   $routes->get('dashboard', 'Pimpinan\DashboardController::index');
+});
+
+
 
 // Rute Umum (Profil Saya)
 $routes->group('profile', ['filter' => 'session'], static function ($routes) {

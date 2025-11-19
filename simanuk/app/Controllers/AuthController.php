@@ -23,12 +23,12 @@ class AuthController extends BaseController
             return redirect()->to('/admin/dashboard');
         }
 
-        if ($user->inGroup('TU')) {
-            return redirect()->to('/tu/dashboard');
+        if ($user->inGroup('Peminjam')) {
+            return redirect()->to('/peminjam/sarpras');
         }
 
-        if ($user->inGroup('Peminjam')) {
-            return redirect()->to('/peminjam/dashboard');
+        if ($user->inGroup('TU')) {
+            return redirect()->to('/tu/dashboard');
         }
 
         if ($user->inGroup('Pimpinan')) {

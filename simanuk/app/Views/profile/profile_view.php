@@ -94,7 +94,7 @@
                   </div>
 
                   <button type="submit"
-                     class="w-full sm:w-auto bg-red-600 hover:bg-red-700 text-white py-2 px-4 rounded-md font-semibold">
+                     class="w-full sm:w-auto bg-yellow-400 hover:bg-yellow-500 text-black py-2 px-4 rounded-md font-semibold">
                      Ubah Kata Sandi
                   </button>
                </form>

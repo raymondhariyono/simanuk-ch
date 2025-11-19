@@ -72,6 +72,29 @@
                         <h3 class="text-lg font-bold text-gray-900"><?= htmlspecialchars($barang['nama_sarana']) ?></h3>
                         <p class="text-sm text-gray-600"><?= htmlspecialchars($barang['nama_kategori']) ?></p>
                      </div>
+                     <a href="<?= site_url('/peminjam/sarpras/detail/' . esc($barang['kode_sarana'])) ?>" class="mt-4 block w-full text-center bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">
+                        Lihat Detail
+                     </a>
+                  </div>
+               </div>
+            <?php endforeach; ?>
+
+            <!-- KATALOG PRASARANA -->
+            <?php foreach ($prasarana as $ruangan): ?>
+               <div class="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col">
+                  <div class="relative">
+                     <img src="" alt="<?= htmlspecialchars($ruangan['nama_prasarana']) ?>" class="w-full h-48 object-cover">
+                     <?php if ($ruangan['status_ketersediaan'] == 'Tersedia'): ?>
+                        <span class="absolute top-2 right-2 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full">Tersedia</span>
+                     <?php else: ?>
+                        <span class="absolute top-2 right-2 bg-yellow-400 text-black text-xs font-bold px-2 py-1 rounded-full">Dipinjam</span>
+                     <?php endif; ?>
+                  </div>
+                  <div class="p-4 flex-1 flex flex-col">
+                     <div class="flex-1">
+                        <h3 class="text-lg font-bold text-gray-900"><?= htmlspecialchars($ruangan['nama_prasarana']) ?></h3>
+                        <p class="text-sm text-gray-600"><?= htmlspecialchars($ruangan['nama_kategori']) ?></p>
+                     </div>
                      <a href="#" class="mt-4 block w-full text-center bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">
                         Lihat Detail
                      </a>
@@ -102,6 +125,29 @@
                            Lihat Detail
                         </a>
                      </div>
+                  </div>
+               </div>
+            <?php endforeach; ?>
+
+            <!-- KATALOG PRASARANA -->
+            <?php foreach ($prasarana as $ruangan): ?>
+               <div class="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col">
+                  <div class="relative">
+                     <img src="" alt="<?= htmlspecialchars($ruangan['nama_prasarana']) ?>" class="w-full h-48 object-cover">
+                     <?php if ($ruangan['status_ketersediaan'] == 'Tersedia'): ?>
+                        <span class="absolute top-2 right-2 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full">Tersedia</span>
+                     <?php else: ?>
+                        <span class="absolute top-2 right-2 bg-yellow-400 text-black text-xs font-bold px-2 py-1 rounded-full">Dipinjam</span>
+                     <?php endif; ?>
+                  </div>
+                  <div class="p-4 flex-1 flex flex-col">
+                     <div class="flex-1">
+                        <h3 class="text-lg font-bold text-gray-900"><?= htmlspecialchars($ruangan['nama_prasarana']) ?></h3>
+                        <p class="text-sm text-gray-600"><?= htmlspecialchars($ruangan['nama_kategori']) ?></p>
+                     </div>
+                     <a href="#" class="mt-4 block w-full text-center bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">
+                        Lihat Detail
+                     </a>
                   </div>
                </div>
             <?php endforeach; ?>
