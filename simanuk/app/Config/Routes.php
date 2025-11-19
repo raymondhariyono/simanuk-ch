@@ -33,6 +33,8 @@ $routes->group('admin', ['filter' => ['session', 'role:Admin']], static function
 $routes->group('peminjam', ['filter' => ['session', 'role:Peminjam']], static function ($routes) {
    $routes->get('dashboard', 'Peminjam\DashboardController::index');
    $routes->get('sarpras', 'Peminjam\SarprasController::index');
+   // route detail sarpras
+   $routes->get('sarpras/detail/(:segment)', 'Peminjam\SarprasController::detail/$1');
 });
 
 // ----------------------------------------------------
