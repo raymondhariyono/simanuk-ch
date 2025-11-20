@@ -73,7 +73,7 @@
                                 </tr>
                             <?php else : ?>
                                 <?php foreach ($loans as $loan) : ?>
-                                    <tr class="hover:bg-gray-50">
+                                    <tr class="hover:bg-gray-50 transition-colors">
                                         <td class="py-4 px-6 whitespace-nowrap">
                                             <span class="font-medium text-gray-900"><?= esc($loan['nama_item']); ?></span>
                                         </td>
@@ -112,15 +112,24 @@
                                                 <?= esc($loan['status']); ?>
                                             </span>
                                         </td>
-                                        <td class="py-4 px-6 whitespace-nowrap text-sm font-medium">
+                                        <td class="py-4 px-6 whitespace-nowrap text-sm font-medium flex items-center">
+                                            
+                                            <a href="<?= site_url('peminjam/histori-peminjaman/detail/' . esc($loan['kode'])) ?>" 
+                                            class="bg-cyan-500 hover:bg-cyan-600 text-white py-1 px-3 rounded-full mr-2 transition shadow-sm">
+                                            Detail
+                                            </a>
+
                                             <?php if ($loan['aksi'] == 'Batal'): ?>
-                                                <a href="#" class="bg-red-600 hover:bg-red-700 text-white py-1 px-3 rounded-full">Batal</a>
+                                                <a href="#" class="bg-red-600 hover:bg-red-700 text-white py-1 px-3 rounded-full transition shadow-sm">Batal</a>
+                                            
                                             <?php elseif ($loan['aksi'] == 'Upload Foto SEBELUM *'): ?>
-                                                <a href="#" class="bg-yellow-500 hover:bg-yellow-600 text-white py-1 px-3 rounded-full">Upload Foto SEBELUM *</a>
+                                                <a href="#" class="bg-yellow-500 hover:bg-yellow-600 text-white py-1 px-3 rounded-full transition shadow-sm">Upload Foto</a>
+                                            
                                             <?php elseif ($loan['aksi'] == 'Kembalikan'): ?>
-                                                <a href="#" class="bg-green-600 hover:bg-green-700 text-white py-1 px-3 rounded-full">Kembalikan</a>
-                                                <a href="#" class="bg-gray-600 hover:bg-gray-700 text-white py-1 px-3 rounded-full ml-2">Perpanjang</a>
+                                                <a href="#" class="bg-green-600 hover:bg-green-700 text-white py-1 px-3 rounded-full transition shadow-sm">Kembalikan</a>
+                                                <a href="#" class="bg-gray-600 hover:bg-gray-700 text-white py-1 px-3 rounded-full ml-2 transition shadow-sm">Perpanjang</a>
                                             <?php endif; ?>
+
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
