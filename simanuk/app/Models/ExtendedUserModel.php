@@ -90,6 +90,12 @@
          return true;
       }
 
+      public function getAllUserWithRole()
+      {
+         return $this->select('users.*, roles.nama_role')
+            ->join('roles', 'roles.id_role = users.id_role', 'left');
+      }
+
       public function getUserWithRole($userId)
       {
          return $this->select('users.*, roles.nama_role')

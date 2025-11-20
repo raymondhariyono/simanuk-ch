@@ -13,7 +13,7 @@
             <svg class="w-6 h-6 <?= getIconClasses('admin/inventaris') ?>" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                <path stroke-linecap="round" stroke-linejoin="round" d="M20.25 7.5l-.625 10.632a2.25 2.25 0 01-2.247 2.118H6.622a2.25 2.25 0 01-2.247-2.118L3.75 7.5M10.5 11.25h3M12 15h.008" />
             </svg>
-            <span>Kelola Inventaris</span>
+            <span>Kelola Inventarisasi</span>
          </a>
          <a href="<?= site_url('admin/peminjaman') ?>" class="<?= getLinkClasses('admin/peminjaman') ?>">
             <svg class="w-6 h-6 <?= getIconClasses('admin/peminjaman') ?>" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">

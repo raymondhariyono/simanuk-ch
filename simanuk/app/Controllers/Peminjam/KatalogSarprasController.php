@@ -6,7 +6,7 @@ use App\Controllers\BaseController;
 use App\Models\Sarpras\SaranaModel;
 use App\Models\Sarpras\PrasaranaModel;
 
-class SarprasController extends BaseController
+class KatalogSarprasController extends BaseController
 {
    protected $saranaModel;
    protected $prasaranaModel;
