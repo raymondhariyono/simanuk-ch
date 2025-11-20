@@ -95,7 +95,7 @@
                         <h3 class="text-lg font-bold text-gray-900"><?= htmlspecialchars($ruangan['nama_prasarana']) ?></h3>
                         <p class="text-sm text-gray-600"><?= htmlspecialchars($ruangan['nama_kategori']) ?></p>
                      </div>
-                     <a href="#" class="mt-4 block w-full text-center bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">
+                     <a href="<?= site_url('/peminjam/sarpras/detail/' . esc($ruangan['kode_prasarana'])) ?>" class="mt-4 block w-full text-center bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">
                         Lihat Detail
                      </a>
                   </div>
@@ -121,7 +121,7 @@
                            <h3 class="text-lg font-bold text-gray-900"><?= htmlspecialchars($barang['nama_sarana']) ?></h3>
                            <p class="text-sm text-gray-600"><?= htmlspecialchars($barang['nama_kategori']) ?></p>
                         </div>
-                        <a href="#" class="mt-4 block w-full text-center bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">
+                        <a href="<?= site_url('/peminjam/sarpras/detail/' . esc($barang['kode_sarana'])) ?>" class="mt-4 block w-full text-center bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">
                            Lihat Detail
                         </a>
                      </div>
@@ -145,7 +145,7 @@
                         <h3 class="text-lg font-bold text-gray-900"><?= htmlspecialchars($ruangan['nama_prasarana']) ?></h3>
                         <p class="text-sm text-gray-600"><?= htmlspecialchars($ruangan['nama_kategori']) ?></p>
                      </div>
-                     <a href="#" class="mt-4 block w-full text-center bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">
+                     <a href="<?= site_url('/peminjam/sarpras/detail/' . esc($ruangan['kode_prasarana'])) ?>" class="mt-4 block w-full text-center bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">
                         Lihat Detail
                      </a>
                   </div>

@@ -14,7 +14,7 @@
                     <h1 class="text-3xl font-bold text-gray-900">HALAMAN PEMINJAMAN SAYA</h1>
                     <?php if (isset($breadcrumbs)) : ?>
                         <div class="mt-2">
-                             <?= render_breadcrumb($breadcrumbs); ?>
+                            <?= render_breadcrumb($breadcrumbs); ?>
                         </div>
                     <?php endif; ?>
                 </div>
@@ -85,26 +85,39 @@
                                         </td>
                                         <td class="py-4 px-6 whitespace-nowrap">
                                             <span class="text-sm font-medium px-3 py-1 rounded-full
-                                                <?php 
-                                                    switch($loan['status']) {
-                                                        case 'Menunggu Verifikasi': echo 'bg-yellow-100 text-yellow-800'; break;
-                                                        case 'Menunggu Persetujuan': echo 'bg-blue-100 text-blue-800'; break;
-                                                        case 'Disetujui': echo 'bg-green-100 text-green-800'; break;
-                                                        case 'Berlangsung': echo 'bg-indigo-100 text-indigo-800'; break;
-                                                        case 'Selesai': echo 'bg-gray-100 text-gray-800'; break;
-                                                        case 'Ditolak': echo 'bg-red-100 text-red-800'; break;
-                                                        default: echo 'bg-gray-100 text-gray-800';
-                                                    }
+                                                <?php
+                                                switch ($loan['status']) {
+                                                    case 'Menunggu Verifikasi':
+                                                        echo 'bg-yellow-100 text-yellow-800';
+                                                        break;
+                                                    case 'Menunggu Persetujuan':
+                                                        echo 'bg-blue-100 text-blue-800';
+                                                        break;
+                                                    case 'Disetujui':
+                                                        echo 'bg-green-100 text-green-800';
+                                                        break;
+                                                    case 'Berlangsung':
+                                                        echo 'bg-indigo-100 text-indigo-800';
+                                                        break;
+                                                    case 'Selesai':
+                                                        echo 'bg-gray-100 text-gray-800';
+                                                        break;
+                                                    case 'Ditolak':
+                                                        echo 'bg-red-100 text-red-800';
+                                                        break;
+                                                    default:
+                                                        echo 'bg-gray-100 text-gray-800';
+                                                }
                                                 ?>">
                                                 <?= esc($loan['status']); ?>
                                             </span>
                                         </td>
                                         <td class="py-4 px-6 whitespace-nowrap text-sm font-medium">
-                                            <?php if($loan['aksi'] == 'Batal'): ?>
+                                            <?php if ($loan['aksi'] == 'Batal'): ?>
                                                 <a href="#" class="bg-red-600 hover:bg-red-700 text-white py-1 px-3 rounded-full">Batal</a>
-                                            <?php elseif($loan['aksi'] == 'Upload Foto SEBELUM *'): ?>
+                                            <?php elseif ($loan['aksi'] == 'Upload Foto SEBELUM *'): ?>
                                                 <a href="#" class="bg-yellow-500 hover:bg-yellow-600 text-white py-1 px-3 rounded-full">Upload Foto SEBELUM *</a>
-                                            <?php elseif($loan['aksi'] == 'Kembalikan'): ?>
+                                            <?php elseif ($loan['aksi'] == 'Kembalikan'): ?>
                                                 <a href="#" class="bg-green-600 hover:bg-green-700 text-white py-1 px-3 rounded-full">Kembalikan</a>
                                                 <a href="#" class="bg-gray-600 hover:bg-gray-700 text-white py-1 px-3 rounded-full ml-2">Perpanjang</a>
                                             <?php endif; ?>
