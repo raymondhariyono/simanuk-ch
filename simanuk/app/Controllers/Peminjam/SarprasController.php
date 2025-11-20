@@ -41,38 +41,61 @@ class SarprasController extends BaseController
       return view('peminjam/sarpras_view', $data);
    }
 
-   public function detail($kode_sarana)
+   public function detail($kode)
    {
-      // cek apakah terdapat sarana & prasarana dari kodenya
-      $sarana = $this->saranaModel->getSaranaForKatalog($kode_sarana);
+      // Coba cari sebagai sarana terlebih dahulu
+      $sarana = $this->saranaModel->getSaranaForKatalog($kode);
 
-      if (!$sarana) {
-         throw new \CodeIgniter\Exceptions\PageNotFoundException('Sarana dengan kode ' . $kode_sarana . ' tidak ditemukan');
+      // Jika sarana ditemukan
+      if ($sarana) {
+         // Proses field JSON 'spesifikasi'
+         if (!empty($sarana['spesifikasi'])) {
+            $decodedSpesifikasi = @json_decode($sarana['spesifikasi'], true);
+            $sarana['spesifikasi'] = (json_last_error() === JSON_ERROR_NONE) ? $decodedSpesifikasi : [];
+         } else {
+            $sarana['spesifikasi'] = [];
+         }
+
+         $data = [
+            'title' => 'Detail Sarana',
+            'sarana' => $sarana,
+            'breadcrumbs' => [
+               ['name' => 'Beranda', 'url' => site_url('peminjam/dashboard')],
+               ['name' => 'Sarpras', 'url' => site_url('peminjam/sarpras')],
+               ['name' => $sarana['nama_sarana']],
+            ]
+         ];
+
+         return view('peminjam/detail_sarana_view', $data);
       }
-      // $prasarana = $this->prasaranaModel->getPrasaranaForKatalog($kode_prasarana);
-      // if (!$prasarana) {
-      //    throw new \CodeIgniter\Exceptions\PageNotFoundException('Prasarana dengan kode ' . $kode_prasarana . ' tidak ditemukan');
-      // }
 
-      $data = [
-         'title' => 'Detail Sarpras',
-         'sarana' => $sarana,
-         // 'prasarana' => $prasarana,
-         'showSidebar' => true, // flag untuk sidebar
-         'breadcrumbs' => [
-            [
-               'name' => 'Beranda',
-               'url' => site_url('admin/dashboard')
-            ],
-            [
-               'name' => 'Sarpras',
-            ],
-            [
-               'name' => $sarana['nama_sarana'],
-            ],
-         ]
-      ];
+      // Jika tidak ditemukan sebagai sarana, coba cari sebagai prasarana
+      $prasarana = $this->prasaranaModel->getPrasaranaForKatalog($kode);
 
-      return view('peminjam/detail_sarpras_view', $data);
+      // Jika prasarana ditemukan
+      if ($prasarana) {
+         // Proses field JSON 'fasilitas'
+         if (!empty($prasarana['fasilitas'])) {
+            $decodedFasilitas = @json_decode($prasarana['fasilitas'], true);
+            $prasarana['fasilitas'] = (json_last_error() === JSON_ERROR_NONE) ? $decodedFasilitas : [];
+         } else {
+            $prasarana['fasilitas'] = [];
+         }
+
+         $data = [
+            'title' => 'Detail Prasarana',
+            'prasarana' => $prasarana,
+            'breadcrumbs' => [
+               ['name' => 'Beranda', 'url' => site_url('peminjam/dashboard')],
+               ['name' => 'Sarpras', 'url' => site_url('peminjam/sarpras')],
+               ['name' => $prasarana['nama_prasarana']],
+            ]
+         ];
+         // TODO: Buat view 'peminjam/detail_prasarana_view' untuk menampilkan detail prasarana.
+         return view('peminjam/detail_prasarana_view', $data);
+      }
+
+      // Jika sarana maupun prasarana tidak ditemukan
+      throw new \CodeIgniter\Exceptions\PageNotFoundException('Sarpras dengan kode ' . $kode . ' tidak ditemukan');
    }
 }

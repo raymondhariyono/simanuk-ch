@@ -11,14 +11,21 @@
 
             <div class="mb-8 text-center">
                 <h1 class="text-2xl font-bold text-gray-900 uppercase tracking-wide">HISTORI PENGEMBALIAN SAYA</h1>
+                <?php if (isset($breadcrumbs)) : ?>
+                    <div class="mt-2">
+                        <?= render_breadcrumb($breadcrumbs); ?>
+                    </div>
+                <?php endif; ?>
             </div>
 
             <div class="bg-white rounded-xl shadow-sm p-6">
-                
+
                 <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-8">
                     <div class="relative w-full md:w-1/2">
                         <div class="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
-                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                            <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
                         </div>
                         <input type="text" class="bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5" placeholder="Cari berdasarkan nama atau kode">
                     </div>
@@ -84,7 +91,7 @@
                     <div class="text-sm text-gray-500 mb-4 md:mb-0">
                         Menampilkan <span class="font-bold text-gray-800">1-5</span> dari <span class="font-bold text-gray-800">100</span>
                     </div>
-                    
+
                     <div class="flex items-center gap-2">
                         <button class="px-4 py-1.5 text-sm text-gray-600 border border-gray-300 rounded hover:bg-gray-50">Sebelumnya</button>
                         <button class="w-8 h-8 flex items-center justify-center text-sm border rounded bg-white text-gray-600 hover:bg-gray-50">1</button>
@@ -95,7 +102,7 @@
                 </div>
 
             </div>
-            </main>
+        </main>
     </div>
 </div>
 <?= $this->endSection(); ?>

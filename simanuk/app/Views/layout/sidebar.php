@@ -73,8 +73,8 @@
          </a>
 
       <?php elseif (auth()->user()->inGroup('Peminjam')) : ?>
-         <a href="<?= site_url('peminjam/katalog') ?>" class="<?= getLinkClasses('peminjam/katalog') ?>">
-            <svg class="w-6 h-6 <?= getIconClasses('peminjam/katalog') ?>" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+         <a href="<?= site_url('peminjam/sarpras') ?>" class="<?= getLinkClasses('peminjam/sarpras') ?>">
+            <svg class="w-6 h-6 <?= getIconClasses('peminjam/sarpras') ?>" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
             </svg>
             <span>Katalog Sarpras</span>
