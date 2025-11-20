@@ -25,7 +25,14 @@ $routes->get('/auth/redirect', 'AuthController::redirect', ['filter' => 'session
 // ----------------------------------------------------
 $routes->group('admin', ['filter' => ['session', 'role:Admin']], static function ($routes) {
    $routes->get('dashboard', 'Admin\DashboardController::index');
+   
+   // INVENTARISASI
    $routes->get('inventaris', 'Admin\InventarisasiController::index');
+   $routes->get('inventaris/create', 'Admin\InventarisasiController::create');
+   $routes->post('inventaris/save', 'Admin\InventarisasiController::save');
+   $routes->delete('inventaris/(:num)', 'Admin\InventarisasiController::delete/$1');
+
+   
    $routes->get('laporan-kerusakan', 'Admin\LaporanKerusakanController::index');
    $routes->get('manajemen-akun', 'Admin\ManajemenAkunController::index');
 });
