@@ -91,7 +91,6 @@ class HistoriPeminjamanController extends BaseController
             'title' => 'Detail Peminjaman',
             'detail' => $detail,
             'histori' => $histori,
-            'showSidebar' => true,
             'breadcrumbs' => [
                 ['name' => 'Beranda', 'url' => site_url('peminjam/dashboard')],
                 ['name' => 'Peminjaman Saya', 'url' => site_url('peminjam/histori-peminjaman')],
