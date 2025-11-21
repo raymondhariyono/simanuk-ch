@@ -8,7 +8,7 @@
 <div class="flex min-h-screen">
    <div class="flex-1 flex flex-col overflow-hidden">
       <main class="flex-1 overflow-y-auto p-6 md:p-8">
-         <h1 class="text-3xl font-bold text-gray-900 mt-6 mb-4">Tambah Inventaris Baru</h1>
+         <h1 class="text-3xl font-bold text-gray-900 mt-6 mb-4">Tambah Sarana Baru</h1>
          <?php if (isset($breadcrumbs)) : ?>
             <?= render_breadcrumb($breadcrumbs); ?>
          <?php endif; ?>
@@ -24,7 +24,7 @@
                </div>
             <?php endif ?>
 
-            <form action="<?= site_url('admin/inventaris/save') ?>" method="post">
+            <form action="<?= site_url('admin/inventaris/sarana/save') ?>" method="post">
                <?= csrf_field() ?>
 
                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -37,7 +37,7 @@
 
                   <div>
                      <label class="block text-gray-700 text-sm font-bold mb-2" for="kode_sarana">
-                        Kode Inventaris (Unik)
+                        Kode Sarana (Unik)
                      </label>
                      <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="kode_sarana" name="kode_sarana" type="text" placeholder="Contoh: FT-PRJ-001" value="<?= old('kode_sarana') ?>">
                   </div>
@@ -112,17 +112,23 @@
                <div class="mt-6">
                   <label class="block text-gray-700 text-sm font-bold mb-2">Spesifikasi Tambahan</label>
                   <div id="spesifikasi-container" class="space-y-4">
-                     <!-- Input spesifikasi dinamis akan ditambahkan di sini -->
-                     <div class="flex items-center gap-4">
-                        <input type="text" name="spesifikasi[merk]" placeholder="Contoh: Merk" class="shadow appearance-none border rounded w-1/3 py-2 px-3 text-gray-700" value="<?= old('spesifikasi.merk') ?>">
-                        <input type="text" name="spesifikasi[merk_value]" placeholder="Contoh: Epson" class="shadow appearance-none border rounded w-2/3 py-2 px-3 text-gray-700" value="<?= old('spesifikasi.merk_value') ?>">
-                        <button type="button" class="text-red-500 hover:text-red-700" onclick="removeRow(this)">Hapus</button>
-                     </div>
-                     <div class="flex items-center gap-4">
-                        <input type="text" name="spesifikasi[warna]" placeholder="Contoh: Warna" class="shadow appearance-none border rounded w-1/3 py-2 px-3 text-gray-700" value="<?= old('spesifikasi.warna') ?>">
-                        <input type="text" name="spesifikasi[warna_value]" placeholder="Contoh: Putih" class="shadow appearance-none border rounded w-2/3 py-2 px-3 text-gray-700" value="<?= old('spesifikasi.warna_value') ?>">
-                        <button type="button" class="text-red-500 hover:text-red-700" onclick="removeRow(this)">Hapus</button>
-                     </div>
+                     <?php
+                     $old_spec_keys = old('spesifikasi_key', ['']);
+                     $old_spec_values = old('spesifikasi_value', ['']);
+                     $spec_count = count($old_spec_keys);
+                     ?>
+                     <?php for ($i = 0; $i < $spec_count; $i++) : ?>
+                        <div class="flex items-center gap-4">
+                           <input type="text" name="spesifikasi_key[]" placeholder="Contoh: Merk" class="shadow appearance-none border rounded w-1/3 py-2 px-3 text-gray-700" value="<?= esc($old_spec_keys[$i]) ?>">
+                           <input type="text" name="spesifikasi_value[]" placeholder="Contoh: Epson" class="shadow appearance-none border rounded w-2/3 py-2 px-3 text-gray-700" value="<?= esc($old_spec_values[$i]) ?>">
+                           <?php if ($i > 0) : ?>
+                              <button type="button" class="text-red-500 hover:text-red-700" onclick="removeRow(this)">Hapus</button>
+                           <?php else : ?>
+                              <!-- Placeholder for alignment on the first row -->
+                              <div style="width: 48px;"></div>
+                           <?php endif; ?>
+                        </div>
+                     <?php endfor; ?>
                   </div>
                   <button type="button" id="tambah-spesifikasi" class="mt-4 bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded text-sm">
                      + Tambah Spesifikasi
@@ -155,11 +161,9 @@
       const newRow = document.createElement('div');
       newRow.className = 'flex items-center gap-4';
 
-      const randomId = 'spec_' + Math.random().toString(36).substr(2, 9);
-
       newRow.innerHTML = `
-         <input type="text" name="spesifikasi[${randomId}][key]" placeholder="Nama Spesifikasi" class="shadow appearance-none border rounded w-1/3 py-2 px-3 text-gray-700">
-         <input type="text" name="spesifikasi[${randomId}][value]" placeholder="Nilai Spesifikasi" class="shadow appearance-none border rounded w-2/3 py-2 px-3 text-gray-700">
+         <input type="text" name="spesifikasi_key[]" placeholder="Nama Spesifikasi" class="shadow appearance-none border rounded w-1/3 py-2 px-3 text-gray-700">
+         <input type="text" name="spesifikasi_value[]" placeholder="Nilai Spesifikasi" class="shadow appearance-none border rounded w-2/3 py-2 px-3 text-gray-700">
          <button type="button" class="text-red-500 hover:text-red-700" onclick="removeRow(this)">Hapus</button>
       `;
 
