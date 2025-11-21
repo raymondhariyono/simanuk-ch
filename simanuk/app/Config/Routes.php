@@ -32,12 +32,16 @@ $routes->group('admin', ['filter' => ['session', 'role:Admin']], static function
    $routes->get('inventaris/sarana/create', 'Admin\SaranaController::create');
    $routes->post('inventaris/sarana/save', 'Admin\SaranaController::save');
    $routes->delete('inventaris/sarana/(:num)', 'Admin\SaranaController::delete/$1');
+   $routes->get('inventaris/sarana/edit/(:num)', 'Admin\SaranaController::edit/$1');
+   $routes->post('inventaris/sarana/update/(:num)', 'Admin\SaranaController::update/$1');
    
    // PRASARANA
    $routes->get('inventaris', 'Admin\InventarisasiController::index');
    $routes->get('inventaris/prasarana/create', 'Admin\PrasaranaController::create');
    $routes->post('inventaris/prasarana/save', 'Admin\PrasaranaController::save');
    $routes->delete('inventaris/prasarana/(:num)', 'Admin\PrasaranaController::delete/$1');
+   $routes->get('inventaris/prasarana/edit/(:num)', 'Admin\PrasaranaController::edit/$1');
+   $routes->post('inventaris/prasarana/update/(:num)', 'Admin\PrasaranaController::update/$1');
 
    
    $routes->get('laporan-kerusakan', 'Admin\LaporanKerusakanController::index');
