@@ -159,23 +159,7 @@
    </div>
 </div>
 
-<script>
-   document.getElementById('tambah-fasilitas').addEventListener('click', function() {
-      const container = document.getElementById('fasilitas-container');
-      const newRow = document.createElement('div');
-      newRow.className = 'flex items-center gap-4';
-
-      newRow.innerHTML = `
-            <input type="text" name="fasilitas[]" placeholder="Nama Fasilitas" class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700">
-            <button type="button" class="text-red-500 hover:text-red-700" onclick="removeFasilitasRow(this)">Hapus</button>
-         `;
-
-      container.appendChild(newRow);
-   });
-
-   function removeFasilitasRow(button) {
-      button.parentElement.remove();
-   }
-</script>
+<!-- Panggil script inventaris -->
+<script src="<?= base_url('js/inventaris.js') ?>"></script>
 
 <?= $this->endSection(); ?>

@@ -155,25 +155,7 @@
    </div>
 </div>
 
-<script>
-   document.getElementById('tambah-spesifikasi').addEventListener('click', function() {
-      const container = document.getElementById('spesifikasi-container');
-      const newRow = document.createElement('div');
-      newRow.className = 'flex items-center gap-4';
-
-      newRow.innerHTML = `
-         <input type="text" name="spesifikasi_key[]" placeholder="Nama Spesifikasi" class="shadow appearance-none border rounded w-1/3 py-2 px-3 text-gray-700">
-         <input type="text" name="spesifikasi_value[]" placeholder="Nilai Spesifikasi" class="shadow appearance-none border rounded w-2/3 py-2 px-3 text-gray-700">
-         <button type="button" class="text-red-500 hover:text-red-700" onclick="removeRow(this)">Hapus</button>
-      `;
-
-      container.appendChild(newRow);
-   });
-
-   function removeRow(button) {
-      const row = button.parentElement;
-      row.remove();
-   }
-</script>
+<!-- Panggil script inventaris -->
+<script src="<?= base_url('js/inventaris.js') ?>"></script>
 
 <?= $this->endSection(); ?>
