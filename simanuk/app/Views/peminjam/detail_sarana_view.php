@@ -14,7 +14,34 @@
 
       <!-- GAMBAR -->
       <div class="bg-white rounded-lg p-5 shadow-sm">
-         <div class="w-full h-96 bg-gray-200 rounded-lg mb-4"></div>
+         <div class="w-full h-96 bg-gray-100 rounded-lg mb-4 overflow-hidden flex items-center justify-center border border-gray-200 relative">
+            <?php if (!empty($fotoSarana)) : ?>
+               <img id="mainImage"
+                  src="<?= base_url($fotoSarana[0]['url_foto']) ?>"
+                  alt="Foto <?= esc($sarana['nama_sarana']) ?>"
+                  class="w-full h-full object-contain">
+            <?php else : ?>
+               <div class="text-gray-400 flex flex-col items-center">
+                  <svg class="w-16 h-16 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                  </svg>
+                  <span>Tidak ada foto</span>
+               </div>
+            <?php endif; ?>
+         </div>
+
+         <?php if (!empty($fotoSarana) && count($fotoSarana) > 1) : ?>
+            <div class="flex gap-3 overflow-x-auto pb-2">
+               <?php foreach ($fotoSarana as $foto) : ?>
+                  <div class="w-20 h-20 flex-shrink-0 cursor-pointer border-2 border-transparent hover:border-blue-500 rounded-lg overflow-hidden transition-all"
+                     onclick="changeImage('<?= base_url($foto['url_foto']) ?>')">
+                     <img src="<?= base_url($foto['url_foto']) ?>"
+                        class="w-full h-full object-cover"
+                        alt="Thumbnail">
+                  </div>
+               <?php endforeach; ?>
+            </div>
+         <?php endif; ?>
 
          <div class="flex gap-3">
             <div class="w-20 h-20 bg-gray-200 border rounded-lg"></div>
@@ -39,7 +66,7 @@
          <div class="border-b mb-4"></div>
 
          <h2 class="text-lg font-semibold text-gray-800 mb-2">Spesifikasi</h2>
-         
+
          <?php if (!empty($sarana['spesifikasi']) && is_array($sarana['spesifikasi'])) : ?>
             <ul class="space-y-2 text-gray-600">
                <?php foreach ($sarana['spesifikasi'] as $key => $value) : ?>
@@ -92,5 +119,11 @@
    </div>
 
 </div>
+
+<script>
+   function changeImage(src) {
+      document.getElementById('mainImage').src = src;
+   }
+</script>
 
 <?= $this->endSection(); ?>

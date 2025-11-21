@@ -132,7 +132,7 @@
                                                 </svg>
                                             </a>
 
-                                            <form action="<?= site_url('admin/inventaris/sarana/edit/' . $barang['id_sarana']); ?>" method="post" class="inline-block" onsubmit="return confirm('Apakah Anda yakin ingin menghapus sarana ini?');">
+                                            <form action="<?= site_url('admin/inventaris/sarana/' . $barang['id_sarana']); ?>" method="post" class="inline-block" onsubmit="return confirm('Apakah Anda yakin ingin menghapus sarana ini?');">
                                                 <?= csrf_field() ?>
                                                 <input type="hidden" name="_method" value="DELETE">
                                                 <button type="submit" class="inline-flex items-center px-1 py-1 text-red-500 rounded hover:bg-red-100">

@@ -3,6 +3,7 @@
 namespace App\Controllers\Admin;
 
 use App\Controllers\BaseController;
+use App\Models\FotoAsetModel;
 use App\Models\Sarpras\PrasaranaModel;
 
 use App\Models\KategoriModel;
@@ -28,7 +29,6 @@ class PrasaranaController extends BaseController
       $data = [
          'title' => 'Tambah Prasarana Baru',
          'prasarana' => $this->prasaranaModel->getPrasaranaForKatalog(),
-         'showSidebar' => true,
          'kategori' => $this->kategoriModel->findAll(),
          'lokasi' => $this->lokasiModel->findAll(),
          'breadcrumbs' => [
@@ -58,7 +58,6 @@ class PrasaranaController extends BaseController
       $data = [
          'title' => 'Edit Data Prasarana',
          'prasarana' => $prasarana,
-         'showSidebar' => true,
          'kategori' => $this->kategoriModel->findAll(),
          'lokasi' => $this->lokasiModel->findAll(),
          'breadcrumbs' => [
@@ -135,6 +134,15 @@ class PrasaranaController extends BaseController
             'errors' => [
                'required' => 'Deskripsi sarana harus diisi',
             ]
+         ],
+         'foto_aset' => [
+            'label' => 'Foto Aset',
+            'rules' => 'permit_empty|uploaded[foto_aset]|max_size[foto_aset,2048]|is_image[foto_aset]|mime_in[foto_aset,image/jpg,image/jpeg,image/png]',
+            'errors' => [
+               'uploaded' => 'Pilih setidaknya satu foto.',
+               'max_size' => 'Ukuran foto terlalu besar (maks 2MB).',
+               'is_image' => 'File yang diupload bukan gambar.',
+            ]
          ]
       ];
 
@@ -150,9 +158,14 @@ class PrasaranaController extends BaseController
       // Ambil data fasilitas sebagai array dari input dengan nama "fasilitas[]".
       $fasilitas = $this->request->getPost('fasilitas') ?? [];
       // Filter untuk menghapus nilai fasilitas yang kosong dan reset index array.
-      $fasilitas = array_values(array_filter($fasilitas, fn ($value) => trim($value) !== ''));
+      $fasilitas = array_values(array_filter($fasilitas, fn($value) => trim($value) !== ''));
 
-      $data = [
+      $db = \Config\Database::connect();
+      $db->transStart();
+
+      try {
+         // 2. Simpan Data Induk (Sarana)
+         $data = [
          'nama_prasarana'        => $this->request->getPost('nama_prasarana'),
          'kode_prasarana'        => $this->request->getPost('kode_prasarana'),
          'id_kategori'        => $this->request->getPost('id_kategori'),
@@ -167,9 +180,59 @@ class PrasaranaController extends BaseController
          'fasilitas'        => json_encode($fasilitas),
       ];
 
-      // dd($data);
+         $this->prasaranaModel->insert($data);
+         $id_prasarana_baru = $this->prasaranaModel->getInsertID(); // Ambil ID yang baru dibuat
 
-      $this->prasaranaModel->save($data);
+         // 3. Proses Upload Foto
+         $files = $this->request->getFileMultiple('foto_aset');
+         $fotoModel = new FotoAsetModel();
+
+         // dd($files);
+
+         if ($files) {
+            foreach ($files as $file) {
+               if ($file->isValid() && !$file->hasMoved()) {
+                  // Generate nama unik
+                  $newName = $file->getRandomName();
+                  // Simpan ke folder public/uploads/sarana
+                  $file->move(FCPATH . 'uploads/prasarana', $newName);
+
+                  // Simpan path ke database
+                  if ($fotoModel->save([
+                     'id_sarana' => null,
+                     'id_prasarana'    => $id_prasarana_baru,
+                     'url_foto'     => 'uploads/prasarana/' . $newName,
+                     'deskripsi'    => $file->getClientName()
+                  ]) === false) {
+                     // DEBUG: Lihat errornya jika gagal simpan
+                     dd($fotoModel->errors());
+                  }
+
+                  // $fotoModel->save([
+                  //    'id_sarana'    => $id_sarana_baru,
+                  //    'id_prasarana' => null, // Pastikan ini null
+                  //    'url_foto'     => 'uploads/sarana/' . $newName,
+                  //    'deskripsi'    => $file->getClientName() // Opsional: simpan nama asli sbg deskripsi
+                  // ]);
+               }
+            }
+         }
+
+         // KOMIT TRANSAKSI (Simpan Permanen)
+         $db->transComplete();
+
+         if ($db->transStatus() === false) {
+            // Jika ada error database, otomatis rollback
+            return redirect()->back()->withInput()->with('error', 'Gagal menyimpan data transaksi.');
+         }
+
+         return redirect()->to(site_url('admin/inventaris'))->with('message', 'Data Sarana dan Foto berhasil disimpan.');
+      } catch (\Exception $e) {
+         // Tangkap error tak terduga
+         return redirect()->back()->withInput()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+      }
+
+      // $this->prasaranaModel->save($data);
 
       return redirect()->to(site_url('admin/inventaris'))->with('message', 'Data berhasil disimpan.');
    }
@@ -207,7 +270,7 @@ class PrasaranaController extends BaseController
       // Ambil data fasilitas sebagai array dari input dengan nama "fasilitas[]".
       $fasilitas = $this->request->getPost('fasilitas') ?? [];
       // Filter untuk menghapus nilai fasilitas yang kosong dan reset index array.
-      $fasilitas = array_values(array_filter($fasilitas, fn ($value) => trim($value) !== ''));
+      $fasilitas = array_values(array_filter($fasilitas, fn($value) => trim($value) !== ''));
 
       $data = [
          'nama_prasarana'        => $this->request->getPost('nama_prasarana'),
