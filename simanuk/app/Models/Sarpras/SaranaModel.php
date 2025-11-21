@@ -56,4 +56,9 @@ class SaranaModel extends Model
       // Jika tidak, kembalikan semua (findAll)
       return $builder->findAll();
    }
+
+   public function getNamaSarana($id_sarana)
+   {
+      return $this->select('nama_sarana')->where('id_sarana', $id_sarana)->first();
+   }
 }
