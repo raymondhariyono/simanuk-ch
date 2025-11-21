@@ -15,7 +15,16 @@
    <?php endif; ?>
    <?php if (session()->getFlashdata('error')) : ?>
       <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-         <?= session()->getFlashdata('error') ?>
+         <?php $errors = session()->getFlashdata('error'); ?>
+         <?php if (is_array($errors)) : ?>
+            <ul class="list-disc ml-5">
+               <?php foreach ($errors as $error) : ?>
+                  <li><?= esc($error) ?></li>
+               <?php endforeach ?>
+            </ul>
+         <?php else : ?>
+            <?= esc($errors) ?>
+         <?php endif; ?>
       </div>
    <?php endif; ?>
 
@@ -42,7 +51,7 @@
                   <div>
                      <h2 class="text-2xl font-bold text-gray-900"><?= esc($user->username); ?></h2>
                      <p class="text-gray-600"><?= esc($user->email); ?></p>
-                     <p class="text-gray-500 text-sm">Mahasiswa</p>
+                     <p class="text-gray-500 text-sm"><?= esc($user->organisasi) ?></p>
                   </div>
                </div>
 
@@ -61,6 +70,24 @@
                   <div>
                      <label for="username" class="block text-sm font-medium text-gray-600 mb-2">Username</label>
                      <input type="text" id="username" name="username" value="<?= esc($user->username); ?>"
+                        class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-blue-400">
+                  </div>
+
+                  <div>
+                     <label for="nama_lengkap" class="block text-sm font-medium text-gray-600 mb-2">Nama Lengkap</label>
+                     <input type="text" id="nama_lengkap" name="nama_lengkap" value="<?= esc($user->nama_lengkap); ?>"
+                        class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-blue-400">
+                  </div>
+
+                  <div>
+                     <label for="organisasi" class="block text-sm font-medium text-gray-600 mb-2">Organisasi / Unit</label>
+                     <input type="text" id="organisasi" name="organisasi" value="<?= esc($user->organisasi); ?>"
+                        class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-blue-400">
+                  </div>
+
+                  <div>
+                     <label for="kontak" class="block text-sm font-medium text-gray-600 mb-2">No. Kontak / WA</label>
+                     <input type="text" id="kontak" name="kontak" value="<?= esc($user->kontak); ?>"
                         class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-blue-400">
                   </div>
 
