@@ -30,6 +30,22 @@
 
       public function save($data): bool
       {
+         // cek apakah ini operasi UPDATE (data memiliki ID)
+         $id = null;
+
+         if (is_object($data) && isset($data->id)) {
+            $id = $data->id;
+         } elseif (is_array($data) && isset($data[0]->id)) {
+            $id = $data[0]->id;
+         }
+
+         // jika operasi UPDATE; gunakan logika dari shield
+         // shield akan secara otomatis mendeteksi perubahan password
+         if ($id) {
+            return parent::save($data);
+         }
+
+         // jika CREATE, jalankan logikanya
          // Jika $data adalah array atau Entity
          $attributes = is_array($data) ? $data : $data->toRawArray();
 
@@ -102,5 +118,10 @@
             ->join('roles', 'roles.id_role = users.id_role', 'left')
             ->where('users.id', $userId)
             ->first();
+      }
+
+      public function updatePassword($userId, $password)
+      {
+         $user = $this->find($userId);
       }
    }

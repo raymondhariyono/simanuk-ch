@@ -12,7 +12,7 @@ class ProfileController extends BaseController
    public function __construct()
    {
       // Inisialisasi model secara langsung untuk mendapatkan instance yang lengkap
-      $this->userModel = new ExtendedUserModel();
+      $this->userModel = auth()->getProvider();
    }
 
    public function index()
@@ -94,11 +94,11 @@ class ProfileController extends BaseController
    public function changePassword()
    {
       $user = auth()->user();
-      
+
       // Validasi Input Password
       $rules = [
          'password_lama'       => 'required',
-         'password_baru'       => 'required|min_length[8]', 
+         'password_baru'       => 'required|min_length[8]',
          'konfirmasi_password' => 'required|matches[password_baru]',
       ];
 
@@ -117,18 +117,20 @@ class ProfileController extends BaseController
          return redirect()->back()->with('error', 'Akun ini tidak menggunakan login password.');
       }
 
-      // Gunakan service 'passwords' dari Shield untuk memverifikasi hash
-      $passwords = service('passwords');
-      dd($oldPassword, $identity->secret2);
-      if (! $passwords->verify($oldPassword, $identity->secret2)) {
+      // Verifikasi hash password lama
+      $authenticator = service('passwords');
+      if (! $authenticator->verify($oldPassword, $identity->secret2)) {
          return redirect()->back()->withInput()->with('error', 'Kata sandi lama yang Anda masukkan salah.');
       }
 
-      // 2. Update Password Baru menggunakan metode yang disediakan UserModel
-      if ($this->userModel->updatePassword($user, $newPassword)) {
+      // 3. Simpan Password Baru
+      // Cukup set atribut pada entity, Shield yang mengurus sisanya via Model
+      $user->password = $newPassword;
+
+      // Panggil save(). Karena kita sudah memperbaiki Model di Langkah 1, 
+      // ini akan lari ke parent::save() yang menghandle update dengan benar.
+      if ($this->userModel->save($user)) {
          return redirect()->to('profile')->with('msg', 'Kata sandi berhasil diubah.');
       }
-
-      return redirect()->back()->withInput()->with('error', 'Terjadi kesalahan saat mengubah kata sandi.');
    }
 }
