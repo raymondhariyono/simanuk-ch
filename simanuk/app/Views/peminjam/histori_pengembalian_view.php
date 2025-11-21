@@ -58,6 +58,7 @@
                                 <th class="py-4 px-4 text-xs font-bold text-gray-500 uppercase tracking-wider">KODE</th>
                                 <th class="py-4 px-4 text-xs font-bold text-gray-500 uppercase tracking-wider">KEGIATAN</th>
                                 <th class="py-4 px-4 text-xs font-bold text-gray-500 uppercase tracking-wider">STATUS</th>
+                                <th class="py-4 px-4 text-xs font-bold text-gray-500 uppercase tracking-wider text-center">AKSI</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100">
@@ -74,24 +75,31 @@
                                             <?= esc($item['kegiatan']); ?>
                                         </td>
                                         <td class="py-4 px-4 text-sm text-gray-600">
-                                            <?= esc($item['status']); ?>
+                                            <span class="px-2 py-1 text-xs font-semibold text-green-700 bg-green-100 rounded-full">
+                                                <?= esc($item['status']); ?>
+                                            </span>
+                                        </td>
+                                        <td class="py-4 px-4 text-sm text-center">
+                                            <a href="<?= site_url('peminjam/histori-pengembalian/detail/' . esc($item['kode'])) ?>" 
+                                               class="inline-flex items-center px-3 py-1.5 bg-blue-50 text-blue-600 hover:bg-blue-100 border border-blue-200 rounded-lg text-xs font-medium transition-colors">
+                                               Lihat Detail
+                                            </a>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
                             <?php else : ?>
                                 <tr>
-                                    <td colspan="4" class="py-8 text-center text-gray-500">Tidak ada data pengembalian.</td>
+                                    <td colspan="5" class="py-8 text-center text-gray-500">Tidak ada data pengembalian.</td>
                                 </tr>
                             <?php endif; ?>
                         </tbody>
                     </table>
                 </div>
-
+                
                 <div class="flex flex-col md:flex-row justify-between items-center mt-8 pt-4 border-t border-gray-100">
                     <div class="text-sm text-gray-500 mb-4 md:mb-0">
                         Menampilkan <span class="font-bold text-gray-800">1-5</span> dari <span class="font-bold text-gray-800">100</span>
                     </div>
-
                     <div class="flex items-center gap-2">
                         <button class="px-4 py-1.5 text-sm text-gray-600 border border-gray-300 rounded hover:bg-gray-50">Sebelumnya</button>
                         <button class="w-8 h-8 flex items-center justify-center text-sm border rounded bg-white text-gray-600 hover:bg-gray-50">1</button>

@@ -61,6 +61,14 @@ $routes->group('peminjam', ['filter' => ['session', 'role:Peminjam']], static fu
    $routes->get('histori-peminjaman', 'Peminjam\HistoriPeminjamanController::index');
    // histori pengembalian
    $routes->get('histori-pengembalian', 'Peminjam\HistoriPengembalianController::index');
+   // laporan kerusakan
+   $routes->get('laporan-kerusakan', 'Peminjam\LaporanKerusakanController::index');
+   // Memproses pengiriman laporan (submit form)
+   $routes->post('laporan-kerusakan/save', 'Peminjam\LaporanKerusakanController::store');
+   // detail histori pengembalian
+   $routes->get('histori-pengembalian/detail/(:segment)', 'Peminjam\HistoriPengembalianController::detail/$1');
+   // detail histori peminjaman
+   $routes->get('histori-peminjaman/detail/(:segment)', 'Peminjam\HistoriPeminjamanController::detail/$1');
 });
 
 $routes->group('pimpinan', ['filter' => ['session', 'role:Pimpinan']], static function ($routes) {
