@@ -20,8 +20,6 @@ class ManajemenAkunController extends BaseController
    {
       $users = $this->userModel->getAllUserWithRole();
 
-      dd($users);
-
       $data = [
          'title' => 'Manajemen Akun',
          'users' => $users,

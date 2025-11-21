@@ -49,4 +49,12 @@ class InventarisasiController extends BaseController
 
       return view('admin/inventarisasi_view', $data);
    }
+
+   public function save()
+   {
+      // validasi input
+      $rules = [
+
+      ];
+   }
 }

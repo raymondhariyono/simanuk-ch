@@ -5,22 +5,44 @@ namespace App\Controllers\Peminjam;
 use App\Controllers\BaseController;
 use App\Models\Sarpras\SaranaModel;
 use App\Models\Sarpras\PrasaranaModel;
+use App\Models\FotoAsetModel;
 
 class KatalogSarprasController extends BaseController
 {
    protected $saranaModel;
    protected $prasaranaModel;
 
+   protected $fotoAsetModel;
+
    public function __construct()
    {
       $this->saranaModel = new SaranaModel();
       $this->prasaranaModel = new PrasaranaModel();
+
+      $this->fotoAsetModel = new FotoAsetModel();
    }
 
    public function index()
    {
       $sarana = $this->saranaModel->getSaranaForKatalog();
       $prasarana = $this->prasaranaModel->getPrasaranaForKatalog();
+
+      foreach ($sarana as &$item) {
+         // ambil foto berdasarkan id_sarana 
+         $foto = $this->fotoAsetModel->where('id_sarana', $item['id_sarana'])->first();
+
+         // jika ada, pakai url_foto, jika tidak pakai placeholder default
+         $item['url_foto'] = $foto ? $foto['url_foto'] : null;
+      }
+      unset($item); // hapus referensi pointer
+
+      foreach ($prasarana as &$item) {
+         // Ambil 1 foto saja (first) berdasarkan id_prasarana
+         $foto = $this->fotoAsetModel->where('id_prasarana', $item['id_prasarana'])->first();
+
+         $item['url_foto'] = $foto ? $foto['url_foto'] : null;
+      }
+      unset($item);
 
       $data = [
          'title' => 'Katalog Sarpras',
@@ -56,9 +78,12 @@ class KatalogSarprasController extends BaseController
             $sarana['spesifikasi'] = [];
          }
 
+         $fotoSarana = $this->fotoAsetModel->getBySarana($sarana['id_sarana']);
+
          $data = [
             'title' => 'Detail Sarana',
             'sarana' => $sarana,
+            'fotoSarana' => $fotoSarana,
             'breadcrumbs' => [
                ['name' => 'Beranda', 'url' => site_url('peminjam/dashboard')],
                ['name' => 'Sarpras', 'url' => site_url('peminjam/sarpras')],
@@ -71,6 +96,8 @@ class KatalogSarprasController extends BaseController
 
       // Jika tidak ditemukan sebagai sarana, coba cari sebagai prasarana
       $prasarana = $this->prasaranaModel->getPrasaranaForKatalog($kode);
+
+      $fotoPrasarana = $this->fotoAsetModel->getByPrasarana($prasarana['id_prasarana']);
 
       // Jika prasarana ditemukan
       if ($prasarana) {
@@ -85,6 +112,7 @@ class KatalogSarprasController extends BaseController
          $data = [
             'title' => 'Detail Prasarana',
             'prasarana' => $prasarana,
+            'fotoPrasarana' => $fotoPrasarana,
             'breadcrumbs' => [
                ['name' => 'Beranda', 'url' => site_url('peminjam/dashboard')],
                ['name' => 'Sarpras', 'url' => site_url('peminjam/sarpras')],

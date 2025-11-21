@@ -25,7 +25,6 @@
          <?php endif; ?>
 
          <div class="mb-8 grid grid-cols-1 md:grid-cols-12 gap-x-6 gap-y-4 items-center">
-
             <div class="md:col-span-7">
                <div class="relative">
                   <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
@@ -59,14 +58,27 @@
          <div class="hidden sm:grid sm:grid-cols-2 md:grid-cols-4 gap-6">
             <?php foreach ($sarana as $barang): ?>
                <div class="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col">
-                  <div class="relative">
-                     <img src="" alt="<?= htmlspecialchars($barang['nama_sarana']) ?>" class="w-full h-48 object-cover">
+                  <div class="relative h-48 bg-gray-200 flex items-center justify-center overflow-hidden">
+                     <?php if (!empty($barang['url_foto'])) : ?>
+                        <img src="<?= base_url($barang['url_foto']) ?>"
+                           alt="<?= esc($barang['nama_sarana']) ?>"
+                           class="w-full h-full object-cover transition-transform duration-300 hover:scale-110">
+                     <?php else : ?>
+                        <div class="text-gray-400 flex flex-col items-center">
+                           <svg class="w-10 h-10 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                           </svg>
+                           <span class="text-xs">No Image</span>
+                        </div>
+                     <?php endif; ?>
+
                      <?php if ($barang['status_ketersediaan'] == 'Tersedia'): ?>
-                        <span class="absolute top-2 right-2 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full">Tersedia</span>
+                        <span class="absolute top-2 right-2 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full shadow">Tersedia</span>
                      <?php else: ?>
-                        <span class="absolute top-2 right-2 bg-yellow-400 text-black text-xs font-bold px-2 py-1 rounded-full">Dipinjam</span>
+                        <span class="absolute top-2 right-2 bg-yellow-400 text-black text-xs font-bold px-2 py-1 rounded-full shadow">Dipinjam</span>
                      <?php endif; ?>
                   </div>
+
                   <div class="p-4 flex-1 flex flex-col">
                      <div class="flex-1">
                         <h3 class="text-lg font-bold text-gray-900"><?= htmlspecialchars($barang['nama_sarana']) ?></h3>
@@ -82,14 +94,27 @@
             <!-- KATALOG PRASARANA -->
             <?php foreach ($prasarana as $ruangan): ?>
                <div class="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col">
-                  <div class="relative">
-                     <img src="" alt="<?= htmlspecialchars($ruangan['nama_prasarana']) ?>" class="w-full h-48 object-cover">
-                     <?php if ($ruangan['status_ketersediaan'] == 'Tersedia'): ?>
-                        <span class="absolute top-2 right-2 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full">Tersedia</span>
+                  <div class="relative h-48 bg-gray-200 flex items-center justify-center overflow-hidden">
+                     <?php if (!empty($ruangan['url_foto'])) : ?>
+                        <img src="<?= base_url($ruangan['url_foto']) ?>"
+                           alt="<?= esc($ruangan['nama_prasarana']) ?>"
+                           class="w-full h-full object-cover transition-transform duration-300 hover:scale-110">
+                     <?php else : ?>
+                        <div class="text-gray-400 flex flex-col items-center">
+                           <svg class="w-10 h-10 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                           </svg>
+                           <span class="text-xs">No Image</span>
+                        </div>
+                     <?php endif; ?>
+
+                     <?php if ($barang['status_ketersediaan'] == 'Tersedia'): ?>
+                        <span class="absolute top-2 right-2 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full shadow">Tersedia</span>
                      <?php else: ?>
-                        <span class="absolute top-2 right-2 bg-yellow-400 text-black text-xs font-bold px-2 py-1 rounded-full">Dipinjam</span>
+                        <span class="absolute top-2 right-2 bg-yellow-400 text-black text-xs font-bold px-2 py-1 rounded-full shadow">Dipinjam</span>
                      <?php endif; ?>
                   </div>
+
                   <div class="p-4 flex-1 flex flex-col">
                      <div class="flex-1">
                         <h3 class="text-lg font-bold text-gray-900"><?= htmlspecialchars($ruangan['nama_prasarana']) ?></h3>
