@@ -161,6 +161,10 @@
                      </label>
                   </div>
                </div>
+               <!-- Container untuk pratinjau gambar -->
+               <div id="image-preview-container" class="mt-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                  <!-- Pratinjau gambar akan muncul di sini -->
+               </div>
 
                <div class="mt-6">
                   <label class="block text-gray-700 text-sm font-bold mb-2" for="deskripsi">Deskripsi Tambahan</label>
