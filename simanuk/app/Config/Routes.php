@@ -53,22 +53,30 @@ $routes->group('admin', ['filter' => ['session', 'role:Admin']], static function
 // ----------------------------------------------------
 $routes->group('peminjam', ['filter' => ['session', 'role:Peminjam']], static function ($routes) {
    $routes->get('dashboard', 'Peminjam\DashboardController::index');
-   // katalog sarpras
+   // --- KATALOG SAPRAS ---
    $routes->get('sarpras', 'Peminjam\KatalogSarprasController::index');
    // detail dari tiap katalog sarpras
    $routes->get('sarpras/detail/(:segment)', 'Peminjam\KatalogSarprasController::detail/$1');
-   // histori peminjaman
+
+   // --- HISTORI PEMINJAMAN ---
    $routes->get('histori-peminjaman', 'Peminjam\HistoriPeminjamanController::index');
-   // histori pengembalian
+   // detail histori peminjaman
+   $routes->get('histori-peminjaman/detail/(:segment)', 'Peminjam\HistoriPeminjamanController::detail/$1');
+   // CRUD peminjaman
+   $routes->get('peminjaman/new', 'Peminjam\PeminjamanController::new'); // Form view
+   $routes->post('peminjaman/create', 'Peminjam\PeminjamanController::create'); // Save
+   $routes->post('peminjaman/delete-item/(:segment)/(:num)', 'Peminjam\PeminjamanController::deleteItem/$1/$2');
+   // $routes->post('peminjaman/delete/(:num)', 'Peminjam\PeminjamanController::delete/$1'); // Batal (Delete)
+   
+   // --- HISTORI PENGEMBALIAN ---
    $routes->get('histori-pengembalian', 'Peminjam\HistoriPengembalianController::index');
-   // laporan kerusakan
+   // detail histori pengembalian
+   $routes->get('histori-pengembalian/detail/(:segment)', 'Peminjam\HistoriPengembalianController::detail/$1');
+   
+   // --- LAPORAN KERUSAKAN ---
    $routes->get('laporan-kerusakan', 'Peminjam\LaporanKerusakanController::index');
    // Memproses pengiriman laporan (submit form)
    $routes->post('laporan-kerusakan/save', 'Peminjam\LaporanKerusakanController::store');
-   // detail histori pengembalian
-   $routes->get('histori-pengembalian/detail/(:segment)', 'Peminjam\HistoriPengembalianController::detail/$1');
-   // detail histori peminjaman
-   $routes->get('histori-peminjaman/detail/(:segment)', 'Peminjam\HistoriPeminjamanController::detail/$1');
 });
 
 $routes->group('pimpinan', ['filter' => ['session', 'role:Pimpinan']], static function ($routes) {

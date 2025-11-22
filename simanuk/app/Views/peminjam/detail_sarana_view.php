@@ -64,6 +64,10 @@
             <span class="px-3 py-1 bg-gray-100 text-gray-600 font-bold rounded text-sm"><?= esc($sarana['nama_lokasi']) ?></span>
          </div>
 
+         <div class="mb-4">
+            <span class="font-bold"><?= esc($sarana['nama_sarana']) ?></span> berjumlah <?= esc($sarana['jumlah']) ?> 
+         </div>
+
          <div class="border-b mb-4"></div>
 
          <h2 class="text-lg font-semibold text-gray-800 mb-2">Spesifikasi</h2>
