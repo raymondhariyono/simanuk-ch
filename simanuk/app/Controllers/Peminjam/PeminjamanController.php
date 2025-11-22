@@ -225,4 +225,55 @@ class PeminjamanController extends BaseController
 
       return redirect()->to(site_url('peminjam/histori-peminjaman'))->with('message', $msg);
    }
+
+   /**
+    * Upload Foto Bukti Pengambilan (Kondisi Awal)
+    */
+   public function uploadBukti($tipe, $idDetail)
+   {
+      // 1. Validasi File
+      if (!$this->validate([
+         'foto_bukti' => [
+            'rules' => 'uploaded[foto_bukti]|max_size[foto_bukti,2048]|is_image[foto_bukti]',
+            'errors' => [
+               'uploaded' => 'Foto wajib diupload.',
+               'max_size' => 'Ukuran foto terlalu besar (Max 2MB).',
+               'is_image' => 'File harus berupa gambar.'
+            ]
+         ]
+      ])) {
+         return redirect()->back()->with('error', 'Gagal upload: ' . $this->validator->getError('foto_bukti'));
+      }
+
+      // 2. Proses Upload
+      $file = $this->request->getFile('foto_bukti');
+      $newName = $file->getRandomName();
+      $file->move(FCPATH . 'uploads/peminjaman/bukti_awal', $newName);
+      $pathFoto = 'uploads/peminjaman/bukti_awal/' . $newName;
+
+      // 3. Update Database Detail
+      $idPeminjaman = null;
+
+      if ($tipe == 'Sarana') {
+         $detail = $this->detailSaranaModel->find($idDetail);
+         $this->detailSaranaModel->update($idDetail, ['foto_sebelum' => $pathFoto]);
+         $idPeminjaman = $detail['id_peminjaman'];
+      } else {
+         // Logic Prasarana
+         $detail = $this->detailPrasaranaModel->find($idDetail); // Pastikan model di-load
+         $this->detailPrasaranaModel->update($idDetail, ['foto_sebelum' => $pathFoto]);
+         $idPeminjaman = $detail['id_peminjaman'];
+      }
+
+      // 4. Update Status Global ke 'Dipinjam' (Jika belum)
+      // Asumsi: Jika user sudah upload bukti 1 barang, berarti transaksi dianggap MULAI (Dipinjam)
+      $peminjaman = $this->peminjamanModel->find($idPeminjaman);
+      if ($peminjaman['status_peminjaman_global'] == 'Disetujui') {
+         $this->peminjamanModel->update($idPeminjaman, [
+            'status_peminjaman_global' => 'Dipinjam'
+         ]);
+      }
+
+      return redirect()->back()->with('message', 'Foto bukti berhasil diupload. Status peminjaman aktif.');
+   }
 }

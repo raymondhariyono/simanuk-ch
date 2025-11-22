@@ -70,7 +70,7 @@
                         </td>
                         <td class="px-4 py-3 text-sm">
                            <a href="<?= site_url('admin/peminjaman/detail/' . $row['id_peminjaman']) ?>"
-                              class="px-3 py-1 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-md active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple">
+                              class="px-3 py-1 text-sm font-medium leading-5 bg-neutral-100 text-neutral-600 hover:bg-neutral-300 border border-neutral-600 rounded-lg text-xs font-medium transition-colors">
                               Detail & Proses
                            </a>
                         </td>
