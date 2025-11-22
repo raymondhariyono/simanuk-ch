@@ -29,6 +29,66 @@ document.addEventListener('DOMContentLoaded', function () {
          container.appendChild(newRow);
       });
    }
+
+   // --- Script untuk Pratinjau Upload Foto ---
+   const dropzoneInput = document.getElementById('dropzone-file');
+   const previewContainer = document.getElementById('image-preview-container');
+
+   // Hanya jalankan skrip jika elemen yang diperlukan ada
+   if (dropzoneInput && previewContainer) {
+      const dropzoneLabel = document.querySelector('label[for="dropzone-file"]');
+      let fileStore = []; // Gunakan array untuk menyimpan file yang valid
+
+      // Fungsi untuk me-render pratinjau
+      function renderPreviews() {
+         previewContainer.innerHTML = '';
+
+         if (fileStore.length > 0) {
+            dropzoneLabel.classList.add('hidden');
+         } else {
+            dropzoneLabel.classList.remove('hidden');
+         }
+
+         fileStore.forEach((file, index) => {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+               const previewWrapper = document.createElement('div');
+               previewWrapper.className = 'relative border rounded-lg overflow-hidden';
+               previewWrapper.innerHTML = `
+                  <img src="${e.target.result}" alt="${file.name}" class="w-full h-full object-cover">
+                  <div class="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-xs p-1 truncate">${file.name}</div>
+                  <button type="button" data-index="${index}" class="absolute top-1 right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold hover:bg-red-700">&times;</button>
+               `;
+               previewContainer.appendChild(previewWrapper);
+            };
+            reader.readAsDataURL(file);
+         });
+      }
+
+      // Event listener untuk input file
+      dropzoneInput.addEventListener('change', function(event) {
+         // Ganti fileStore dengan file yang baru dipilih
+         fileStore = Array.from(event.target.files);
+         renderPreviews();
+      });
+
+      // Event listener untuk tombol hapus (menggunakan event delegation)
+      previewContainer.addEventListener('click', function(event) {
+         if (event.target.matches('button[data-index]')) {
+            const indexToRemove = parseInt(event.target.getAttribute('data-index'), 10);
+
+            // Hapus file dari fileStore
+            fileStore.splice(indexToRemove, 1);
+
+            // Buat objek DataTransfer baru untuk memperbarui input file
+            const dataTransfer = new DataTransfer();
+            fileStore.forEach(file => dataTransfer.items.add(file));
+            dropzoneInput.files = dataTransfer.files;
+
+            renderPreviews(); // Render ulang pratinjau
+         }
+      });
+   }
 });
 
 // Fungsi global untuk menghapus baris, bisa dipakai keduanya
