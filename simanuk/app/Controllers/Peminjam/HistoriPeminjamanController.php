@@ -145,7 +145,7 @@ class HistoriPeminjamanController extends BaseController
             case 'Diajukan':
                 return 'Batal'; // Masih bisa dibatalkan user
             case 'Disetujui':
-                return 'Lihat Detail'; // Menunggu diambil/digunakan
+                return 'Upload Foto Sebelum'; // Menunggu diambil/digunakan
             case 'Dipinjam':
                 return 'Kembalikan'; // Sedang dipinjam
             default:

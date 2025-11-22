@@ -81,7 +81,7 @@
                                         </td>
                                         <td class="py-4 px-4 text-sm text-center">
                                             <a href="<?= site_url('peminjam/histori-pengembalian/detail/' . esc($item['kode'])) ?>"
-                                                class="inline-flex items-center px-3 py-1.5 bg-blue-50 text-blue-600 hover:bg-blue-100 border border-blue-200 rounded-lg text-xs font-medium transition-colors">
+                                                class="inline-flex items-center px-3 py-1.5 bg-neutral-100 text-neutral-600 hover:bg-neutral-300 border border-neutral-600 rounded-lg text-xs font-medium transition-colors">
                                                 Lihat Detail
                                             </a>
                                         </td>
