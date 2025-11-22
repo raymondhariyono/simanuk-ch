@@ -18,11 +18,11 @@
                         </div>
                     <?php endif; ?>
                 </div>
-                <a href="#" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg flex items-center space-x-2">
+                <a href="<?= site_url('peminjam/peminjaman/new') ?>" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg flex items-center space-x-2">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
                     </svg>
-                    <span>Tambah Item Baru</span>
+                    <span>Tambah Pinjaman Baru</span>
                 </a>
             </div>
 
@@ -73,63 +73,62 @@
                                 </tr>
                             <?php else : ?>
                                 <?php foreach ($loans as $loan) : ?>
-                                    <tr class="hover:bg-gray-50 transition-colors">
+                                    <tr class="hover:bg-gray-50 transition">
                                         <td class="py-4 px-6 whitespace-nowrap">
-                                            <span class="font-medium text-gray-900"><?= esc($loan['nama_item']); ?></span>
+                                            <div class="flex flex-col">
+                                                <span class="font-medium text-gray-900"><?= esc($loan['nama_item']); ?></span>
+                                                <span class="text-xs text-gray-500"><?= esc($loan['tipe']); ?></span>
+                                            </div>
                                         </td>
                                         <td class="py-4 px-6 text-gray-700 whitespace-nowrap">
                                             <?= esc($loan['kode']); ?>
                                         </td>
                                         <td class="py-4 px-6 text-gray-700 whitespace-nowrap">
-                                            <?= esc($loan['kegiatan']); ?>
+                                            <div class="flex flex-col">
+                                                <span><?= esc($loan['kegiatan']); ?></span>
+                                                <span class="text-xs text-gray-400"><?= date('d M Y', strtotime($loan['tgl_pinjam'])) ?></span>
+                                            </div>
                                         </td>
                                         <td class="py-4 px-6 whitespace-nowrap">
-                                            <span class="text-sm font-medium px-3 py-1 rounded-full
-                                                <?php
-                                                switch ($loan['status']) {
-                                                    case 'Menunggu Verifikasi':
-                                                        echo 'bg-yellow-100 text-yellow-800';
-                                                        break;
-                                                    case 'Menunggu Persetujuan':
-                                                        echo 'bg-blue-100 text-blue-800';
-                                                        break;
-                                                    case 'Disetujui':
-                                                        echo 'bg-green-100 text-green-800';
-                                                        break;
-                                                    case 'Berlangsung':
-                                                        echo 'bg-indigo-100 text-indigo-800';
-                                                        break;
-                                                    case 'Selesai':
-                                                        echo 'bg-gray-100 text-gray-800';
-                                                        break;
-                                                    case 'Ditolak':
-                                                        echo 'bg-red-100 text-red-800';
-                                                        break;
-                                                    default:
-                                                        echo 'bg-gray-100 text-gray-800';
-                                                }
-                                                ?>">
+                                            <?php
+                                            $badgeClass = 'bg-gray-100 text-gray-800';
+                                            switch ($loan['status']) {
+                                                case 'Diajukan':
+                                                    $badgeClass = 'bg-yellow-100 text-yellow-800';
+                                                    break;
+                                                case 'Disetujui':
+                                                    $badgeClass = 'bg-blue-100 text-blue-800';
+                                                    break;
+                                                case 'Dipinjam':
+                                                    $badgeClass = 'bg-indigo-100 text-indigo-800';
+                                                    break;
+                                                case 'Selesai':
+                                                    $badgeClass = 'bg-green-100 text-green-800';
+                                                    break;
+                                                case 'Ditolak':
+                                                case 'Dibatalkan':
+                                                    $badgeClass = 'bg-red-100 text-red-800';
+                                                    break;
+                                            }
+                                            ?>
+                                            <span class="text-sm font-medium px-3 py-1 rounded-full <?= $badgeClass ?>">
                                                 <?= esc($loan['status']); ?>
                                             </span>
                                         </td>
-                                        <td class="py-4 px-6 whitespace-nowrap text-sm font-medium flex items-center">
-                                            
-                                            <a href="<?= site_url('peminjam/histori-peminjaman/detail/' . esc($loan['kode'])) ?>" 
-                                            class="bg-cyan-500 hover:bg-cyan-600 text-white py-1 px-3 rounded-full mr-2 transition shadow-sm">
-                                            Detail
-                                            </a>
-
+                                        <td class="py-4 px-6 whitespace-nowrap text-sm font-medium">
                                             <?php if ($loan['aksi'] == 'Batal'): ?>
-                                                <a href="#" class="bg-red-600 hover:bg-red-700 text-white py-1 px-3 rounded-full transition shadow-sm">Batal</a>
-                                            
-                                            <?php elseif ($loan['aksi'] == 'Upload Foto SEBELUM *'): ?>
-                                                <a href="#" class="bg-yellow-500 hover:bg-yellow-600 text-white py-1 px-3 rounded-full transition shadow-sm">Upload Foto</a>
-                                            
-                                            <?php elseif ($loan['aksi'] == 'Kembalikan'): ?>
-                                                <a href="#" class="bg-green-600 hover:bg-green-700 text-white py-1 px-3 rounded-full transition shadow-sm">Kembalikan</a>
-                                                <a href="#" class="bg-gray-600 hover:bg-gray-700 text-white py-1 px-3 rounded-full ml-2 transition shadow-sm">Perpanjang</a>
-                                            <?php endif; ?>
 
+                                                <form action="<?= site_url('peminjam/peminjaman/delete-item/' . $loan['tipe'] . '/' . $loan['id_detail']) ?>"
+                                                    method="post"
+                                                    onsubmit="return confirm('Batalkan peminjaman untuk item ini saja?');">
+                                                    <?= csrf_field() ?>
+                                                    <button type="submit" class="bg-red-600 hover:bg-red-700 text-white py-1 px-3 rounded-full text-xs shadow-sm">
+                                                        Batal
+                                                    </button>
+                                                </form>
+
+                                            <?php elseif ($loan['aksi'] == 'Kembalikan'): ?>
+                                            <?php endif; ?>
                                         </td>
                                     </tr>
                                 <?php endforeach; ?>
