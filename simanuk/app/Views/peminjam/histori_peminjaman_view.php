@@ -94,20 +94,19 @@
                                             $badgeClass = 'bg-gray-100 text-gray-800';
                                             switch ($loan['status']) {
                                                 case 'Diajukan':
-                                                    $badgeClass = 'bg-yellow-100 text-yellow-800';
+                                                    $badgeClass = 'font-semibold text-yellow-800 bg-yellow-100 rounded-full';
                                                     break;
                                                 case 'Disetujui':
-                                                    $badgeClass = 'bg-blue-100 text-blue-800';
+                                                    $badgeClass = 'font-semibold text-blue-800 bg-blue-100 rounded-full';
                                                     break;
                                                 case 'Dipinjam':
-                                                    $badgeClass = 'bg-indigo-100 text-indigo-800';
+                                                    $badgeClass = 'font-semibold text-indigo-800 bg-indigo-100 rounded-full';
                                                     break;
                                                 case 'Selesai':
-                                                    $badgeClass = 'bg-green-100 text-green-800';
+                                                    $badgeClass = 'font-semibold text-green-800 bg-green-100 rounded-full';
                                                     break;
-                                                case 'Ditolak':
                                                 case 'Dibatalkan':
-                                                    $badgeClass = 'bg-red-100 text-red-800';
+                                                    $badgeClass = 'font-semibold text-red-800 bg-red-100 rounded-full';
                                                     break;
                                             }
                                             ?>
@@ -117,17 +116,16 @@
                                         </td>
                                         <td class="py-4 px-6 whitespace-nowrap text-sm font-medium">
                                             <?php if ($loan['aksi'] == 'Batal'): ?>
-
                                                 <form action="<?= site_url('peminjam/peminjaman/delete-item/' . $loan['tipe'] . '/' . $loan['id_detail']) ?>"
                                                     method="post"
                                                     onsubmit="return confirm('Batalkan peminjaman untuk item ini saja?');">
                                                     <?= csrf_field() ?>
-                                                    <button type="submit" class="bg-red-600 hover:bg-red-700 text-white py-1 px-3 rounded-full text-xs shadow-sm">
+                                                    <button type="submit" class="inline-flex items-center px-3 py-1.5 bg-red-50 text-red-600 hover:bg-red-200 border border-red-300 rounded-lg text-xs font-medium transition-colors">
                                                         Batal
                                                     </button>
                                                 </form>
-
                                             <?php elseif ($loan['aksi'] == 'Kembalikan'): ?>
+                                                
                                             <?php endif; ?>
                                         </td>
                                     </tr>
