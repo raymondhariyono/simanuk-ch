@@ -204,16 +204,9 @@ class SaranaController extends BaseController
                      'url_foto'     => 'uploads/sarana/' . $newName,
                      'deskripsi'    => $file->getClientName()
                   ]) === false) {
-                     // DEBUG: Lihat errornya jika gagal simpan
-                     dd($fotoModel->errors());
+                     // Trigger rollback manual atau throw exception agar ditangkap catch
+                     throw new \Exception('Gagal menyimpan foto: ' . implode(', ', $fotoModel->errors()));
                   }
-
-                  // $fotoModel->save([
-                  //    'id_sarana'    => $id_sarana_baru,
-                  //    'id_prasarana' => null, // Pastikan ini null
-                  //    'url_foto'     => 'uploads/sarana/' . $newName,
-                  //    'deskripsi'    => $file->getClientName() // Opsional: simpan nama asli sbg deskripsi
-                  // ]);
                }
             }
          }
@@ -231,21 +224,6 @@ class SaranaController extends BaseController
          // Tangkap error tak terduga
          return redirect()->back()->withInput()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
       }
-
-      // $data = [
-      //    'nama_sarana'        => $this->request->getPost('nama_sarana'),
-      //    'kode_sarana'        => $this->request->getPost('kode_sarana'),
-      //    'id_kategori'        => $this->request->getPost('id_kategori'),
-      //    'id_lokasi'          => $this->request->getPost('id_lokasi'),
-      //    'id_prasarana'       => $this->request->getPost('id_prasarana') ?: null, // bisa NULL
-      //    'jumlah'             => $this->request->getPost('jumlah'),
-      //    'kondisi'            => $this->request->getPost('kondisi'),
-      //    'status_ketersediaan' => $this->request->getPost('status_ketersediaan'),
-      //    'deskripsi'          => $this->request->getPost('deskripsi'),
-      //    'spesifikasi'        => json_encode($spesifikasi),
-      // ];
-
-      // $this->saranaModel->save($data);
 
       return redirect()->to(site_url('admin/inventaris'))->with('message', 'Data berhasil disimpan.');
    }
@@ -391,7 +369,7 @@ class SaranaController extends BaseController
    {
       // dd($this->saranaModel->getNamaSarana($id));
 
-      $fotoModel = new FotoAsetModel();
+      $fotoModel = $this->fotoAsetModel;
 
       // 1. Ambil daftar foto dari database SEBELUM menghapus data induk
       $fotos = $fotoModel->getBySarana($id);

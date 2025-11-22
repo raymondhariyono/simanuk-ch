@@ -209,16 +209,9 @@ class PrasaranaController extends BaseController
                      'url_foto'     => 'uploads/prasarana/' . $newName,
                      'deskripsi'    => $file->getClientName()
                   ]) === false) {
-                     // DEBUG: Lihat errornya jika gagal simpan
-                     dd($fotoModel->errors());
+                     // Trigger rollback manual atau throw exception agar ditangkap catch
+                     throw new \Exception('Gagal menyimpan foto: ' . implode(', ', $fotoModel->errors()));
                   }
-
-                  // $fotoModel->save([
-                  //    'id_sarana'    => $id_sarana_baru,
-                  //    'id_prasarana' => null, // Pastikan ini null
-                  //    'url_foto'     => 'uploads/sarana/' . $newName,
-                  //    'deskripsi'    => $file->getClientName() // Opsional: simpan nama asli sbg deskripsi
-                  // ]);
                }
             }
          }
@@ -236,8 +229,6 @@ class PrasaranaController extends BaseController
          // Tangkap error tak terduga
          return redirect()->back()->withInput()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
       }
-
-      // $this->prasaranaModel->save($data);
 
       return redirect()->to(site_url('admin/inventaris'))->with('message', 'Data berhasil disimpan.');
    }
@@ -329,16 +320,9 @@ class PrasaranaController extends BaseController
                      'url_foto'     => 'uploads/prasarana/' . $newName,
                      'deskripsi'    => $file->getClientName()
                   ]) === false) {
-                     // DEBUG: Lihat errornya jika gagal simpan
-                     dd($fotoModel->errors());
+                     // Trigger rollback manual atau throw exception agar ditangkap catch
+                     throw new \Exception('Gagal menyimpan foto: ' . implode(', ', $fotoModel->errors()));
                   }
-
-                  // $fotoModel->save([
-                  //    'id_sarana'    => $id_sarana_baru,
-                  //    'id_prasarana' => null, // Pastikan ini null
-                  //    'url_foto'     => 'uploads/sarana/' . $newName,
-                  //    'deskripsi'    => $file->getClientName() // Opsional: simpan nama asli sbg deskripsi
-                  // ]);
                }
             }
          }
@@ -357,13 +341,24 @@ class PrasaranaController extends BaseController
          return redirect()->back()->withInput()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
       }
 
-      // $this->prasaranaModel->update($id, $data);
-
       return redirect()->to(site_url('admin/inventaris'))->with('message', 'Data prasarana berhasil diperbarui.');
    }
 
    public function delete($id)
    {
+      $fotoModel = $this->fotoAsetModel;
+
+      // 1. Ambil daftar foto dari database SEBELUM menghapus data induk
+      $fotos = $fotoModel->getByPrasarana($id);
+
+      // 2. Hapus file fisik di server
+      foreach ($fotos as $foto) {
+         $path = FCPATH . $foto['url_foto'];
+         if (is_file($path)) {
+            unlink($path); // Hapus file gambar
+         }
+      }
+
       $this->prasaranaModel->delete($id);
       return redirect()->to(site_url('admin/inventaris'))->with('message', 'Data berhasil dihapus.');
    }
