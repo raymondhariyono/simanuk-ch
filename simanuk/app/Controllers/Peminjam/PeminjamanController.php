@@ -36,7 +36,6 @@ class PeminjamanController extends BaseController
          'title' => 'Ajukan Peminjaman Baru',
          'sarana' => $this->saranaModel
             ->where('status_ketersediaan', 'Tersedia')
-            ->where('jumlah >', 1)
             ->findAll(),
          // 'prasarana' => ... (jika ada)
          'breadcrumbs' => [

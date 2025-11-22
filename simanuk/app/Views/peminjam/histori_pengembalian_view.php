@@ -80,9 +80,9 @@
                                             </span>
                                         </td>
                                         <td class="py-4 px-4 text-sm text-center">
-                                            <a href="<?= site_url('peminjam/histori-pengembalian/detail/' . esc($item['kode'])) ?>" 
-                                               class="inline-flex items-center px-3 py-1.5 bg-blue-50 text-blue-600 hover:bg-blue-100 border border-blue-200 rounded-lg text-xs font-medium transition-colors">
-                                               Lihat Detail
+                                            <a href="<?= site_url('peminjam/histori-pengembalian/detail/' . esc($item['kode'])) ?>"
+                                                class="inline-flex items-center px-3 py-1.5 bg-blue-50 text-blue-600 hover:bg-blue-100 border border-blue-200 rounded-lg text-xs font-medium transition-colors">
+                                                Lihat Detail
                                             </a>
                                         </td>
                                     </tr>
@@ -95,7 +95,7 @@
                         </tbody>
                     </table>
                 </div>
-                
+
                 <div class="flex flex-col md:flex-row justify-between items-center mt-8 pt-4 border-t border-gray-100">
                     <div class="text-sm text-gray-500 mb-4 md:mb-0">
                         Menampilkan <span class="font-bold text-gray-800">1-5</span> dari <span class="font-bold text-gray-800">100</span>

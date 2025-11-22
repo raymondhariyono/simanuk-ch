@@ -25,8 +25,8 @@ $routes->get('/auth/redirect', 'AuthController::redirect', ['filter' => 'session
 // ----------------------------------------------------
 $routes->group('admin', ['filter' => ['session', 'role:Admin']], static function ($routes) {
    $routes->get('dashboard', 'Admin\DashboardController::index');
-   
-   // INVENTARISASI
+
+   // --- INVENTARISASI ---
    // SARANA
    $routes->get('inventaris', 'Admin\InventarisasiController::index');
    $routes->get('inventaris/sarana/create', 'Admin\SaranaController::create');
@@ -34,7 +34,7 @@ $routes->group('admin', ['filter' => ['session', 'role:Admin']], static function
    $routes->delete('inventaris/sarana/(:num)', 'Admin\SaranaController::delete/$1');
    $routes->get('inventaris/sarana/edit/(:num)', 'Admin\SaranaController::edit/$1');
    $routes->post('inventaris/sarana/update/(:num)', 'Admin\SaranaController::update/$1');
-   
+
    // PRASARANA
    $routes->get('inventaris', 'Admin\InventarisasiController::index');
    $routes->get('inventaris/prasarana/create', 'Admin\PrasaranaController::create');
@@ -43,8 +43,18 @@ $routes->group('admin', ['filter' => ['session', 'role:Admin']], static function
    $routes->get('inventaris/prasarana/edit/(:num)', 'Admin\PrasaranaController::edit/$1');
    $routes->post('inventaris/prasarana/update/(:num)', 'Admin\PrasaranaController::update/$1');
 
-   
+   // --- KELOLA PEMINJAMAN ---
+   $routes->get('peminjaman', 'Admin\PeminjamanController::index');
+   $routes->get('peminjaman/detail/(:num)', 'Admin\PeminjamanController::detail/$1');
+   // Route Proses Peminjaman
+   $routes->post('peminjaman/approve/(:num)', 'Admin\PeminjamanController::approve/$1');
+   $routes->post('peminjaman/reject/(:num)', 'Admin\PeminjamanController::reject/$1');
+
+   // --- KELOLA PENGEMBALIAN ---
+
+   // --- LAPORAN KERUSAKAN ---
    $routes->get('laporan-kerusakan', 'Admin\LaporanKerusakanController::index');
+   // --- MANAJEMEN AKUN PENGGUNA ---
    $routes->get('manajemen-akun', 'Admin\ManajemenAkunController::index');
 });
 
@@ -65,14 +75,14 @@ $routes->group('peminjam', ['filter' => ['session', 'role:Peminjam']], static fu
    // CRUD peminjaman
    $routes->get('peminjaman/new', 'Peminjam\PeminjamanController::new'); // Form view
    $routes->post('peminjaman/create', 'Peminjam\PeminjamanController::create'); // Save
-   $routes->post('peminjaman/delete-item/(:segment)/(:num)', 'Peminjam\PeminjamanController::deleteItem/$1/$2');
+   $routes->post('peminjaman/delete-item/(:segment)/(:num)', 'Peminjam\PeminjamanController::deleteItem/$1/$2'); // batal (delete) untuk item tertentu
    // $routes->post('peminjaman/delete/(:num)', 'Peminjam\PeminjamanController::delete/$1'); // Batal (Delete)
-   
+
    // --- HISTORI PENGEMBALIAN ---
    $routes->get('histori-pengembalian', 'Peminjam\HistoriPengembalianController::index');
    // detail histori pengembalian
    $routes->get('histori-pengembalian/detail/(:segment)', 'Peminjam\HistoriPengembalianController::detail/$1');
-   
+
    // --- LAPORAN KERUSAKAN ---
    $routes->get('laporan-kerusakan', 'Peminjam\LaporanKerusakanController::index');
    // Memproses pengiriman laporan (submit form)
