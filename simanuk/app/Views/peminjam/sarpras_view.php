@@ -74,8 +74,12 @@
 
                      <?php if ($barang['status_ketersediaan'] == 'Tersedia'): ?>
                         <span class="absolute top-2 right-2 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full shadow">Tersedia</span>
-                     <?php else: ?>
+                     <?php elseif ($barang['status_ketersediaan'] == 'Dipinjam'): ?>
                         <span class="absolute top-2 right-2 bg-yellow-400 text-black text-xs font-bold px-2 py-1 rounded-full shadow">Dipinjam</span>
+                     <?php elseif ($barang['status_ketersediaan'] == 'Perawatan'): ?>
+                        <span class="absolute top-2 right-2 bg-yellow-600 text-black text-xs font-bold px-2 py-1 rounded-full shadow">Perawatan</span>
+                     <?php else : ?>
+                        <span class="absolute top-2 right-2 bg-red-400 text-black text-xs font-bold px-2 py-1 rounded-full shadow">Tidak Tersedia</span>
                      <?php endif; ?>
                   </div>
 

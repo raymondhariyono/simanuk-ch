@@ -137,7 +137,7 @@
 
                <div class="mt-6">
                   <label class="block text-gray-700 text-sm font-bold mb-2" for="foto_aset">
-                     Foto Dokumentasi Sarana
+                     Foto Dokumentasi Sarana <span class="text-gray-400">(Bisa pilih lebih dari satu)</span>
                   </label>
                   <div class="flex items-center justify-center w-full">
                      <label for="dropzone-file" class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100">
@@ -155,7 +155,9 @@
                            </p>
                         <?php endif; ?>
                      </label>
+                     
                   </div>
+                  <p class="text-center text-xs text-gray-500 mt-1">Tekan Ctrl (Windows) atau Command (Mac) untuk memilih banyak file sekaligus.</p>
 
                   <!-- Container untuk pratinjau gambar -->
                   <div id="image-preview-container" class="mt-4 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
