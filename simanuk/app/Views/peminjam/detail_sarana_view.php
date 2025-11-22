@@ -42,13 +42,6 @@
                <?php endforeach; ?>
             </div>
          <?php endif; ?>
-
-         <div class="flex gap-3">
-            <div class="w-20 h-20 bg-gray-200 border rounded-lg"></div>
-            <div class="w-20 h-20 bg-gray-200 border rounded-lg"></div>
-            <div class="w-20 h-20 bg-gray-200 border rounded-lg"></div>
-            <div class="w-20 h-20 bg-gray-200 border rounded-lg"></div>
-         </div>
       </div>
 
       <!-- DETAIL SARPRAS -->
@@ -59,7 +52,15 @@
 
          <div class="flex gap-2 mb-4">
             <span class="px-3 py-1 bg-gray-100 text-gray-600 font-bold rounded text-sm"><?= esc($sarana['nama_kategori']) ?></span>
-            <span class="px-3 py-1 bg-green-100 text-green-600 font-bold rounded text-sm"><?= esc($sarana['status_ketersediaan']) ?></span>
+            <?php if ($sarana['status_ketersediaan'] == 'Tersedia'): ?>
+               <span class="px-3 py-1 bg-green-100 text-green-600 font-bold rounded text-sm">Tersedia</span>
+            <?php elseif ($sarana['status_ketersediaan'] == 'Dipinjam'): ?>
+               <span class="px-3 py-1 bg-yellow-100 text-yellow-600 font-bold rounded text-sm">Dipinjam</span>
+            <?php elseif ($sarana['status_ketersediaan'] == 'Perawatan'): ?>
+               <span class="px-3 py-1 bg-yellow-300 text-yellow-800 font-bold rounded text-sm">Perawatan</span>
+            <?php else : ?>
+               <span class="px-3 py-1 bg-red-100 text-red-600 font-bold rounded text-sm">Tidak Tersedia</span>
+            <?php endif; ?>
             <span class="px-3 py-1 bg-gray-100 text-gray-600 font-bold rounded text-sm"><?= esc($sarana['nama_lokasi']) ?></span>
          </div>
 
