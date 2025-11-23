@@ -122,6 +122,15 @@ $routes->group('tu', ['filter' => ['session', 'role:TU']], static function ($rou
    $routes->get('kelola/akun/edit/(:num)', 'TU\UserController::edit/$1'); // UPDATE - Tampil Form
    $routes->post('kelola/akun/update/(:num)', 'TU\UserController::update/$1'); // UPDATE - Proses Update
    $routes->post('kelola/akun/delete/(:num)', 'TU\UserController::delete/$1'); // DELETE
+   $routes->get('verifikasi-peminjaman', 'TU\VerifikasiPeminjamanController::index');
+   $routes->get('verifikasi-peminjaman/detail/(:num)', 'TU\VerifikasiPeminjamanController::detail/$1');
+   $routes->post('verifikasi-peminjaman/approve/(:num)', 'TU\VerifikasiPeminjamanController::approve/$1');
+   $routes->post('verifikasi-peminjaman/reject/(:num)', 'TU\VerifikasiPeminjamanController::reject/$1');
+   $routes->get('verifikasi-pengembalian', 'TU\PengembalianController::index');
+   
+   $routes->get('verifikasi-peminjaman', 'TU\PeminjamanController::index');
+   $routes->get('kelola-laporan-kerusakan', 'TU\LaporanKerusakanController::index');
+   $routes->get('generate-laporan', 'TU\LaporanController::index');
 });
 
 // ----------------------------------------------------
