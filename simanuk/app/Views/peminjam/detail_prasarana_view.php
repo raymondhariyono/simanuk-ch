@@ -52,11 +52,11 @@
 
          <div class="flex gap-2 mb-4">
             <span class="px-3 py-1 bg-gray-100 text-gray-600 font-bold rounded text-sm"><?= esc($prasarana['nama_kategori']) ?></span>
-            <?php if ($sarana['status_ketersediaan'] == 'Tersedia'): ?>
+            <?php if ($prasarana['status_ketersediaan'] == 'Tersedia'): ?>
                <span class="px-3 py-1 bg-green-100 text-green-600 font-bold rounded text-sm">Tersedia</span>
-            <?php elseif ($sarana['status_ketersediaan'] == 'Dipinjam'): ?>
+            <?php elseif ($prasarana['status_ketersediaan'] == 'Dipinjam'): ?>
                <span class="px-3 py-1 bg-yellow-100 text-yellow-600 font-bold rounded text-sm">Dipinjam</span>
-            <?php elseif ($sarana['status_ketersediaan'] == 'Perawatan'): ?>
+            <?php elseif ($prasarana['status_ketersediaan'] == 'Perawatan'): ?>
                <span class="px-3 py-1 bg-yellow-300 text-yellow-800 font-bold rounded text-sm">Perawatan</span>
             <?php else : ?>
                <span class="px-3 py-1 bg-red-100 text-red-600 font-bold rounded text-sm">Tidak Tersedia</span>

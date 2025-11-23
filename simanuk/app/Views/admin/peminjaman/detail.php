@@ -44,7 +44,7 @@
 
          <?php if (!empty($itemsSarana)) : ?>
             <div class="bg-white shadow rounded-lg p-6">
-               <h3 class="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">Daftar Barang (Sarana)</h3>
+               <h3 class="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">Daftar Sarana</h3>
                <div class="overflow-x-auto">
                   <table class="w-full text-left border-collapse">
                      <thead>
@@ -70,15 +70,17 @@
 
          <?php if (!empty($itemsPrasarana)) : ?>
             <div class="bg-white shadow rounded-lg p-6">
-               <h3 class="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">Daftar Ruangan (Prasarana)</h3>
-               <ul class="list-disc list-inside space-y-2">
-                  <?php foreach ($itemsPrasarana as $item) : ?>
-                     <li class="text-gray-700">
-                        <span class="font-medium"><?= esc($item['nama_prasarana']) ?></span>
-                        <span class="text-sm text-gray-500">(<?= esc($item['kode_prasarana']) ?>)</span>
-                     </li>
-                  <?php endforeach; ?>
-               </ul>
+               <h4 class="font-bold text-gray-700 mt-6 mb-3">Daftar Ruangan</h4>
+               <?php foreach ($itemsPrasarana as $item) : ?>
+                  <div class="bg-white rounded-lg shadow p-6 border-l-4 border-purple-500">
+                     <h4 class="text-lg font-bold"><?= esc($item['nama_prasarana']) ?></h4>
+
+                     <?php if ($peminjaman['status_peminjaman_global'] == 'Dipinjam' && empty($item['foto_sesudah'])) : ?>
+                        <form action="<?= site_url('peminjam/peminjaman/kembalikan-item/prasarana/' . $item['id_detail_prasarana']) ?>" ...>
+                        </form>
+                     <?php endif; ?>
+                  </div>
+               <?php endforeach; ?>
             </div>
          <?php endif; ?>
 
@@ -137,7 +139,7 @@
                         <?= csrf_field() ?>
                         <label class="block text-xs font-bold text-gray-700 mb-1">Alasan Penolakan</label>
                         <textarea name="alasan_tolak" required rows="2" class="w-full px-2 border-gray-300 rounded-md text-sm mb-2" placeholder="Contoh: Jadwal bentrok..."></textarea>
-                        <button type="submit" class="w-full py-1 bg-red-600 text-white text-xs rounded hover:bg-red-700">Konfirmasi Tolak</button>
+                        <button type="submit" class="w-full bg-red-600 text-white text-xs rounded hover:bg-red-700">Konfirmasi Tolak</button>
                      </form>
                   </div>
                </div>

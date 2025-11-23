@@ -104,10 +104,10 @@
                                                 <?php
                                                 switch ($barang['status_ketersediaan']) {
                                                     case 'Tersedia':
-                                                        echo 'bg-yellow-100 text-yellow-800';
+                                                        echo 'bg-green-100 text-green-800';
                                                         break;
                                                     case 'Dipinjam':
-                                                        echo 'bg-green-100 text-green-800';
+                                                        echo 'bg-yellow-100 text-yellow-800';
                                                         break;
                                                     case 'Perawatan':
                                                         echo 'bg-indigo-100 text-indigo-800';
@@ -161,10 +161,10 @@
                                                 <?php
                                                 switch ($ruangan['status_ketersediaan']) {
                                                     case 'Tersedia':
-                                                        echo 'bg-yellow-100 text-yellow-800';
+                                                        echo 'bg-green-100 text-green-800';
                                                         break;
                                                     case 'Dipinjam':
-                                                        echo 'bg-green-100 text-green-800';
+                                                        echo 'bg-yellow-100 text-yellow-800';
                                                         break;
                                                     case 'Renovasi':
                                                         echo 'bg-indigo-100 text-indigo-800';

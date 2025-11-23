@@ -34,14 +34,12 @@ class PeminjamanController extends BaseController
    {
       $data = [
          'title' => 'Ajukan Peminjaman Baru',
-         'sarana' => $this->saranaModel
-            ->where('status_ketersediaan', 'Tersedia')
-            ->findAll(),
-         // 'prasarana' => ... (jika ada)
+         'sarana' => $this->saranaModel->where('status_ketersediaan', 'Tersedia')->findAll(),
+         'prasarana' => $this->prasaranaModel->where('status_ketersediaan', 'Tersedia')->findAll(),
          'breadcrumbs' => [
             ['name' => 'Beranda', 'url' => site_url('peminjam/dashboard')],
             ['name' => 'Peminjaman', 'url' => site_url('peminjam/histori-peminjaman')],
-            ['name' => 'Buat Pengajuan']
+            ['name' => 'Buat Pengajuan Sarana / Prasarana']
          ]
       ];
 
@@ -58,9 +56,6 @@ class PeminjamanController extends BaseController
          'kegiatan'           => 'required|min_length[3]',
          'tgl_pinjam_dimulai' => 'required|valid_date',
          'tgl_pinjam_selesai' => 'required|valid_date',
-         // Validasi Array Item (Pastikan minimal ada 1 barang dipilih)
-         'items.sarana'       => 'required',
-         'items.jumlah'       => 'required',
       ])) {
          return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
       }
@@ -68,9 +63,37 @@ class PeminjamanController extends BaseController
       // Validasi Logika Tanggal
       $tglMulai = $this->request->getPost('tgl_pinjam_dimulai');
       $tglSelesai = $this->request->getPost('tgl_pinjam_selesai');
-
       if (strtotime($tglSelesai) < strtotime($tglMulai)) {
          return redirect()->back()->withInput()->with('error', 'Tanggal selesai tidak boleh lebih awal dari tanggal mulai.');
+      }
+
+      // ambil input 
+      $itemsSarana = $this->request->getPost('items')['sarana'] ?? [];
+      $itemsJumlah = $this->request->getPost('items')['jumlah'] ?? [];
+      $itemsPrasarana = $this->request->getPost('items')['prasarana'] ?? [];
+      // Validasi: Pastikan User memilih setidaknya 1 Sarana ATAU 1 Prasarana
+      if (empty($itemsSarana) && empty($itemsPrasarana)) {
+         return redirect()->back()->withInput()->with('error', 'Pilih setidaknya satu Sarana atau Prasarana.');
+      }
+
+      // --- LOGIKA (Conflict Check) ---
+      // 1. Cek Ketersediaan Ruangan (Prasarana) di tanggal tersebut
+      foreach ($itemsPrasarana as $idPras) {
+         if ($this->isPrasaranaBooked($idPras, $tglMulai, $tglSelesai)) {
+            $namaPras = $this->prasaranaModel->find($idPras)['nama_prasarana'];
+            return redirect()->back()->withInput()->with('error', "Ruangan '$namaPras' sudah dipinjam pada tanggal tersebut.");
+         }
+      }
+
+      // 2. Cek Konflik Sarana (Jika sarana ada di dalam ruangan yang sedang dipinjam orang lain)
+      foreach ($itemsSarana as $idSar) {
+         $sarana = $this->saranaModel->find($idSar);
+         // Jika sarana terikat ruangan, yaitu (id_prasarana yang tidak null)
+         if (!empty($sarana['id_prasarana'])) {
+            if ($this->isPrasaranaBooked($sarana['id_prasarana'], $tglMulai, $tglSelesai)) {
+               return redirect()->back()->withInput()->with('error', "Barang '{$sarana['nama_sarana']}' berada di ruangan yang sedang dipakai oleh kegiatan lain pada tanggal tersebut.");
+            }
+         }
       }
 
       // Hitung Durasi (Hari)
@@ -103,25 +126,42 @@ class PeminjamanController extends BaseController
          $this->peminjamanModel->insert($dataPeminjaman);
          $peminjamanId = $this->peminjamanModel->getInsertID();
 
-         // B. Insert Detail Item (Looping)
-         $itemsSarana = $this->request->getPost('items')['sarana']; // Array ID Sarana
-         $itemsJumlah = $this->request->getPost('items')['jumlah']; // Array Jumlah
+         // B. Insert Detail Item Sarana
+         if (!empty($itemsSarana)) {
+            foreach ($itemsSarana as $index => $idSarana) {
+               $jumlahPinjam = $itemsJumlah[$index];
+               // Validasi Stok Sederhana (Opsional: Bisa diperketat dengan cek tanggal)
+               $sarana = $this->saranaModel->find($idSarana);
+               if ($sarana['jumlah'] < $jumlahPinjam) {
+                  throw new \Exception("Stok untuk " . $sarana['nama_sarana'] . " tidak mencukupi.");
+               }
 
-         foreach ($itemsSarana as $index => $idSarana) {
-            $jumlahPinjam = $itemsJumlah[$index];
-
-            // Validasi Stok Sederhana (Opsional: Bisa diperketat dengan cek tanggal)
-            $sarana = $this->saranaModel->find($idSarana);
-            if ($sarana['jumlah'] < $jumlahPinjam) {
-               throw new \Exception("Stok untuk " . $sarana['nama_sarana'] . " tidak mencukupi.");
+               $this->detailSaranaModel->insert([
+                  'id_peminjaman' => $peminjamanId,
+                  'id_sarana'     => $idSarana,
+                  'jumlah'        => $jumlahPinjam,
+                  'kondisi_awal'  => 'Baik', // Default asumsi
+               ]);
             }
+         }
 
-            $this->detailSaranaModel->insert([
-               'id_peminjaman' => $peminjamanId,
-               'id_sarana'     => $idSarana,
-               'jumlah'        => $jumlahPinjam,
-               'kondisi_awal'  => 'Baik', // Default asumsi
-            ]);
+         // C. Insert Detail Item Prasarana
+         if (!empty($itemsPrasarana)) {
+            foreach ($itemsPrasarana as $idPrasarana) {
+               // Cek Ketersediaan (Double Check)
+               $prasarana = $this->prasaranaModel->find($idPrasarana);
+               if ($prasarana['status_ketersediaan'] != 'Tersedia') {
+                  throw new \Exception("Ruangan " . $prasarana['nama_prasarana'] . " sedang tidak tersedia.");
+               }
+
+               // Insert ke detail_peminjaman_prasarana
+               // Note: Prasarana biasanya tidak ada 'jumlah', jadi 1 unit
+               $this->detailPrasaranaModel->insert([
+                  'id_peminjaman' => $peminjamanId,
+                  'id_prasarana'  => $idPrasarana,
+                  'kondisi_awal'  => 'Baik',
+               ]);
+            }
          }
 
          $db->transComplete();
@@ -133,7 +173,7 @@ class PeminjamanController extends BaseController
          return redirect()->to(site_url('peminjam/histori-peminjaman'))->with('message', 'Pengajuan peminjaman berhasil dibuat.');
       } catch (\Exception $e) {
          $db->transRollback();
-         return redirect()->back()->withInput()->with('error', $e->getMessage());
+         return redirect()->back()->withInput()->with('error', 'Pilih setidaknya satu Sarana atau Prasarana.');
       }
    }
 
@@ -265,16 +305,33 @@ class PeminjamanController extends BaseController
          $idPeminjaman = $detail['id_peminjaman'];
       }
 
-      // 4. Update Status Global ke 'Dipinjam' (Jika belum)
-      // Asumsi: Jika user sudah upload bukti 1 barang, berarti transaksi dianggap MULAI (Dipinjam)
+      // 4. LOGIKA BARU: Cek Apakah SEMUA item sudah diupload foto 'sebelum'-nya?
       $peminjaman = $this->peminjamanModel->find($idPeminjaman);
-      if ($peminjaman['status_peminjaman_global'] == 'Disetujui') {
+
+      // Hitung total item dalam transaksi ini
+      $totalSarana = $this->detailSaranaModel->where('id_peminjaman', $idPeminjaman)->countAllResults();
+      $totalPrasarana = $this->detailPrasaranaModel->where('id_peminjaman', $idPeminjaman)->countAllResults();
+
+      // Hitung item yang SUDAH upload foto sebelum
+      $doneSarana = $this->detailSaranaModel
+         ->where('id_peminjaman', $idPeminjaman)
+         ->where('foto_sebelum !=', null) // Asumsi default null
+         ->countAllResults();
+
+      $donePrasarana = $this->detailPrasaranaModel
+         ->where('id_peminjaman', $idPeminjaman)
+         ->where('foto_sebelum !=', null)
+         ->countAllResults();
+
+      // Jika Total Item == Total yang Sudah Upload, baru update status Global
+      if (($totalSarana + $totalPrasarana) == ($doneSarana + $donePrasarana)) {
          $this->peminjamanModel->update($idPeminjaman, [
             'status_peminjaman_global' => 'Dipinjam'
          ]);
       }
+      // Jika belum semua, biarkan status tetap 'Disetujui'
 
-      return redirect()->back()->with('message', 'Barang berhasil diambil.');
+      return redirect()->back()->with('message', 'Foto Bukti Sebelum Berhasil di Upload dan Barang berhasil diambil.');
    }
 
    public function kembalikanItem($tipe, $idDetail)
@@ -300,8 +357,12 @@ class PeminjamanController extends BaseController
             'foto_sesudah'  => $pathFoto,
             'kondisi_akhir' => $this->request->getPost('kondisi_akhir')
          ]);
+      } else if ($tipe == 'prasarana') {
+         $this->detailPrasaranaModel->update($idDetail, [
+            'foto_sesudah'  => $pathFoto,
+            'kondisi_akhir' => $this->request->getPost('kondisi_akhir')
+         ]);
       }
-      // else if ($tipe == 'prasarana') ...
 
       return redirect()->back()->with('message', 'Bukti pengembalian berhasil dikirim.');
    }
@@ -335,7 +396,12 @@ class PeminjamanController extends BaseController
          ]);
          $idPeminjaman = $detail['id_peminjaman'];
       } else {
-         // Logika Prasarana...
+         $detail = $this->detailPrasaranaModel->find($idDetail);
+         $this->detailPrasaranaModel->update($idDetail, [
+            'foto_sesudah' => $pathFoto,
+            'kondisi_akhir' => $this->request->getPost('kondisi_akhir')
+         ]);
+         $idPeminjaman = $detail['id_peminjaman'];
       }
 
       // 4. Cek Apakah SEMUA barang dalam transaksi ini sudah dikembalikan?
@@ -361,5 +427,21 @@ class PeminjamanController extends BaseController
       // ... hitung prasarana ...
 
       return ($countSarana == 0); // Return true jika semua sudah dikembalikan
+   }
+
+   // Helper: Cek apakah prasarana booked di rentang tanggal
+   private function isPrasaranaBooked($idPrasarana, $start, $end)
+   {
+      // Cari di detail_peminjaman_prasarana yang terhubung ke peminjaman aktif
+      // Logika: (StartA <= EndB) and (EndA >= StartB)
+      $booked = $this->detailPrasaranaModel
+         ->join('peminjaman', 'peminjaman.id_peminjaman = detail_peminjaman_prasarana.id_peminjaman')
+         ->where('detail_peminjaman_prasarana.id_prasarana', $idPrasarana)
+         ->whereIn('peminjaman.status_peminjaman_global', ['Disetujui', 'Dipinjam']) // Status aktif
+         ->where('peminjaman.tgl_pinjam_dimulai <=', $end)
+         ->where('peminjaman.tgl_pinjam_selesai >=', $start)
+         ->countAllResults();
+
+      return $booked > 0;
    }
 }
