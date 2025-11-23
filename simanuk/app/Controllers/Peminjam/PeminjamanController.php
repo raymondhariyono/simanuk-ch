@@ -277,6 +277,35 @@ class PeminjamanController extends BaseController
       return redirect()->back()->with('message', 'Barang berhasil diambil.');
    }
 
+   public function kembalikanItem($tipe, $idDetail)
+   {
+      // 1. Validasi
+      if (!$this->validate([
+         'foto_sesudah'  => 'uploaded[foto_sesudah]|is_image[foto_sesudah]|max_size[foto_sesudah,2048]',
+         'kondisi_akhir' => 'required'
+      ])) {
+         return redirect()->back()->withInput()->with('error', 'Foto wajib diupload & valid.');
+      }
+
+      // 2. Upload Foto
+      $file = $this->request->getFile('foto_sesudah');
+      $newName = $file->getRandomName();
+      $file->move(FCPATH . 'uploads/peminjaman/bukti_akhir', $newName);
+      $pathFoto = 'uploads/peminjaman/bukti_akhir/' . $newName;
+
+      // 3. Update Database
+      // Kita hanya update detail item, tidak mengubah status header 'Selesai' (itu tugas Admin)
+      if ($tipe == 'sarana') {
+         $this->detailSaranaModel->update($idDetail, [
+            'foto_sesudah'  => $pathFoto,
+            'kondisi_akhir' => $this->request->getPost('kondisi_akhir')
+         ]);
+      }
+      // else if ($tipe == 'prasarana') ...
+
+      return redirect()->back()->with('message', 'Bukti pengembalian berhasil dikirim.');
+   }
+
    /**
     * Upload Bukti SESUDAH (Saat Kembali)
     */

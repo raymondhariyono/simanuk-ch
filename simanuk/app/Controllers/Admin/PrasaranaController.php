@@ -224,7 +224,7 @@ class PrasaranaController extends BaseController
             return redirect()->back()->withInput()->with('error', 'Gagal menyimpan data transaksi.');
          }
 
-         return redirect()->to(site_url('admin/inventaris'))->with('message', 'Data Sarana dan Foto berhasil disimpan.');
+         return redirect()->to(site_url('admin/inventaris'))->with('message', 'Data Prasarana dan Foto berhasil disimpan.');
       } catch (\Exception $e) {
          // Tangkap error tak terduga
          return redirect()->back()->withInput()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
@@ -335,7 +335,7 @@ class PrasaranaController extends BaseController
             return redirect()->back()->withInput()->with('error', 'Gagal menyimpan data transaksi.');
          }
 
-         return redirect()->to(site_url('admin/inventaris'))->with('message', 'Data Sarana dan Foto berhasil disimpan.');
+         return redirect()->to(site_url('admin/inventaris'))->with('message', 'Data Prasarana dan Foto berhasil disimpan.');
       } catch (\Exception $e) {
          // Tangkap error tak terduga
          return redirect()->back()->withInput()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
@@ -361,5 +361,15 @@ class PrasaranaController extends BaseController
 
       $this->prasaranaModel->delete($id);
       return redirect()->to(site_url('admin/inventaris'))->with('message', 'Data berhasil dihapus.');
+   }
+
+   public function deleteFoto($idFoto)
+   {
+      $foto = $this->fotoAsetModel->find($idFoto);
+      if ($foto) {
+         unlink(FCPATH . $foto['url_foto']); // Hapus file
+         $this->fotoAsetModel->delete($idFoto);  // Hapus DB
+      }
+      return redirect()->back(); // Kembali ke halaman edit
    }
 }

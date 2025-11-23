@@ -30,13 +30,13 @@ class HistoriPeminjamanController extends BaseController
             ->where('id_peminjam', $userId)
             ->orderBy('created_at', 'DESC')
             ->findAll();
-            
+
         $listPeminjamanDitolak = $this->peminjamanModel
             ->where('id_peminjam', $userId)
             ->where('status_peminjaman_global', 'Ditolak')
             ->orderBy('created_at', 'DESC')
             ->findAll();
-        
+
         $loans = [];
 
         // 2. Loop setiap transaksi untuk mengambil detail itemnya
@@ -60,6 +60,7 @@ class HistoriPeminjamanController extends BaseController
                     'tgl_pinjam'    => $pinjam['tgl_pinjam_dimulai'], // Opsional: bisa ditampilkan
                     // Gunakan status global untuk user
                     'status'        => $pinjam['status_peminjaman_global'],
+                    'foto_sesudah'  => $item['foto_sesudah'],
                     // Tentukan jenis aksi berdasarkan status
                     'aksi'          => $this->determineAction($pinjam['status_peminjaman_global']),
                     'tipe'          => 'Sarana'
@@ -83,6 +84,7 @@ class HistoriPeminjamanController extends BaseController
                     'kegiatan'      => $pinjam['kegiatan'],
                     'tgl_pinjam'    => $pinjam['tgl_pinjam_dimulai'],
                     'status'        => $pinjam['status_peminjaman_global'],
+                    'foto_sesudah'  => $item['foto_sesudah'],
                     'aksi'          => $this->determineAction($pinjam['status_peminjaman_global']),
                     'tipe'          => 'Prasarana'
                 ];
@@ -103,41 +105,46 @@ class HistoriPeminjamanController extends BaseController
         return view('peminjam/histori_peminjaman_view', $data);
     }
 
-    // File: app/Controllers/Peminjam/HistoriPeminjamanController.php
-
-    public function detail($kode)
+    public function detail($id)
     {
-        // Data Dummy: Status masih "Digunakan"
-        $detail = [
-            'id' => $kode,
-            'status' => 'Digunakan',
-            'peminjam' => 'Ahmad Subagja (21120120140158)',
-            'barang' => 'Proyektor InFocus X1',
-            'jumlah' => '1 unit',
-            'lokasi' => 'Ruang Rapat Gedung A',
-            'jadwal_pinjam' => '28 Mei 2024, 09:00 WIB',
-            'jadwal_kembali' => '28 Mei 2024, 12:00 WIB',
-            'tujuan' => 'Untuk presentasi rapat koordinasi bulanan departemen.'
-        ];
+        $userId = auth()->user()->id;
 
-        // Timeline: Belum ada log pengembalian
-        $histori = [
-            ['date' => '27 Mei 2024, 14:30 WIB', 'title' => "Foto 'Sebelum' diunggah.", 'color' => 'bg-green-500'],
-            ['date' => '27 Mei 2024, 10:05 WIB', 'title' => 'Peminjaman disetujui oleh Admin.', 'color' => 'bg-green-500'],
-            ['date' => '27 Mei 2024, 09:15 WIB', 'title' => 'Pengajuan dibuat.', 'color' => 'bg-yellow-400']
-        ];
+        // 1. Ambil Header Peminjaman & Pastikan milik user yang login
+        $peminjaman = $this->peminjamanModel->find($id);
+
+        if (!$peminjaman || $peminjaman['id_peminjam'] != $userId) {
+            return redirect()->to('peminjam/histori-peminjaman')->with('error', 'Data tidak ditemukan atau akses ditolak.');
+        }
+
+        // 2. Ambil Detail Item (Sarana)
+        // Kita join ke tabel sarana untuk dapat nama & kode
+        $itemsSarana = $this->detailSaranaModel
+            ->select('detail_peminjaman_sarana.*, sarana.nama_sarana, sarana.kode_sarana')
+            ->join('sarana', 'sarana.id_sarana = detail_peminjaman_sarana.id_sarana')
+            ->where('id_peminjaman', $id)
+            ->findAll();
+
+        // 3. Ambil Detail Item (Prasarana) jika ada
+        $itemsPrasarana = $this->detailPrasaranaModel
+            ->select('detail_peminjaman_prasarana.*, prasarana.nama_prasarana, prasarana.kode_prasarana')
+            ->join('prasarana', 'prasarana.id_prasarana = detail_peminjaman_prasarana.id_prasarana')
+            ->where('id_peminjaman', $id)
+            ->findAll();
 
         $data = [
-            'title' => 'Detail Peminjaman',
-            'detail' => $detail,
-            'histori' => $histori,
+            'title' => 'Detail Peminjaman & Pengembalian',
+            'peminjaman' => $peminjaman,
+            'itemsSarana' => $itemsSarana,
+            'itemsPrasarana' => $itemsPrasarana,
+            'showSidebar' => true,
             'breadcrumbs' => [
                 ['name' => 'Beranda', 'url' => site_url('peminjam/dashboard')],
-                ['name' => 'Peminjaman Saya', 'url' => site_url('peminjam/histori-peminjaman')],
-                ['name' => 'Detail ' . $kode],
+                ['name' => 'Histori', 'url' => site_url('peminjam/histori-peminjaman')],
+                ['name' => 'Detail Peminjaman'],
             ]
         ];
 
+        // Arahkan ke view detail_peminjaman_view.php
         return view('peminjam/detail_peminjaman_view', $data);
     }
 

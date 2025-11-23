@@ -142,7 +142,7 @@
                         <?php foreach ($fotoPrasarana as $foto) : ?>
                            <div class="relative group border rounded-lg overflow-hidden">
                               <img src="<?= base_url($foto['url_foto']) ?>" class="w-full h-32 object-cover">
-                              <a href="<?= site_url('admin/prasarana/foto/delete/' . $foto['id_foto']) ?>"
+                              <a href="<?= site_url('admin/inventaris/prasarana/foto/delete/' . $foto['id_foto']) ?>"
                                  onclick="return confirm('Hapus foto ini?')"
                                  class="absolute top-1 right-1 bg-red-600 text-white p-1 rounded-full opacity-75 hover:opacity-100">
                                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

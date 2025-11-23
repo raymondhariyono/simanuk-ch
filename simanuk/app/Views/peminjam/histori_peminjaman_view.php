@@ -121,7 +121,7 @@
                                                 </form>
                                             <?php elseif ($loan['aksi'] == 'Upload Foto Sebelum'): ?>
                                                 <button type="button"
-                                                    onclick="openUploadModal('<?= $loan['tipe'] ?>', '<?= $loan['id_detail'] ?>', '<?= esc($loan['nama_item']) ?>')"
+                                                    onclick="openUploadModal('sebelum', '<?= $loan['tipe'] ?>', '<?= $loan['id_detail'] ?>', '<?= esc($loan['nama_item']) ?>')"
                                                     class="inline-flex items-center px-3 py-1.5 bg-yellow-100 text-yellow-600 hover:bg-yellow-300 border border-yellow-600 rounded-lg text-xs font-medium transition-colors">
                                                     Upload Foto <br>SEBELUM<span class="text-red-500 text-xl">*</span>
                                                 </button>
@@ -129,9 +129,9 @@
                                             <?php elseif ($loan['aksi'] == 'Upload Foto Sesudah'): ?>
                                                 <?php if (empty($loan['foto_sesudah'])): ?>
                                                     <button type="button"
-                                                        onclick="openReturnModal('<?= $loan['tipe'] ?>', '<?= $loan['id_detail'] ?>', '<?= esc($loan['nama_item']) ?>')"
-                                                        class="inline-flex items-center px-3 py-1.5 bg-yellow-100 text-yellow-600 hover:bg-yellow-300 border border-yellow-600 rounded-lg text-xs font-medium transition-colors">
-                                                        Kembalikan dan <br>Upload Foto SESUDAH<span class="text-red-500 text-xl">*</span>
+                                                        onclick="openUploadModal('sesudah', '<?= $loan['tipe'] ?>', '<?= $loan['id_detail'] ?>', '<?= esc($loan['nama_item']) ?>')"
+                                                        class="inline-flex items-center px-3 py-1.5 bg-green-100 text-green-600 hover:bg-green-300 border border-green-600 rounded-lg text-xs font-medium transition-colors">
+                                                        Kembalikan
                                                     </button>
                                                 <?php else: ?>
                                                     <span class="text-gray-500 text-xs italic">Menunggu Verifikasi Admin</span>
@@ -188,7 +188,7 @@
 
                                         <div>
                                             <label class="block text-sm font-medium text-gray-700">Foto Bukti (Wajib)</label>
-                                            <input type="file" name="foto_bukti" required accept="image/*" class="mt-1 block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none">
+                                            <input type="file" name="foto_bukti" required accept="image/*" class="px-2 py-2 mt-1 block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none">
                                         </div>
 
                                         <div id="kondisiInputContainer" class="hidden">
@@ -206,6 +206,48 @@
                                         Simpan
                                     </button>
                                     <button type="button" onclick="closeUploadModal()" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                                        Batal
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="returnModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+                    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" onclick="closeReturnModal()"></div>
+                        <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
+
+                        <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full">
+                            <form id="formReturn" action="" method="post" enctype="multipart/form-data">
+                                <?= csrf_field() ?>
+                                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                                    <h3 class="text-lg leading-6 font-medium text-gray-900">Form Pengembalian Barang</h3>
+                                    <p class="text-sm text-gray-500 mt-1">Item: <b id="returnItemName"></b></p>
+
+                                    <div class="mt-4 space-y-4">
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700">Foto Bukti Pengembalian <span class="text-red-500">*</span></label>
+                                            <input type="file" name="foto_sesudah" required accept="image/*" class="mt-1 block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none">
+                                            <p class="text-xs text-gray-500 mt-1">Upload foto kondisi barang saat dikembalikan.</p>
+                                        </div>
+
+                                        <div>
+                                            <label class="block text-sm font-medium text-gray-700">Kondisi Barang <span class="text-red-500">*</span></label>
+                                            <select name="kondisi_akhir" required class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                                <option value="Baik">Baik</option>
+                                                <option value="Rusak Ringan">Rusak Ringan</option>
+                                                <option value="Rusak Berat">Rusak Berat</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                                    <button type="submit" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 sm:ml-3 sm:w-auto sm:text-sm">
+                                        Kirim & Kembalikan
+                                    </button>
+                                    <button type="button" onclick="closeReturnModal()" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
                                         Batal
                                     </button>
                                 </div>
@@ -274,6 +316,22 @@
 
     function closeUploadModal() {
         document.getElementById('uploadModal').classList.add('hidden');
+    }
+
+    // pengembalian + upload foto sesudah
+    function openReturnModal(tipe, idDetail, namaItem) {
+        const form = document.getElementById('formReturn');
+
+        // Set action URL ke method uploadBuktiSesudah di PeminjamanController
+        // Pastikan rute ini sudah ada di Routes.php!
+        form.action = '<?= site_url("peminjam/peminjaman/upload-bukti-sesudah/") ?>' + tipe + '/' + idDetail;
+
+        document.getElementById('returnItemName').innerText = namaItem;
+        document.getElementById('returnModal').classList.remove('hidden');
+    }
+
+    function closeReturnModal() {
+        document.getElementById('returnModal').classList.add('hidden');
     }
 
     // penolakan
