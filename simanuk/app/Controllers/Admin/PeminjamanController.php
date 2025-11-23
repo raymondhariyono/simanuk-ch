@@ -137,7 +137,7 @@ class PeminjamanController extends BaseController
                $updateData['status_ketersediaan'] = 'Tidak Tersedia';
             }
 
-            $this->saranaModel->update($item['id_sarana'], ['jumlah' => $newStok]);
+            $this->saranaModel->update($item['id_sarana'], $updateData);
          }
 
          // 2. Update Status Peminjaman

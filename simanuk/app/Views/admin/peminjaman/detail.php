@@ -136,7 +136,7 @@
                      <form action="<?= site_url('admin/peminjaman/reject/' . $peminjaman['id_peminjaman']) ?>" method="post">
                         <?= csrf_field() ?>
                         <label class="block text-xs font-bold text-gray-700 mb-1">Alasan Penolakan</label>
-                        <textarea name="alasan_tolak" required rows="2" class="w-full border-gray-300 rounded-md text-sm mb-2" placeholder="Contoh: Jadwal bentrok..."></textarea>
+                        <textarea name="alasan_tolak" required rows="2" class="w-full px-2 border-gray-300 rounded-md text-sm mb-2" placeholder="Contoh: Jadwal bentrok..."></textarea>
                         <button type="submit" class="w-full py-1 bg-red-600 text-white text-xs rounded hover:bg-red-700">Konfirmasi Tolak</button>
                      </form>
                   </div>

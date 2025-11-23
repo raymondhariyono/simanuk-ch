@@ -227,9 +227,9 @@ class PeminjamanController extends BaseController
    }
 
    /**
-    * Upload Foto Bukti Pengambilan (Kondisi Awal)
+    * Upload Bukti SEBELUM (Saat Ambil)
     */
-   public function uploadBukti($tipe, $idDetail)
+   public function uploadBuktiSebelum($tipe, $idDetail)
    {
       // 1. Validasi File
       if (!$this->validate([
@@ -274,6 +274,63 @@ class PeminjamanController extends BaseController
          ]);
       }
 
-      return redirect()->back()->with('message', 'Foto bukti berhasil diupload. Status peminjaman aktif.');
+      return redirect()->back()->with('message', 'Barang berhasil diambil.');
+   }
+
+   /**
+    * Upload Bukti SESUDAH (Saat Kembali)
+    */
+   public function uploadBuktiSesudah($tipe, $idDetail)
+   {
+      // 1. Validasi
+      if (!$this->validate([
+         'foto_bukti' => 'uploaded[foto_bukti]|is_image[foto_bukti]|max_size[foto_bukti,2048]',
+         'kondisi_akhir' => 'required'
+      ])) {
+         return redirect()->back()->withInput()->with('error', 'Data tidak valid.');
+      }
+
+      // 2. Upload Foto
+      $file = $this->request->getFile('foto_bukti');
+      $newName = $file->getRandomName();
+      $file->move(FCPATH . 'uploads/peminjaman/bukti_akhir', $newName);
+      $pathFoto = 'uploads/peminjaman/bukti_akhir/' . $newName;
+
+      // 3. Update Database Detail (foto_sesudah & kondisi_akhir)
+      $idPeminjaman = null;
+      if ($tipe == 'Sarana') {
+         $detail = $this->detailSaranaModel->find($idDetail);
+         $this->detailSaranaModel->update($idDetail, [
+            'foto_sesudah' => $pathFoto,
+            'kondisi_akhir' => $this->request->getPost('kondisi_akhir')
+         ]);
+         $idPeminjaman = $detail['id_peminjaman'];
+      } else {
+         // Logika Prasarana...
+      }
+
+      // 4. Cek Apakah SEMUA barang dalam transaksi ini sudah dikembalikan?
+      // Jika semua detail sudah punya 'foto_sesudah', maka update status Global
+      if ($this->checkAllItemsReturned($idPeminjaman)) {
+         // Opsional: Update status ke 'Selesai' otomatis, 
+         // ATAU biarkan tetap 'Dipinjam' sampai Admin memverifikasi fisik barang (Recommended).
+         // Di sini kita biarkan user menunggu verifikasi admin.
+      }
+
+      return redirect()->back()->with('message', 'Barang berhasil dikembalikan. Menunggu verifikasi admin.');
+   }
+
+   // Helper function private
+   private function checkAllItemsReturned($idPeminjaman)
+   {
+      // Hitung item yang foto_sesudah-nya masih NULL
+      $countSarana = $this->detailSaranaModel
+         ->where('id_peminjaman', $idPeminjaman)
+         ->where('foto_sesudah', null)
+         ->countAllResults();
+
+      // ... hitung prasarana ...
+
+      return ($countSarana == 0); // Return true jika semua sudah dikembalikan
    }
 }
