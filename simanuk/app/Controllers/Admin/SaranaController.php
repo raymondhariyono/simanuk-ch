@@ -385,4 +385,14 @@ class SaranaController extends BaseController
       $this->saranaModel->delete($id);
       return redirect()->to(site_url('admin/inventaris'))->with('message', 'Data ' . $this->saranaModel->getNamaSarana($id) . ' berhasil dihapus.');
    }
+
+   public function deleteFoto($idFoto)
+   {
+      $foto = $this->fotoAsetModel->find($idFoto);
+      if ($foto) {
+         unlink(FCPATH . $foto['url_foto']); // Hapus file
+         $this->fotoAsetModel->delete($idFoto);  // Hapus DB
+      }
+      return redirect()->back(); // Kembali ke halaman edit
+   }
 }

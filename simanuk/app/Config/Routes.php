@@ -32,8 +32,10 @@ $routes->group('admin', ['filter' => ['session', 'role:Admin']], static function
    $routes->get('inventaris/sarana/create', 'Admin\SaranaController::create');
    $routes->post('inventaris/sarana/save', 'Admin\SaranaController::save');
    $routes->delete('inventaris/sarana/(:num)', 'Admin\SaranaController::delete/$1');
-   $routes->get('inventaris/sarana/edit/(:num)', 'Admin\SaranaController::edit/$1');
    $routes->post('inventaris/sarana/update/(:num)', 'Admin\SaranaController::update/$1');
+
+   // delete foto
+   $routes->get('inventaris/sarana/foto/delete/(:num)', 'Admin\SaranaController::deleteFoto/$1');
 
    // PRASARANA
    $routes->get('inventaris', 'Admin\InventarisasiController::index');
@@ -43,6 +45,9 @@ $routes->group('admin', ['filter' => ['session', 'role:Admin']], static function
    $routes->get('inventaris/prasarana/edit/(:num)', 'Admin\PrasaranaController::edit/$1');
    $routes->post('inventaris/prasarana/update/(:num)', 'Admin\PrasaranaController::update/$1');
 
+   // delete foto
+   $routes->get('inventaris/prasarana/foto/delete/(:num)', 'Admin\PrasaranaController::deleteFoto/$1');
+
    // --- KELOLA PEMINJAMAN ---
    $routes->get('peminjaman', 'Admin\PeminjamanController::index');
    $routes->get('peminjaman/detail/(:num)', 'Admin\PeminjamanController::detail/$1');
@@ -51,6 +56,9 @@ $routes->group('admin', ['filter' => ['session', 'role:Admin']], static function
    $routes->post('peminjaman/reject/(:num)', 'Admin\PeminjamanController::reject/$1');
 
    // --- KELOLA PENGEMBALIAN ---
+   $routes->get('pengembalian', 'Admin\PengembalianController::index');
+   $routes->get('pengembalian/detail/(:num)', 'Admin\PengembalianController::detail/$1');
+   $routes->post('pengembalian/selesai/(:num)', 'Admin\PengembalianController::prosesSelesai/$1');
 
    // --- LAPORAN KERUSAKAN ---
    $routes->get('laporan-kerusakan', 'Admin\LaporanKerusakanController::index');
@@ -71,7 +79,10 @@ $routes->group('peminjam', ['filter' => ['session', 'role:Peminjam']], static fu
    // --- HISTORI PEMINJAMAN ---
    $routes->get('histori-peminjaman', 'Peminjam\HistoriPeminjamanController::index');
    // detail histori peminjaman
-   $routes->get('histori-peminjaman/detail/(:segment)', 'Peminjam\HistoriPeminjamanController::detail/$1');
+   // Untuk melihat halaman detail
+   $routes->get('histori-peminjaman/detail/(:num)', 'Peminjam\HistoriPeminjamanController::detail/$1');
+   // Untuk proses aksi form pengembalian
+   $routes->post('peminjaman/kembalikan-item/(:segment)/(:num)', 'Peminjam\PeminjamanController::kembalikanItem/$1/$2');
    // CRUD peminjaman
    $routes->get('peminjaman/new', 'Peminjam\PeminjamanController::new'); // Form view
    $routes->post('peminjaman/create', 'Peminjam\PeminjamanController::create'); // Save
