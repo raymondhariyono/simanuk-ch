@@ -6,7 +6,7 @@ use App\Controllers\BaseController;
 use App\Models\Peminjaman\PeminjamanModel;
 use App\Models\Peminjaman\DetailPeminjamanSaranaModel;
 use App\Models\Peminjaman\DetailPeminjamanPrasaranaModel;
-
+use App\Models\Sarpras\PrasaranaModel;
 use App\Models\Sarpras\SaranaModel;
 
 class PeminjamanController extends BaseController
@@ -16,6 +16,7 @@ class PeminjamanController extends BaseController
    protected $detailPrasaranaModel;
 
    protected $saranaModel;
+   protected $prasaranaModel;
 
    public function __construct()
    {
@@ -24,6 +25,7 @@ class PeminjamanController extends BaseController
       $this->detailPrasaranaModel = new DetailPeminjamanPrasaranaModel();
 
       $this->saranaModel = new SaranaModel();
+      $this->prasaranaModel = new PrasaranaModel();
    }
 
    public function index()
@@ -113,10 +115,11 @@ class PeminjamanController extends BaseController
       $db->transStart();
 
       try {
-         // 1. Ambil Detail Item Sarana untuk Update Stok
-         $items = $this->detailSaranaModel->where('id_peminjaman', $id)->findAll();
+         // 1. Ambil Detail Item Sarana dan Prasarana
+         $itemSarana = $this->detailSaranaModel->where('id_peminjaman', $id)->findAll();
+         $itemsPrasarana = $this->detailPrasaranaModel->where('id_peminjaman', $id)->findAll();
 
-         foreach ($items as $item) {
+         foreach ($itemSarana as $item) {
             // Ambil data sarana terkini (untuk cek stok real-time)
             $sarana = $this->saranaModel->find($item['id_sarana']);
 
@@ -132,12 +135,17 @@ class PeminjamanController extends BaseController
             // update data stok
             $updateData = ['jumlah' => $newStok];
 
-            // jika stok habis atau 0 (nol), update status menjadi 'tidak_tersedia'
+            // jika stok habis atau 0 (nol), artinya telah habis dipinjam, update status menjadi 'Dipinjam'
             if ($newStok <= 0) {
-               $updateData['status_ketersediaan'] = 'Tidak Tersedia';
+               $updateData['status_ketersediaan'] = 'Dipinjam';
             }
 
             $this->saranaModel->update($item['id_sarana'], $updateData);
+         }
+
+         foreach ($itemsPrasarana as $item) {
+            // Set status master prasarana jadi 'Dipinjam' agar tampil merah di katalog
+            $this->prasaranaModel->update($item['id_prasarana'], ['status_ketersediaan' => 'Dipinjam']);
          }
 
          // 2. Update Status Peminjaman

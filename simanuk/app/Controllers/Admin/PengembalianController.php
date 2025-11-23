@@ -107,6 +107,7 @@ class PengembalianController extends BaseController
       try {
          // 1. RESTOCK SARANA (Barang)
          $itemsSarana = $this->detailSaranaModel->where('id_peminjaman', $id)->findAll();
+         $itemsPrasarana = $this->detailPrasaranaModel->where('id_peminjaman', $id)->findAll();
 
          foreach ($itemsSarana as $item) {
             $sarana = $this->saranaModel->find($item['id_sarana']);

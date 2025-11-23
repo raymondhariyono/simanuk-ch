@@ -32,6 +32,7 @@ $routes->group('admin', ['filter' => ['session', 'role:Admin']], static function
    $routes->get('inventaris/sarana/create', 'Admin\SaranaController::create');
    $routes->post('inventaris/sarana/save', 'Admin\SaranaController::save');
    $routes->delete('inventaris/sarana/(:num)', 'Admin\SaranaController::delete/$1');
+   $routes->get('inventaris/sarana/edit/(:num)', 'Admin\SaranaController::edit/$1');
    $routes->post('inventaris/sarana/update/(:num)', 'Admin\SaranaController::update/$1');
 
    // delete foto
@@ -81,6 +82,7 @@ $routes->group('peminjam', ['filter' => ['session', 'role:Peminjam']], static fu
    // detail histori peminjaman
    // Untuk melihat halaman detail
    $routes->get('histori-peminjaman/detail/(:num)', 'Peminjam\HistoriPeminjamanController::detail/$1');
+   
    // Untuk proses aksi form pengembalian
    $routes->post('peminjaman/kembalikan-item/(:segment)/(:num)', 'Peminjam\PeminjamanController::kembalikanItem/$1/$2');
    // CRUD peminjaman

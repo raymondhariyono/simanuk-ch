@@ -26,6 +26,12 @@
                 </a>
             </div>
 
+            <?php if (session()->getFlashdata('message')) : ?>
+                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+                    <?= session()->getFlashdata('message') ?>
+                </div>
+            <?php endif; ?>
+
             <div class="mb-8 flex flex-wrap gap-4 items-center">
                 <div class="relative flex-grow" style="min-width: 300px;">
                     <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
@@ -110,7 +116,7 @@
                                             </span>
                                         </td>
                                         <td class="py-4 px-6 whitespace-nowrap text-sm font-medium">
-                                            <?php if ($loan['aksi'] == 'Batal'): ?>
+                                            <?php if ($loan['status'] == 'Diajukan'): ?>
                                                 <form action="<?= site_url('peminjam/peminjaman/delete-item/' . $loan['tipe'] . '/' . $loan['id_detail']) ?>"
                                                     method="post"
                                                     onsubmit="return confirm('Batalkan peminjaman untuk item ini saja?');">
@@ -119,25 +125,30 @@
                                                         Batal
                                                     </button>
                                                 </form>
-                                            <?php elseif ($loan['aksi'] == 'Upload Foto Sebelum'): ?>
-                                                <button type="button"
-                                                    onclick="openUploadModal('sebelum', '<?= $loan['tipe'] ?>', '<?= $loan['id_detail'] ?>', '<?= esc($loan['nama_item']) ?>')"
-                                                    class="inline-flex items-center px-3 py-1.5 bg-yellow-100 text-yellow-600 hover:bg-yellow-300 border border-yellow-600 rounded-lg text-xs font-medium transition-colors">
-                                                    Upload Foto <br>SEBELUM<span class="text-red-500 text-xl">*</span>
-                                                </button>
+                                            <?php elseif ($loan['status'] == 'Disetujui' || $loan['status'] == 'Dipinjam'): ?>
+                                                <?php if (empty($loan['foto_sebelum'])): ?>
 
-                                            <?php elseif ($loan['aksi'] == 'Upload Foto Sesudah'): ?>
-                                                <?php if (empty($loan['foto_sesudah'])): ?>
                                                     <button type="button"
-                                                        onclick="openUploadModal('sesudah', '<?= $loan['tipe'] ?>', '<?= $loan['id_detail'] ?>', '<?= esc($loan['nama_item']) ?>')"
-                                                        class="inline-flex items-center px-3 py-1.5 bg-green-100 text-green-600 hover:bg-green-300 border border-green-600 rounded-lg text-xs font-medium transition-colors">
-                                                        Kembalikan
+                                                        onclick="openUploadModal('sebelum', '<?= $loan['tipe'] ?>', '<?= $loan['id_detail'] ?>', '<?= esc($loan['nama_item']) ?>')"
+                                                        class="inline-flex items-center px-3 py-1.5 bg-yellow-100 text-yellow-600 hover:bg-yellow-300 border border-yellow-600 rounded-lg text-xs font-medium transition-colors">
+                                                        Upload Foto <br>SEBELUM<span class="text-red-500 text-xl">*</span>
                                                     </button>
+
                                                 <?php else: ?>
-                                                    <span class="text-gray-500 text-xs italic">Menunggu Verifikasi Admin</span>
+                                                    <?php if (empty($loan['foto_sesudah'])): ?>
+                                                        <button type="button"
+                                                            onclick="openUploadModal('sesudah', '<?= $loan['tipe'] ?>', '<?= $loan['id_detail'] ?>', '<?= esc($loan['nama_item']) ?>')"
+                                                            class="inline-flex items-center px-3 py-1.5 bg-green-600 text-white hover:bg-green-700 rounded-lg text-xs font-medium transition-colors">
+                                                            Kembalikan
+                                                        </button>
+                                                    <?php else: ?>
+                                                        <span class="text-gray-500 text-xs italic">Menunggu Verifikasi Admin</span>
+                                                    <?php endif; ?>
+
                                                 <?php endif; ?>
-                                            <?php elseif ($loan['aksi'] == 'Lihat Riwayat'): ?>
-                                                <a href="<?= site_url('peminjam/histori-peminjaman/detail/' . esc($loan['kode'])) ?>"
+
+                                            <?php elseif ($loan['status'] == 'Selesai'): ?>
+                                                <a href="<?= site_url('peminjam/histori-peminjaman/detail/' . esc($loan['id_peminjaman'])) ?>"
                                                     class="inline-flex items-center px-3 py-1.5 bg-neutral-100 text-neutral-600 hover:bg-neutral-300 border border-neutral-600 rounded-lg text-xs font-medium transition-colors">
                                                     Lihat Riwayat
                                                 </a>

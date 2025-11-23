@@ -56,12 +56,12 @@
          </div>
          <!-- GRID KATALOG (DESKTOP) -->
          <div class="hidden sm:grid sm:grid-cols-2 md:grid-cols-4 gap-6">
-            <?php foreach ($sarana as $barang): ?>
+            <?php foreach ($sarana as $b): ?>
                <div class="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col">
                   <div class="relative h-48 bg-gray-200 flex items-center justify-center overflow-hidden">
-                     <?php if (!empty($barang['url_foto'])) : ?>
-                        <img src="<?= base_url($barang['url_foto']) ?>"
-                           alt="<?= esc($barang['nama_sarana']) ?>"
+                     <?php if (!empty($b['url_foto'])) : ?>
+                        <img src="<?= base_url($b['url_foto']) ?>"
+                           alt="<?= esc($b['nama_sarana']) ?>"
                            class="w-full h-full object-cover transition-transform duration-300 hover:scale-110">
                      <?php else : ?>
                         <div class="text-gray-400 flex flex-col items-center">
@@ -72,11 +72,11 @@
                         </div>
                      <?php endif; ?>
 
-                     <?php if ($barang['status_ketersediaan'] == 'Tersedia'): ?>
+                     <?php if ($b['status_ketersediaan'] == 'Tersedia'): ?>
                         <span class="absolute top-2 right-2 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full shadow">Tersedia</span>
-                     <?php elseif ($barang['status_ketersediaan'] == 'Dipinjam'): ?>
+                     <?php elseif ($b['status_ketersediaan'] == 'Dipinjam'): ?>
                         <span class="absolute top-2 right-2 bg-yellow-400 text-black text-xs font-bold px-2 py-1 rounded-full shadow">Dipinjam</span>
-                     <?php elseif ($barang['status_ketersediaan'] == 'Perawatan'): ?>
+                     <?php elseif ($b['status_ketersediaan'] == 'Perawatan'): ?>
                         <span class="absolute top-2 right-2 bg-yellow-600 text-black text-xs font-bold px-2 py-1 rounded-full shadow">Perawatan</span>
                      <?php else : ?>
                         <span class="absolute top-2 right-2 bg-red-400 text-black text-xs font-bold px-2 py-1 rounded-full shadow">Tidak Tersedia</span>
@@ -85,10 +85,10 @@
 
                   <div class="p-4 flex-1 flex flex-col">
                      <div class="flex-1">
-                        <h3 class="text-lg font-bold text-gray-900"><?= htmlspecialchars($barang['nama_sarana']) ?></h3>
-                        <p class="text-sm text-gray-600"><?= htmlspecialchars($barang['nama_kategori']) ?></p>
+                        <h3 class="text-lg font-bold text-gray-900"><?= htmlspecialchars($b['nama_sarana']) ?></h3>
+                        <p class="text-sm text-gray-600"><?= htmlspecialchars($b['nama_kategori']) ?></p>
                      </div>
-                     <a href="<?= site_url('/peminjam/sarpras/detail/' . esc($barang['kode_sarana'])) ?>" class="mt-4 block w-full text-center bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">
+                     <a href="<?= site_url('/peminjam/sarpras/detail/' . esc($b['kode_sarana'])) ?>" class="mt-4 block w-full text-center bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">
                         Lihat Detail
                      </a>
                   </div>
@@ -96,12 +96,12 @@
             <?php endforeach; ?>
 
             <!-- KATALOG PRASARANA -->
-            <?php foreach ($prasarana as $ruangan): ?>
+            <?php foreach ($prasarana as $p): ?>
                <div class="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col">
                   <div class="relative h-48 bg-gray-200 flex items-center justify-center overflow-hidden">
-                     <?php if (!empty($ruangan['url_foto'])) : ?>
-                        <img src="<?= base_url($ruangan['url_foto']) ?>"
-                           alt="<?= esc($ruangan['nama_prasarana']) ?>"
+                     <?php if (!empty($p['url_foto'])) : ?>
+                        <img src="<?= base_url($p['url_foto']) ?>"
+                           alt="<?= esc($p['nama_prasarana']) ?>"
                            class="w-full h-full object-cover transition-transform duration-300 hover:scale-110">
                      <?php else : ?>
                         <div class="text-gray-400 flex flex-col items-center">
@@ -112,19 +112,23 @@
                         </div>
                      <?php endif; ?>
 
-                     <?php if ($barang['status_ketersediaan'] == 'Tersedia'): ?>
+                     <?php if ($p['status_ketersediaan'] == 'Tersedia'): ?>
                         <span class="absolute top-2 right-2 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full shadow">Tersedia</span>
-                     <?php else: ?>
+                     <?php elseif ($p['status_ketersediaan'] == 'Dipinjam'): ?>
                         <span class="absolute top-2 right-2 bg-yellow-400 text-black text-xs font-bold px-2 py-1 rounded-full shadow">Dipinjam</span>
+                     <?php elseif ($p['status_ketersediaan'] == 'Perawatan'): ?>
+                        <span class="absolute top-2 right-2 bg-yellow-600 text-black text-xs font-bold px-2 py-1 rounded-full shadow">Perawatan</span>
+                     <?php else : ?>
+                        <span class="absolute top-2 right-2 bg-red-400 text-black text-xs font-bold px-2 py-1 rounded-full shadow">Tidak Tersedia</span>
                      <?php endif; ?>
                   </div>
 
                   <div class="p-4 flex-1 flex flex-col">
                      <div class="flex-1">
-                        <h3 class="text-lg font-bold text-gray-900"><?= htmlspecialchars($ruangan['nama_prasarana']) ?></h3>
-                        <p class="text-sm text-gray-600"><?= htmlspecialchars($ruangan['nama_kategori']) ?></p>
+                        <h3 class="text-lg font-bold text-gray-900"><?= htmlspecialchars($p['nama_prasarana']) ?></h3>
+                        <p class="text-sm text-gray-600"><?= htmlspecialchars($p['nama_kategori']) ?></p>
                      </div>
-                     <a href="<?= site_url('/peminjam/sarpras/detail/' . esc($ruangan['kode_prasarana'])) ?>" class="mt-4 block w-full text-center bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">
+                     <a href="<?= site_url('/peminjam/sarpras/detail/' . esc($p['kode_prasarana'])) ?>" class="mt-4 block w-full text-center bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">
                         Lihat Detail
                      </a>
                   </div>
@@ -134,12 +138,12 @@
 
          <!-- SLIDER (MOBILE) -->
          <div class="sm:hidden flex overflow-x-auto space-x-4 p-1 snap-x snap-mandatory">
-            <?php foreach ($sarana as $barang): ?>
+            <?php foreach ($sarana as $b): ?>
                <div class="min-w-[16rem] snap-center shrink-0">
                   <div class="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col h-full">
                      <div class="relative">
-                        <img src="" alt="<?= htmlspecialchars($barang['nama_sarana']) ?>" class="w-full h-48 object-cover">
-                        <?php if ($barang['status_ketersediaan'] == 'Tersedia'): ?>
+                        <img src="" alt="<?= htmlspecialchars($b['nama_sarana']) ?>" class="w-full h-48 object-cover">
+                        <?php if ($b['status_ketersediaan'] == 'Tersedia'): ?>
                            <span class="absolute top-2 left-2 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full">Tersedia</span>
                         <?php else: ?>
                            <span class="absolute top-2 left-2 bg-yellow-500 text-white text-xs font-bold px-2 py-1 rounded-full">Dipinjam</span>
@@ -147,10 +151,10 @@
                      </div>
                      <div class="p-4 flex-1 flex flex-col">
                         <div class="flex-1">
-                           <h3 class="text-lg font-bold text-gray-900"><?= htmlspecialchars($barang['nama_sarana']) ?></h3>
-                           <p class="text-sm text-gray-600"><?= htmlspecialchars($barang['nama_kategori']) ?></p>
+                           <h3 class="text-lg font-bold text-gray-900"><?= htmlspecialchars($b['nama_sarana']) ?></h3>
+                           <p class="text-sm text-gray-600"><?= htmlspecialchars($b['nama_kategori']) ?></p>
                         </div>
-                        <a href="<?= site_url('/peminjam/sarpras/detail/' . esc($barang['kode_sarana'])) ?>" class="mt-4 block w-full text-center bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">
+                        <a href="<?= site_url('/peminjam/sarpras/detail/' . esc($b['kode_sarana'])) ?>" class="mt-4 block w-full text-center bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">
                            Lihat Detail
                         </a>
                      </div>
@@ -159,11 +163,11 @@
             <?php endforeach; ?>
 
             <!-- KATALOG PRASARANA -->
-            <?php foreach ($prasarana as $ruangan): ?>
+            <?php foreach ($prasarana as $p): ?>
                <div class="bg-white rounded-lg shadow-lg overflow-hidden flex flex-col">
                   <div class="relative">
-                     <img src="" alt="<?= htmlspecialchars($ruangan['nama_prasarana']) ?>" class="w-full h-48 object-cover">
-                     <?php if ($ruangan['status_ketersediaan'] == 'Tersedia'): ?>
+                     <img src="" alt="<?= htmlspecialchars($p['nama_prasarana']) ?>" class="w-full h-48 object-cover">
+                     <?php if ($p['status_ketersediaan'] == 'Tersedia'): ?>
                         <span class="absolute top-2 right-2 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full">Tersedia</span>
                      <?php else: ?>
                         <span class="absolute top-2 right-2 bg-yellow-400 text-black text-xs font-bold px-2 py-1 rounded-full">Dipinjam</span>
@@ -171,10 +175,10 @@
                   </div>
                   <div class="p-4 flex-1 flex flex-col">
                      <div class="flex-1">
-                        <h3 class="text-lg font-bold text-gray-900"><?= htmlspecialchars($ruangan['nama_prasarana']) ?></h3>
-                        <p class="text-sm text-gray-600"><?= htmlspecialchars($ruangan['nama_kategori']) ?></p>
+                        <h3 class="text-lg font-bold text-gray-900"><?= htmlspecialchars($p['nama_prasarana']) ?></h3>
+                        <p class="text-sm text-gray-600"><?= htmlspecialchars($p['nama_kategori']) ?></p>
                      </div>
-                     <a href="<?= site_url('/peminjam/sarpras/detail/' . esc($ruangan['kode_prasarana'])) ?>" class="mt-4 block w-full text-center bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">
+                     <a href="<?= site_url('/peminjam/sarpras/detail/' . esc($p['kode_prasarana'])) ?>" class="mt-4 block w-full text-center bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">
                         Lihat Detail
                      </a>
                   </div>

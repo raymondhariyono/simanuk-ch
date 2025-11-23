@@ -60,6 +60,7 @@ class HistoriPeminjamanController extends BaseController
                     'tgl_pinjam'    => $pinjam['tgl_pinjam_dimulai'], // Opsional: bisa ditampilkan
                     // Gunakan status global untuk user
                     'status'        => $pinjam['status_peminjaman_global'],
+                    'foto_sebelum'  => $item['foto_sebelum'],
                     'foto_sesudah'  => $item['foto_sesudah'],
                     // Tentukan jenis aksi berdasarkan status
                     'aksi'          => $this->determineAction($pinjam['status_peminjaman_global']),
@@ -84,6 +85,7 @@ class HistoriPeminjamanController extends BaseController
                     'kegiatan'      => $pinjam['kegiatan'],
                     'tgl_pinjam'    => $pinjam['tgl_pinjam_dimulai'],
                     'status'        => $pinjam['status_peminjaman_global'],
+                    'foto_sebelum'  => $item['foto_sebelum'],
                     'foto_sesudah'  => $item['foto_sesudah'],
                     'aksi'          => $this->determineAction($pinjam['status_peminjaman_global']),
                     'tipe'          => 'Prasarana'
@@ -110,7 +112,12 @@ class HistoriPeminjamanController extends BaseController
         $userId = auth()->user()->id;
 
         // 1. Ambil Header Peminjaman & Pastikan milik user yang login
-        $peminjaman = $this->peminjamanModel->find($id);
+        // $peminjaman = $this->peminjamanModel->find($id);
+        $peminjaman = $this->peminjamanModel
+            ->select('peminjaman.*, users.nama_lengkap, users.organisasi, users.kontak')
+            ->join('users', 'users.id = peminjaman.id_peminjam')
+            ->where('peminjaman.id_peminjaman', $id)
+            ->first();
 
         if (!$peminjaman || $peminjaman['id_peminjam'] != $userId) {
             return redirect()->to('peminjam/histori-peminjaman')->with('error', 'Data tidak ditemukan atau akses ditolak.');
@@ -143,6 +150,8 @@ class HistoriPeminjamanController extends BaseController
                 ['name' => 'Detail Peminjaman'],
             ]
         ];
+
+        // dd($peminjaman);
 
         // Arahkan ke view detail_peminjaman_view.php
         return view('peminjam/detail_peminjaman_view', $data);

@@ -56,6 +56,48 @@
                </div>
             </div>
          <?php endforeach; ?>
+         
+         <?php foreach ($itemsPrasarana as $item) : ?>
+            <div class="bg-white shadow rounded-lg p-6 border-l-4 border-indigo-500">
+               <div class="flex justify-between mb-4">
+                  <div>
+                     <h4 class="text-lg font-bold text-gray-800"><?= esc($item['nama_prasarana']) ?></h4>
+                  </div>
+                  <div class="text-right">
+                     <span class="block text-xs text-gray-500">Kondisi Dilaporkan User:</span>
+                     <span class="font-bold <?= $item['kondisi_akhir'] == 'Baik' ? 'text-green-600' : 'text-red-600' ?>">
+                        <?= esc($item['kondisi_akhir'] ?? 'Belum Lapor') ?>
+                     </span>
+                  </div>
+               </div>
+
+               <div class="grid grid-cols-2 gap-4 mt-4 bg-gray-50 p-4 rounded-lg">
+                  <div class="text-center">
+                     <p class="text-xs font-bold text-gray-500 mb-2">FOTO SEBELUM (SAAT AMBIL)</p>
+                     <?php if ($item['foto_sebelum']): ?>
+                        <a href="<?= base_url($item['foto_sebelum']) ?>" target="_blank">
+                           <img src="<?= base_url($item['foto_sebelum']) ?>" class="h-32 mx-auto object-cover rounded border border-gray-300 hover:opacity-75 transition">
+                        </a>
+                     <?php else: ?>
+                        <div class="h-32 flex items-center justify-center text-gray-400 text-xs border border-dashed border-gray-300">Tidak ada foto</div>
+                     <?php endif; ?>
+                  </div>
+
+                  <div class="text-center">
+                     <p class="text-xs font-bold text-gray-500 mb-2">FOTO SESUDAH (SAAT KEMBALI)</p>
+                     <?php if ($item['foto_sesudah']): ?>
+                        <a href="<?= base_url($item['foto_sesudah']) ?>" target="_blank">
+                           <img src="<?= base_url($item['foto_sesudah']) ?>" class="h-32 mx-auto object-cover rounded border border-gray-300 hover:opacity-75 transition">
+                        </a>
+                     <?php else: ?>
+                        <div class="h-32 flex items-center justify-center text-red-400 text-xs border border-dashed border-red-300 bg-red-50">
+                           User <span class="font-bold">"<?= $peminjaman['nama_lengkap'] ?>"</span> Belum Upload
+                        </div>
+                     <?php endif; ?>
+                  </div>
+               </div>
+            </div>
+         <?php endforeach; ?>
 
       </div>
 
