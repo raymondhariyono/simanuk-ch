@@ -30,7 +30,13 @@ class HistoriPeminjamanController extends BaseController
             ->where('id_peminjam', $userId)
             ->orderBy('created_at', 'DESC')
             ->findAll();
-
+            
+        $listPeminjamanDitolak = $this->peminjamanModel
+            ->where('id_peminjam', $userId)
+            ->where('status_peminjaman_global', 'Ditolak')
+            ->orderBy('created_at', 'DESC')
+            ->findAll();
+        
         $loans = [];
 
         // 2. Loop setiap transaksi untuk mengambil detail itemnya
@@ -82,10 +88,10 @@ class HistoriPeminjamanController extends BaseController
                 ];
             }
         }
-
         $data = [
             'title'       => 'Histori Peminjaman',
             'loans'       => $loans,
+            'peminjaman'  => $listPeminjamanDitolak,
             'showSidebar' => true,
             'breadcrumbs' => [
                 ['name' => 'Beranda', 'url' => site_url('peminjam/dashboard')],
@@ -147,9 +153,11 @@ class HistoriPeminjamanController extends BaseController
             case 'Disetujui':
                 return 'Upload Foto Sebelum'; // Menunggu diambil/digunakan
             case 'Dipinjam':
-                return 'Kembalikan'; // Sedang dipinjam
+                return 'Upload Foto Sesudah'; // Sedang dipinjam
+            case 'Selesai':
+                return 'Lihat Riwayat'; // Sedang dipinjam
             default:
-                return null; // Selesai/Ditolak/Dibatalkan (Tidak ada aksi)
+                return 'Lihat Alasan'; // Selesai/Ditolak/Dibatalkan (Tidak ada aksi)
         }
     }
 }

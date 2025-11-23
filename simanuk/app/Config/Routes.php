@@ -79,7 +79,9 @@ $routes->group('peminjam', ['filter' => ['session', 'role:Peminjam']], static fu
    // $routes->post('peminjaman/delete/(:num)', 'Peminjam\PeminjamanController::delete/$1'); // Batal (Delete)
 
    // upload bukti foto (SEBELUM)
-   $routes->post('peminjaman/upload-bukti/(:segment)/(:num)', 'Peminjam\PeminjamanController::uploadBukti/$1/$2');
+   $routes->post('peminjaman/upload-bukti-sebelum/(:segment)/(:num)', 'Peminjam\PeminjamanController::uploadBuktiSebelum/$1/$2');
+   // upload bukti foto (SESUDAH)
+   $routes->post('peminjaman/upload-bukti-sesudah/(:segment)/(:num)', 'Peminjam\PeminjamanController::uploadBuktiSesudah/$1/$2');
 
    // --- HISTORI PENGEMBALIAN ---
    $routes->get('histori-pengembalian', 'Peminjam\HistoriPengembalianController::index');
