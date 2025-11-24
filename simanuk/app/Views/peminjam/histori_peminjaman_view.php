@@ -82,6 +82,131 @@
 
                 <div class="" id="active" role="tabpanel" aria-labelledby="active-tab">
                     <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                            <div class="overflow-x-auto">
+                                <table class="w-full min-w-max">
+                                    <thead class="bg-gray-50 border-b border-gray-200">
+                                        <tr>
+                                            <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Item</th>
+                                            <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kode</th>
+                                            <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kegiatan</th>
+                                            <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                            <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-200">
+                                        <?php if (empty($activeLoans)) : ?>
+                                            <tr>
+                                                <td colspan="5" class="py-6 px-6 text-center text-gray-500">
+                                                    Belum ada data peminjaman.
+                                                </td>
+                                            </tr>
+                                        <?php else : ?>
+                                            <?php foreach ($activeLoans as $loan) : ?>
+                                                <tr class="hover:bg-gray-50 transition">
+                                                    <td class="py-4 px-6 whitespace-nowrap">
+                                                        <div class="flex flex-col">
+                                                            <span class="font-medium text-gray-900"><?= esc($loan['nama_item']); ?></span>
+                                                            <span class="text-xs text-gray-500"><?= esc($loan['tipe']); ?></span>
+                                                        </div>
+                                                    </td>
+                                                    <td class="py-4 px-6 text-gray-700 whitespace-nowrap">
+                                                        <?= esc($loan['kode']); ?>
+                                                    </td>
+                                                    <td class="py-4 px-6 text-gray-700 whitespace-nowrap">
+                                                        <div class="flex flex-col">
+                                                            <span><?= esc($loan['kegiatan']); ?></span>
+                                                            <span class="text-xs text-gray-400"><?= date('d M Y', strtotime($loan['tgl_pinjam'])) ?></span>
+                                                        </div>
+                                                    </td>
+                                                    <td class="py-4 px-6 whitespace-nowrap">
+                                                        <?php
+                                                        $badgeClass = 'font-bold';
+                                                        switch ($loan['status']) {
+                                                            case 'Diajukan':
+                                                                break;
+                                                            case 'Disetujui':
+                                                                break;
+                                                            case 'Dipinjam':
+                                                                break;
+                                                            case 'Selesai':
+                                                                break;
+                                                            case 'Dibatalkan':
+                                                                break;
+                                                        }
+                                                        ?>
+                                                        <span class="text-sm font-bold px-3 py-1 rounded-full <?= $badgeClass ?>">
+                                                            <?= esc($loan['status']); ?>
+                                                        </span>
+                                                    </td>
+                                                    <td class="py-4 px-6 whitespace-nowrap text-sm font-medium">
+                                                        <?php if ($loan['status'] == 'Diajukan'): ?>
+                                                            <form action="<?= site_url('peminjam/peminjaman/delete-item/' . $loan['tipe'] . '/' . $loan['id_detail']) ?>"
+                                                                method="post"
+                                                                onsubmit="return confirm('Batalkan peminjaman untuk item ini saja?');">
+                                                                <?= csrf_field() ?>
+                                                                <button type="submit" class="inline-flex items-center px-3 py-1.5 bg-red-50 text-red-600 hover:bg-red-200 border border-red-300 rounded-lg text-xs font-medium transition-colors">
+                                                                    Batal
+                                                                </button>
+                                                            </form>
+                                                        <?php elseif ($loan['status'] == 'Disetujui' || $loan['status'] == 'Dipinjam'): ?>
+                                                            <?php if (empty($loan['foto_sebelum'])): ?>
+
+                                                                <button type="button"
+                                                                    onclick="openUploadModal('sebelum', '<?= $loan['tipe'] ?>', '<?= $loan['id_detail'] ?>', '<?= esc($loan['nama_item']) ?>')"
+                                                                    class="inline-flex items-center px-3 py-1.5 bg-yellow-100 text-yellow-600 hover:bg-yellow-300 border border-yellow-600 rounded-lg text-xs font-medium transition-colors">
+                                                                    Upload Foto <br>SEBELUM<span class="text-red-500 text-xl">*</span>
+                                                                </button>
+
+                                                            <?php else: ?>
+                                                                <?php if (empty($loan['foto_sesudah'])): ?>
+                                                                    <button type="button"
+                                                                        onclick="openUploadModal('sesudah', '<?= $loan['tipe'] ?>', '<?= $loan['id_detail'] ?>', '<?= esc($loan['nama_item']) ?>')"
+                                                                        class="inline-flex items-center px-3 py-1.5 bg-green-600 text-white hover:bg-green-700 rounded-lg text-xs font-medium transition-colors">
+                                                                        Kembalikan
+                                                                    </button>
+                                                                <?php else: ?>
+                                                                    <span class="text-gray-500 text-xs italic">Menunggu Verifikasi Admin</span>
+                                                                <?php endif; ?>
+
+                                                            <?php endif; ?>
+
+                                                        <?php elseif ($loan['status'] == 'Selesai'): ?>
+                                                            <a href="<?= site_url('peminjam/histori-peminjaman/detail/' . esc($loan['id_peminjaman'])) ?>"
+                                                                class="inline-flex items-center px-3 py-1.5 bg-neutral-100 text-neutral-600 hover:bg-neutral-300 border border-neutral-600 rounded-lg text-xs font-medium transition-colors">
+                                                                Lihat Riwayat
+                                                            </a>
+                                                        <?php else: ?>
+                                                            <?php foreach ($peminjaman as $p): ?>
+                                                                <button type="button"
+                                                                    onclick="openDetailPenolakanModal(this)"
+                                                                    data-alasan="<?= esc($p['keterangan']) ?>"
+                                                                    class="inline-flex items-center px-3 py-1.5 bg-neutral-100 text-neutral-600 hover:bg-neutral-300 border border-neutral-600 rounded-lg text-xs font-medium transition-colors">
+                                                                    Lihat Alasan..
+                                                                </button>
+                                                            <?php endforeach; ?>
+                                                        <?php endif; ?>
+                                                    </td>
+                                                </tr>
+                                            <?php endforeach; ?>
+                                        <?php endif; ?>
+                                    </tbody>
+                                </table>
+                            </div>
+
+                            <div class="p-4 flex justify-between items-center">
+                                <span class="text-sm text-gray-700">
+                                    Menampilkan <span class="font-medium">1-5</span> dari <span class="font-medium">100</span>
+                                </span>
+                                <nav class="flex space-x-1">
+                                    <a href="#" class="py-2 px-3 rounded-lg text-gray-600 hover:bg-gray-100">Sebelumnya</a>
+                                    <a href="#" class="py-2 px-3 rounded-lg text-gray-600 hover:bg-gray-100">1</a>
+                                    <a href="#" class="py-2 px-3 rounded-lg bg-blue-100 text-blue-600 font-medium">2</a>
+                                    <a href="#" class="py-2 px-3 rounded-lg text-gray-600 hover:bg-gray-100">3</a>
+                                    <a href="#" class="py-2 px-3 rounded-lg text-gray-600 hover:bg-gray-100">Berikutnya</a>
+                                </nav>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -152,239 +277,115 @@
                 </div>
             </div>
 
-            <div class="bg-white rounded-lg shadow-lg overflow-hidden">
-                <div class="overflow-x-auto">
-                    <table class="w-full min-w-max">
-                        <thead class="bg-gray-50 border-b border-gray-200">
-                            <tr>
-                                <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Item</th>
-                                <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kode</th>
-                                <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kegiatan</th>
-                                <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-200">
-                            <?php if (empty($activeLoans)) : ?>
-                                <tr>
-                                    <td colspan="5" class="py-6 px-6 text-center text-gray-500">
-                                        Belum ada data peminjaman.
-                                    </td>
-                                </tr>
-                            <?php else : ?>
-                                <?php foreach ($activeLoans as $loan) : ?>
-                                    <tr class="hover:bg-gray-50 transition">
-                                        <td class="py-4 px-6 whitespace-nowrap">
-                                            <div class="flex flex-col">
-                                                <span class="font-medium text-gray-900"><?= esc($loan['nama_item']); ?></span>
-                                                <span class="text-xs text-gray-500"><?= esc($loan['tipe']); ?></span>
-                                            </div>
-                                        </td>
-                                        <td class="py-4 px-6 text-gray-700 whitespace-nowrap">
-                                            <?= esc($loan['kode']); ?>
-                                        </td>
-                                        <td class="py-4 px-6 text-gray-700 whitespace-nowrap">
-                                            <div class="flex flex-col">
-                                                <span><?= esc($loan['kegiatan']); ?></span>
-                                                <span class="text-xs text-gray-400"><?= date('d M Y', strtotime($loan['tgl_pinjam'])) ?></span>
-                                            </div>
-                                        </td>
-                                        <td class="py-4 px-6 whitespace-nowrap">
-                                            <?php
-                                            $badgeClass = 'font-bold';
-                                            switch ($loan['status']) {
-                                                case 'Diajukan':
-                                                    break;
-                                                case 'Disetujui':
-                                                    break;
-                                                case 'Dipinjam':
-                                                    break;
-                                                case 'Selesai':
-                                                    break;
-                                                case 'Dibatalkan':
-                                                    break;
-                                            }
-                                            ?>
-                                            <span class="text-sm font-bold px-3 py-1 rounded-full <?= $badgeClass ?>">
-                                                <?= esc($loan['status']); ?>
-                                            </span>
-                                        </td>
-                                        <td class="py-4 px-6 whitespace-nowrap text-sm font-medium">
-                                            <?php if ($loan['status'] == 'Diajukan'): ?>
-                                                <form action="<?= site_url('peminjam/peminjaman/delete-item/' . $loan['tipe'] . '/' . $loan['id_detail']) ?>"
-                                                    method="post"
-                                                    onsubmit="return confirm('Batalkan peminjaman untuk item ini saja?');">
-                                                    <?= csrf_field() ?>
-                                                    <button type="submit" class="inline-flex items-center px-3 py-1.5 bg-red-50 text-red-600 hover:bg-red-200 border border-red-300 rounded-lg text-xs font-medium transition-colors">
-                                                        Batal
-                                                    </button>
-                                                </form>
-                                            <?php elseif ($loan['status'] == 'Disetujui' || $loan['status'] == 'Dipinjam'): ?>
-                                                <?php if (empty($loan['foto_sebelum'])): ?>
 
-                                                    <button type="button"
-                                                        onclick="openUploadModal('sebelum', '<?= $loan['tipe'] ?>', '<?= $loan['id_detail'] ?>', '<?= esc($loan['nama_item']) ?>')"
-                                                        class="inline-flex items-center px-3 py-1.5 bg-yellow-100 text-yellow-600 hover:bg-yellow-300 border border-yellow-600 rounded-lg text-xs font-medium transition-colors">
-                                                        Upload Foto <br>SEBELUM<span class="text-red-500 text-xl">*</span>
-                                                    </button>
 
-                                                <?php else: ?>
-                                                    <?php if (empty($loan['foto_sesudah'])): ?>
-                                                        <button type="button"
-                                                            onclick="openUploadModal('sesudah', '<?= $loan['tipe'] ?>', '<?= $loan['id_detail'] ?>', '<?= esc($loan['nama_item']) ?>')"
-                                                            class="inline-flex items-center px-3 py-1.5 bg-green-600 text-white hover:bg-green-700 rounded-lg text-xs font-medium transition-colors">
-                                                            Kembalikan
-                                                        </button>
-                                                    <?php else: ?>
-                                                        <span class="text-gray-500 text-xs italic">Menunggu Verifikasi Admin</span>
-                                                    <?php endif; ?>
 
-                                                <?php endif; ?>
+            <div id="uploadModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+                <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                    <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" onclick="closeUploadModal()"></div>
+                    <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
 
-                                            <?php elseif ($loan['status'] == 'Selesai'): ?>
-                                                <a href="<?= site_url('peminjam/histori-peminjaman/detail/' . esc($loan['id_peminjaman'])) ?>"
-                                                    class="inline-flex items-center px-3 py-1.5 bg-neutral-100 text-neutral-600 hover:bg-neutral-300 border border-neutral-600 rounded-lg text-xs font-medium transition-colors">
-                                                    Lihat Riwayat
-                                                </a>
-                                            <?php else: ?>
-                                                <?php foreach ($peminjaman as $p): ?>
-                                                    <button type="button"
-                                                        onclick="openDetailPenolakanModal(this)"
-                                                        data-alasan="<?= esc($p['keterangan']) ?>"
-                                                        class="inline-flex items-center px-3 py-1.5 bg-neutral-100 text-neutral-600 hover:bg-neutral-300 border border-neutral-600 rounded-lg text-xs font-medium transition-colors">
-                                                        Lihat Alasan..
-                                                    </button>
-                                                <?php endforeach; ?>
-                                            <?php endif; ?>
-                                        </td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
-                        </tbody>
-                    </table>
-                </div>
+                    <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full">
+                        <form id="formUploadBukti" action="" method="post" enctype="multipart/form-data">
+                            <?= csrf_field() ?>
+                            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                                <h3 class="text-lg leading-6 font-medium text-gray-900" id="modalTitle">Upload Bukti</h3>
 
-                <div class="p-4 flex justify-between items-center">
-                    <span class="text-sm text-gray-700">
-                        Menampilkan <span class="font-medium">1-5</span> dari <span class="font-medium">100</span>
-                    </span>
-                    <nav class="flex space-x-1">
-                        <a href="#" class="py-2 px-3 rounded-lg text-gray-600 hover:bg-gray-100">Sebelumnya</a>
-                        <a href="#" class="py-2 px-3 rounded-lg text-gray-600 hover:bg-gray-100">1</a>
-                        <a href="#" class="py-2 px-3 rounded-lg bg-blue-100 text-blue-600 font-medium">2</a>
-                        <a href="#" class="py-2 px-3 rounded-lg text-gray-600 hover:bg-gray-100">3</a>
-                        <a href="#" class="py-2 px-3 rounded-lg text-gray-600 hover:bg-gray-100">Berikutnya</a>
-                    </nav>
-                </div>
+                                <div class="mt-2 space-y-4">
+                                    <p class="text-sm text-gray-500" id="modalDescription"></p>
 
-                <div id="uploadModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-                    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-                        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" onclick="closeUploadModal()"></div>
-                        <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700">Foto Bukti (Wajib)</label>
+                                        <input type="file" name="foto_bukti" required accept="image/*" class="px-2 py-2 mt-1 block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none">
+                                    </div>
 
-                        <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full">
-                            <form id="formUploadBukti" action="" method="post" enctype="multipart/form-data">
-                                <?= csrf_field() ?>
-                                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                                    <h3 class="text-lg leading-6 font-medium text-gray-900" id="modalTitle">Upload Bukti</h3>
-
-                                    <div class="mt-2 space-y-4">
-                                        <p class="text-sm text-gray-500" id="modalDescription"></p>
-
-                                        <div>
-                                            <label class="block text-sm font-medium text-gray-700">Foto Bukti (Wajib)</label>
-                                            <input type="file" name="foto_bukti" required accept="image/*" class="px-2 py-2 mt-1 block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none">
-                                        </div>
-
-                                        <div id="kondisiInputContainer" class="hidden">
-                                            <label class="block text-sm font-medium text-gray-700">Kondisi Barang Saat Ini</label>
-                                            <select name="kondisi_akhir" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                                                <option value="Baik">Baik</option>
-                                                <option value="Rusak Ringan">Rusak Ringan</option>
-                                                <option value="Rusak Berat">Rusak Berat</option>
-                                            </select>
-                                        </div>
+                                    <div id="kondisiInputContainer" class="hidden">
+                                        <label class="block text-sm font-medium text-gray-700">Kondisi Barang Saat Ini</label>
+                                        <select name="kondisi_akhir" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                            <option value="Baik">Baik</option>
+                                            <option value="Rusak Ringan">Rusak Ringan</option>
+                                            <option value="Rusak Berat">Rusak Berat</option>
+                                        </select>
                                     </div>
                                 </div>
-                                <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                                    <button type="submit" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 sm:ml-3 sm:w-auto sm:text-sm">
-                                        Simpan
-                                    </button>
-                                    <button type="button" onclick="closeUploadModal()" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
-                                        Batal
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
+                            </div>
+                            <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                                <button type="submit" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 sm:ml-3 sm:w-auto sm:text-sm">
+                                    Simpan
+                                </button>
+                                <button type="button" onclick="closeUploadModal()" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                                    Batal
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
+            </div>
 
-                <div id="returnModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
-                    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-                        <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" onclick="closeReturnModal()"></div>
-                        <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
+            <div id="returnModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+                <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                    <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" onclick="closeReturnModal()"></div>
+                    <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
 
-                        <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full">
-                            <form id="formReturn" action="" method="post" enctype="multipart/form-data">
-                                <?= csrf_field() ?>
-                                <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                                    <h3 class="text-lg leading-6 font-medium text-gray-900">Form Pengembalian Barang</h3>
-                                    <p class="text-sm text-gray-500 mt-1">Item: <b id="returnItemName"></b></p>
+                    <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full">
+                        <form id="formReturn" action="" method="post" enctype="multipart/form-data">
+                            <?= csrf_field() ?>
+                            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                                <h3 class="text-lg leading-6 font-medium text-gray-900">Form Pengembalian Barang</h3>
+                                <p class="text-sm text-gray-500 mt-1">Item: <b id="returnItemName"></b></p>
 
-                                    <div class="mt-4 space-y-4">
-                                        <div>
-                                            <label class="block text-sm font-medium text-gray-700">Foto Bukti Pengembalian <span class="text-red-500">*</span></label>
-                                            <input type="file" name="foto_sesudah" required accept="image/*" class="mt-1 block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none">
-                                            <p class="text-xs text-gray-500 mt-1">Upload foto kondisi barang saat dikembalikan.</p>
-                                        </div>
+                                <div class="mt-4 space-y-4">
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700">Foto Bukti Pengembalian <span class="text-red-500">*</span></label>
+                                        <input type="file" name="foto_sesudah" required accept="image/*" class="mt-1 block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none">
+                                        <p class="text-xs text-gray-500 mt-1">Upload foto kondisi barang saat dikembalikan.</p>
+                                    </div>
 
-                                        <div>
-                                            <label class="block text-sm font-medium text-gray-700">Kondisi Barang <span class="text-red-500">*</span></label>
-                                            <select name="kondisi_akhir" required class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                                                <option value="Baik">Baik</option>
-                                                <option value="Rusak Ringan">Rusak Ringan</option>
-                                                <option value="Rusak Berat">Rusak Berat</option>
-                                            </select>
-                                        </div>
+                                    <div>
+                                        <label class="block text-sm font-medium text-gray-700">Kondisi Barang <span class="text-red-500">*</span></label>
+                                        <select name="kondisi_akhir" required class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                            <option value="Baik">Baik</option>
+                                            <option value="Rusak Ringan">Rusak Ringan</option>
+                                            <option value="Rusak Berat">Rusak Berat</option>
+                                        </select>
                                     </div>
                                 </div>
-                                <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                                    <button type="submit" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 sm:ml-3 sm:w-auto sm:text-sm">
-                                        Kirim & Kembalikan
-                                    </button>
-                                    <button type="button" onclick="closeReturnModal()" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
-                                        Batal
-                                    </button>
-                                </div>
-                            </form>
-                        </div>
+                            </div>
+                            <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                                <button type="submit" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 sm:ml-3 sm:w-auto sm:text-sm">
+                                    Kirim & Kembalikan
+                                </button>
+                                <button type="button" onclick="closeReturnModal()" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                                    Batal
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
+            </div>
 
-                <!-- Modal Detail Alasan Penolakan -->
-                <div id="detailPenolakanModal" class="fixed inset-0 z-50 items-center justify-center hidden bg-black bg-opacity-50">
-                    <div class="w-full max-w-md p-6 bg-white rounded-lg shadow-lg">
-                        <div class="flex items-center justify-between pb-3 border-b">
-                            <h3 class="text-lg font-semibold text-gray-900">Alasan Penolakan/Pembatalan</h3>
-                            <button onclick="closeDetailPenolakanModal()" class="text-gray-400 hover:text-gray-600">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                                </svg>
-                            </button>
-                        </div>
-                        <div class="mt-4">
-                            <p id="alasanPenolakanText" class="text-sm text-gray-700">
-                                <!-- Alasan akan dimasukkan di sini oleh JavaScript -->
-                            </p>
-                        </div>
-                        <div class="flex justify-end mt-6">
-                            <button onclick="closeDetailPenolakanModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
-                                Tutup
-                            </button>
-                        </div>
+            <!-- Modal Detail Alasan Penolakan -->
+            <div id="detailPenolakanModal" class="fixed inset-0 z-50 items-center justify-center hidden bg-black bg-opacity-50">
+                <div class="w-full max-w-md p-6 bg-white rounded-lg shadow-lg">
+                    <div class="flex items-center justify-between pb-3 border-b">
+                        <h3 class="text-lg font-semibold text-gray-900">Alasan Penolakan/Pembatalan</h3>
+                        <button onclick="closeDetailPenolakanModal()" class="text-gray-400 hover:text-gray-600">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="mt-4">
+                        <p id="alasanPenolakanText" class="text-sm text-gray-700">
+                            <!-- Alasan akan dimasukkan di sini oleh JavaScript -->
+                        </p>
+                    </div>
+                    <div class="flex justify-end mt-6">
+                        <button onclick="closeDetailPenolakanModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+                            Tutup
+                        </button>
                     </div>
                 </div>
-
             </div>
 
         </main>

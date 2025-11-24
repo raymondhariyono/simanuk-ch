@@ -1,5 +1,9 @@
 <?= $this->extend('layout/template'); ?>
 
+<?= $this->section('title'); ?>
+<?= esc($title); ?>
+<?= $this->endSection(); ?>
+
 <?= $this->section('content'); ?>
 <div class="container px-6 py-8 mx-auto">
    <h2 class="text-2xl font-semibold text-gray-700 mb-6">Verifikasi Pengembalian</h2>

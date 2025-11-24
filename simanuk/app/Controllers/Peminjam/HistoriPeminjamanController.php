@@ -78,7 +78,18 @@ class HistoriPeminjamanController extends BaseController
                 $dataItem = [
                     'id_peminjaman' => $id,
                     'nama_item'     => $item['nama_sarana'],
-                    // ... (sisanya sama seperti kode lama Anda) ...
+                    'id_detail'     => $item['id_detail_sarana'],
+                    'nama_item'     => $item['nama_sarana'],
+                    'kode'          => $item['kode_sarana'],
+                    'kegiatan'      => $pinjam['kegiatan'],
+                    'tgl_pinjam'    => $pinjam['tgl_pinjam_dimulai'],
+                    'tgl_selesai'   => $pinjam['tgl_pinjam_selesai'], // tambahan untuk history
+                    'status'        => $status,
+                    'foto_sebelum'  => $item['foto_sebelum'],
+                    'foto_sesudah'  => $item['foto_sesudah'],
+                    'keterangan'    => $pinjam['keterangan'],
+                    // Tentukan jenis aksi berdasarkan status
+                    'aksi'          => $this->determineAction($pinjam['status_peminjaman_global']),
                     'tipe'          => 'Sarana'
                 ];
 
@@ -90,8 +101,17 @@ class HistoriPeminjamanController extends BaseController
             foreach ($detailsPrasarana as $item) {
                 $dataItem = [
                     'id_peminjaman' => $id,
+                    'id_detail'     => $item['id_detail_prasarana'],
                     'nama_item'     => $item['nama_prasarana'],
-                    // ... (sisanya sama seperti kode lama Anda) ...
+                    'kode'          => $item['kode_prasarana'],
+                    'kegiatan'      => $pinjam['kegiatan'],
+                    'tgl_pinjam'    => $pinjam['tgl_pinjam_dimulai'],
+                    'tgl_selesai'   => $pinjam['tgl_pinjam_selesai'], // tambahan untuk history
+                    'status'        => $status,
+                    'foto_sebelum'  => $item['foto_sebelum'],
+                    'foto_sesudah'  => $item['foto_sesudah'],
+                    'keterangan'    => $pinjam['keterangan'],
+                    'aksi'          => $this->determineAction($pinjam['status_peminjaman_global']),
                     'tipe'          => 'Prasarana'
                 ];
 
