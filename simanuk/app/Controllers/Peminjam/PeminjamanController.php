@@ -67,10 +67,17 @@ class PeminjamanController extends BaseController
          return redirect()->back()->withInput()->with('error', 'Tanggal selesai tidak boleh lebih awal dari tanggal mulai.');
       }
 
-      // ambil input 
+      // 2. ambil input tiap item
+      // operator ?? [] akan memastikan variabel menjadi array kosong, jika tidak ada input
+      $rawItems = $this->request->getPost('items');
       $itemsSarana = $this->request->getPost('items')['sarana'] ?? [];
       $itemsJumlah = $this->request->getPost('items')['jumlah'] ?? [];
       $itemsPrasarana = $this->request->getPost('items')['prasarana'] ?? [];
+
+      // Filter array kosong (jika ada input hidden atau bug di frontend)
+      $itemsSarana = array_filter($itemsSarana);
+      $itemsPrasarana = array_filter($itemsPrasarana);
+
       // Validasi: Pastikan User memilih setidaknya 1 Sarana ATAU 1 Prasarana
       if (empty($itemsSarana) && empty($itemsPrasarana)) {
          return redirect()->back()->withInput()->with('error', 'Pilih setidaknya satu Sarana atau Prasarana.');
@@ -173,7 +180,7 @@ class PeminjamanController extends BaseController
          return redirect()->to(site_url('peminjam/histori-peminjaman'))->with('message', 'Pengajuan peminjaman berhasil dibuat.');
       } catch (\Exception $e) {
          $db->transRollback();
-         return redirect()->back()->withInput()->with('error', 'Pilih setidaknya satu Sarana atau Prasarana.');
+         return redirect()->back()->withInput()->with('error', 'Pilih setidaknya satu Sarana atau Prasarana..');
       }
    }
 

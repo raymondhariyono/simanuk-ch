@@ -58,6 +58,100 @@
                 </div>
             </div>
 
+            <div class="mb-6 border-b border-gray-200">
+                <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="myTab" data-tabs-toggle="#myTabContent" role="tablist">
+                    <li class="mr-2" role="presentation">
+                        <button class="inline-block p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300 text-blue-600 border-blue-600"
+                            id="active-tab" data-tabs-target="#active" type="button" role="tab" aria-controls="active" aria-selected="true">
+                            Peminjaman Aktif
+                            <?php if (count($activeLoans) > 0): ?>
+                                <span class="ml-2 bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded-full"><?= count($activeLoans) ?></span>
+                            <?php endif; ?>
+                        </button>
+                    </li>
+                    <li class="mr-2" role="presentation">
+                        <button class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 text-gray-500"
+                            id="history-tab" data-tabs-target="#history" type="button" role="tab" aria-controls="history" aria-selected="false">
+                            Riwayat Selesai
+                        </button>
+                    </li>
+                </ul>
+            </div>
+
+            <div id="myTabContent">
+
+                <div class="" id="active" role="tabpanel" aria-labelledby="active-tab">
+                    <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                    </div>
+                </div>
+
+                <div class="hidden" id="history" role="tabpanel" aria-labelledby="history-tab">
+                    <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full min-w-max">
+                                <thead class="bg-gray-100 border-b border-gray-200">
+                                    <tr>
+                                        <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase">Nama Item</th>
+                                        <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase">Kegiatan</th>
+                                        <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase">Tanggal</th>
+                                        <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                                        <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-200">
+                                    <?php if (empty($historyLoans)) : ?>
+                                        <tr>
+                                            <td colspan="5" class="py-6 px-6 text-center text-gray-500">Belum ada riwayat peminjaman.</td>
+                                        </tr>
+                                    <?php else : ?>
+                                        <?php foreach ($historyLoans as $loan) : ?>
+                                            <tr class="hover:bg-gray-50 transition">
+                                                <td class="py-4 px-6">
+                                                    <div class="flex flex-col">
+                                                        <span class="font-medium text-gray-900"><?= esc($loan['nama_item']); ?></span>
+                                                        <span class="text-xs text-gray-500"><?= esc($loan['tipe']); ?> (<?= esc($loan['kode']); ?>)</span>
+                                                    </div>
+                                                </td>
+                                                <td class="py-4 px-6 text-sm text-gray-700"><?= esc($loan['kegiatan']); ?></td>
+                                                <td class="py-4 px-6 text-sm text-gray-500">
+                                                    <?= date('d M Y', strtotime($loan['tgl_selesai'])) ?>
+                                                </td>
+                                                <td class="py-4 px-6">
+                                                    <?php
+                                                    $color = 'bg-gray-100 text-gray-800';
+                                                    if ($loan['status'] == 'Selesai') $color = 'bg-green-100 text-green-800';
+                                                    if ($loan['status'] == 'Ditolak') $color = 'bg-red-100 text-red-800';
+                                                    if ($loan['status'] == 'Dibatalkan') $color = 'bg-gray-200 text-gray-600';
+                                                    ?>
+                                                    <span class="text-xs font-bold px-3 py-1 rounded-full <?= $color ?>">
+                                                        <?= esc($loan['status']); ?>
+                                                    </span>
+                                                </td>
+                                                <td class="py-4 px-6">
+                                                    <?php if ($loan['status'] == 'Selesai'): ?>
+                                                        <a href="<?= site_url('peminjam/histori-peminjaman/detail/' . esc($loan['id_peminjaman'])) ?>"
+                                                            class="inline-flex items-center px-3 py-1.5 bg-neutral-100 text-neutral-600 hover:bg-neutral-300 border border-neutral-600 rounded-lg text-xs font-medium transition-colors">
+                                                            Lihat Riwayat
+                                                        </a>
+                                                    <?php else: ?>
+                                                        <button type="button"
+                                                            onclick="openDetailPenolakanModal(this)"
+                                                            data-alasan="<?= esc($loan['keterangan']) ?>"
+                                                            class="inline-flex items-center px-3 py-1.5 bg-neutral-100 text-neutral-600 hover:bg-neutral-300 border border-neutral-600 rounded-lg text-xs font-medium transition-colors">
+                                                            Lihat Alasan
+                                                        </button>
+                                                    <?php endif; ?>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    <?php endif; ?>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <div class="bg-white rounded-lg shadow-lg overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="w-full min-w-max">
@@ -71,14 +165,14 @@
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200">
-                            <?php if (empty($loans)) : ?>
+                            <?php if (empty($activeLoans)) : ?>
                                 <tr>
                                     <td colspan="5" class="py-6 px-6 text-center text-gray-500">
                                         Belum ada data peminjaman.
                                     </td>
                                 </tr>
                             <?php else : ?>
-                                <?php foreach ($loans as $loan) : ?>
+                                <?php foreach ($activeLoans as $loan) : ?>
                                     <tr class="hover:bg-gray-50 transition">
                                         <td class="py-4 px-6 whitespace-nowrap">
                                             <div class="flex flex-col">
@@ -158,7 +252,7 @@
                                                         onclick="openDetailPenolakanModal(this)"
                                                         data-alasan="<?= esc($p['keterangan']) ?>"
                                                         class="inline-flex items-center px-3 py-1.5 bg-neutral-100 text-neutral-600 hover:bg-neutral-300 border border-neutral-600 rounded-lg text-xs font-medium transition-colors">
-                                                        Lihat Alasan
+                                                        Lihat Alasan..
                                                     </button>
                                                 <?php endforeach; ?>
                                             <?php endif; ?>
@@ -298,6 +392,38 @@
 </div>
 
 <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const activeTab = document.getElementById('active-tab');
+        const historyTab = document.getElementById('history-tab');
+        const activeContent = document.getElementById('active');
+        const historyContent = document.getElementById('history');
+
+        function switchTab(showActive) {
+            if (showActive) {
+                activeContent.classList.remove('hidden');
+                historyContent.classList.add('hidden');
+
+                activeTab.classList.add('text-blue-600', 'border-blue-600');
+                activeTab.classList.remove('text-gray-500', 'border-transparent');
+
+                historyTab.classList.add('text-gray-500', 'border-transparent');
+                historyTab.classList.remove('text-blue-600', 'border-blue-600');
+            } else {
+                activeContent.classList.add('hidden');
+                historyContent.classList.remove('hidden');
+
+                historyTab.classList.add('text-blue-600', 'border-blue-600');
+                historyTab.classList.remove('text-gray-500', 'border-transparent');
+
+                activeTab.classList.add('text-gray-500', 'border-transparent');
+                activeTab.classList.remove('text-blue-600', 'border-blue-600');
+            }
+        }
+
+        activeTab.addEventListener('click', () => switchTab(true));
+        historyTab.addEventListener('click', () => switchTab(false));
+    });
+
     // upload-foto-sebelum
     function openUploadModal(jenis, tipeItem, idDetail, namaItem) {
         const form = document.getElementById('formUploadBukti');
