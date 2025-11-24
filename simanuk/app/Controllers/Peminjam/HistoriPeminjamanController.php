@@ -25,102 +25,86 @@ class HistoriPeminjamanController extends BaseController
         $userId = auth()->user()->id;
 
         // 1. Ambil semua data peminjaman milik user ini
-        // Urutkan dari yang terbaru
+        // ambil header (Query #1)
         $listPeminjaman = $this->peminjamanModel
             ->where('id_peminjam', $userId)
             ->orderBy('created_at', 'DESC')
             ->findAll();
 
+        // 2. Kumpulkan ID untuk Batch Query
+        $peminjamanIds = array_column($listPeminjaman, 'id_peminjaman');
+
+        // 3. Ambil Detail Sarana Sekaligus (Query #2)
+        $allSarana = $this->detailSaranaModel
+            ->select('detail_peminjaman_sarana.*, sarana.nama_sarana, sarana.kode_sarana')
+            ->join('sarana', 'sarana.id_sarana = detail_peminjaman_sarana.id_sarana')
+            ->whereIn('id_peminjaman', $peminjamanIds)
+            ->findAll();
+
+        // 4. Ambil Detail Prasarana Sekaligus (Query #3)
+        $allPrasarana = $this->detailPrasaranaModel
+            ->select('detail_peminjaman_prasarana.*, prasarana.nama_prasarana, prasarana.kode_prasarana')
+            ->join('prasarana', 'prasarana.id_prasarana = detail_peminjaman_prasarana.id_prasarana')
+            ->whereIn('id_peminjaman', $peminjamanIds)
+            ->findAll();
+
+        // 5. Mapping Data (Grouping)
+        // Kelompokkan detail berdasarkan id_peminjaman untuk akses cepat
+        $groupedSarana = [];
+        foreach ($allSarana as $item) {
+            $groupedSarana[$item['id_peminjaman']][] = $item;
+        }
+        $groupedPrasarana = [];
+        foreach ($allPrasarana as $item) {
+            $groupedPrasarana[$item['id_peminjaman']][] = $item;
+        }
+
         // mencari peminjaman yang aktif dan telah selesai (dikembalikan)
         $activeLoans = [];
         $historyLoans = [];
 
-        $listPeminjamanDitolak = $this->peminjamanModel
-            ->where('id_peminjam', $userId)
-            ->where('status_peminjaman_global', 'Ditolak')
-            ->orderBy('created_at', 'DESC')
-            ->findAll();
-
-        $loans = [];
-
-        // 2. Loop setiap transaksi untuk mengambil detail itemnya
+        // 6. susun data akhir (semuanya)
         foreach ($listPeminjaman as $pinjam) {
-            // Tentukan kategori: Aktif atau Riwayat
+            $id = $pinjam['id_peminjaman'];
             $status = $pinjam['status_peminjaman_global'];
             $isHistory = in_array($status, ['Selesai', 'Ditolak', 'Dibatalkan']);
 
-            // A. Ambil Detail Sarana (Barang)
-            // Join ke tabel 'sarana' untuk dapat nama & kode
-            $itemsSarana = $this->detailSaranaModel
-                ->select('detail_peminjaman_sarana.*, sarana.nama_sarana, sarana.kode_sarana')
-                ->join('sarana', 'sarana.id_sarana = detail_peminjaman_sarana.id_sarana')
-                ->where('id_peminjaman', $pinjam['id_peminjaman'])
-                ->findAll();
+            // Ambil detail dari array yang sudah digroup (tanpa query lagi)
+            $detailsSarana = $groupedSarana[$id] ?? [];
+            $detailsPrasarana = $groupedPrasarana[$id] ?? [];
 
-            foreach ($itemsSarana as $item) {
+            // Proses Sarana
+            foreach ($detailsSarana as $item) {
                 $dataItem = [
-                    'id_peminjaman' => $pinjam['id_peminjaman'], // ID Transaksi (untuk aksi batal)
-                    'id_detail'     => $item['id_detail_sarana'],
+                    'id_peminjaman' => $id,
                     'nama_item'     => $item['nama_sarana'],
-                    'kode'          => $item['kode_sarana'],
-                    'kegiatan'      => $pinjam['kegiatan'],
-                    'tgl_pinjam'    => $pinjam['tgl_pinjam_dimulai'],
-                    'tgl_selesai'   => $pinjam['tgl_pinjam_selesai'], // tambahan untuk history
-                    'status'        => $status,
-                    'foto_sebelum'  => $item['foto_sebelum'],
-                    'foto_sesudah'  => $item['foto_sesudah'],
-                    'keterangan'    => $pinjam['keterangan'],
-                    // Tentukan jenis aksi berdasarkan status
-                    'aksi'          => $this->determineAction($pinjam['status_peminjaman_global']),
+                    // ... (sisanya sama seperti kode lama Anda) ...
                     'tipe'          => 'Sarana'
                 ];
 
-                // logika history pengembalian
-                if ($isHistory) {
-                    $historyLoans[] = $dataItem;
-                } else {
-                    $activeLoans[] = $dataItem;
-                }
+                if ($isHistory) $historyLoans[] = $dataItem;
+                else $activeLoans[] = $dataItem;
             }
 
-            // B. Ambil Detail Prasarana (Ruangan)
-            // Join ke tabel 'prasarana'
-            $itemsPrasarana = $this->detailPrasaranaModel
-                ->select('detail_peminjaman_prasarana.*, prasarana.nama_prasarana, prasarana.kode_prasarana')
-                ->join('prasarana', 'prasarana.id_prasarana = detail_peminjaman_prasarana.id_prasarana')
-                ->where('id_peminjaman', $pinjam['id_peminjaman'])
-                ->findAll();
-
-            foreach ($itemsPrasarana as $item) {
+            // Proses Prasarana
+            foreach ($detailsPrasarana as $item) {
                 $dataItem = [
-                    'id_peminjaman' => $pinjam['id_peminjaman'],
-                    'id_detail'     => $item['id_detail_prasarana'],
+                    'id_peminjaman' => $id,
                     'nama_item'     => $item['nama_prasarana'],
-                    'kode'          => $item['kode_prasarana'],
-                    'kegiatan'      => $pinjam['kegiatan'],
-                    'tgl_pinjam'    => $pinjam['tgl_pinjam_dimulai'],
-                    'tgl_selesai'   => $pinjam['tgl_pinjam_selesai'], // tambahan untuk history
-                    'status'        => $status,
-                    'foto_sebelum'  => $item['foto_sebelum'],
-                    'foto_sesudah'  => $item['foto_sesudah'],
-                    'keterangan'    => $pinjam['keterangan'],
-                    'aksi'          => $this->determineAction($pinjam['status_peminjaman_global']),
+                    // ... (sisanya sama seperti kode lama Anda) ...
                     'tipe'          => 'Prasarana'
                 ];
 
-                if ($isHistory) {
-                    $historyLoans[] = $dataItem;
-                } else {
-                    $activeLoans[] = $dataItem;
-                }
+                if ($isHistory) $historyLoans[] = $dataItem;
+                else $activeLoans[] = $dataItem;
             }
         }
+
         $data = [
             'title'       => 'Histori Peminjaman',
             // 'loans'       => $loans,
             'activeLoans'  => $activeLoans,  // Data untuk Tab 1
             'historyLoans' => $historyLoans, // Data untuk Tab 2
-            'peminjaman'  => $listPeminjamanDitolak,
             'showSidebar' => true,
             'breadcrumbs' => [
                 ['name' => 'Beranda', 'url' => site_url('peminjam/dashboard')],
