@@ -198,7 +198,7 @@ class SaranaController extends BaseController
                   $file->move(FCPATH . 'uploads/sarana', $newName);
 
                   // Simpan path ke database
-                  if ($fotoModel->save([
+                  if (dd([
                      'id_sarana'    => $id_sarana_baru,
                      'id_prasarana' => null,
                      'url_foto'     => 'uploads/sarana/' . $newName,

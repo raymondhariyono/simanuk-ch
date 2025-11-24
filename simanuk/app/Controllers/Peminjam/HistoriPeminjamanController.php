@@ -31,6 +31,10 @@ class HistoriPeminjamanController extends BaseController
             ->orderBy('created_at', 'DESC')
             ->findAll();
 
+        // mencari peminjaman yang aktif dan telah selesai (dikembalikan)
+        $activeLoans = [];
+        $historyLoans = [];
+
         $listPeminjamanDitolak = $this->peminjamanModel
             ->where('id_peminjam', $userId)
             ->where('status_peminjaman_global', 'Ditolak')
@@ -41,6 +45,9 @@ class HistoriPeminjamanController extends BaseController
 
         // 2. Loop setiap transaksi untuk mengambil detail itemnya
         foreach ($listPeminjaman as $pinjam) {
+            // Tentukan kategori: Aktif atau Riwayat
+            $status = $pinjam['status_peminjaman_global'];
+            $isHistory = in_array($status, ['Selesai', 'Ditolak', 'Dibatalkan']);
 
             // A. Ambil Detail Sarana (Barang)
             // Join ke tabel 'sarana' untuk dapat nama & kode
@@ -51,21 +58,29 @@ class HistoriPeminjamanController extends BaseController
                 ->findAll();
 
             foreach ($itemsSarana as $item) {
-                $loans[] = [
+                $dataItem = [
                     'id_peminjaman' => $pinjam['id_peminjaman'], // ID Transaksi (untuk aksi batal)
                     'id_detail'     => $item['id_detail_sarana'],
                     'nama_item'     => $item['nama_sarana'],
                     'kode'          => $item['kode_sarana'],
                     'kegiatan'      => $pinjam['kegiatan'],
-                    'tgl_pinjam'    => $pinjam['tgl_pinjam_dimulai'], // Opsional: bisa ditampilkan
-                    // Gunakan status global untuk user
-                    'status'        => $pinjam['status_peminjaman_global'],
+                    'tgl_pinjam'    => $pinjam['tgl_pinjam_dimulai'],
+                    'tgl_selesai'   => $pinjam['tgl_pinjam_selesai'], // tambahan untuk history
+                    'status'        => $status,
                     'foto_sebelum'  => $item['foto_sebelum'],
                     'foto_sesudah'  => $item['foto_sesudah'],
+                    'keterangan'    => $pinjam['keterangan'],
                     // Tentukan jenis aksi berdasarkan status
                     'aksi'          => $this->determineAction($pinjam['status_peminjaman_global']),
                     'tipe'          => 'Sarana'
                 ];
+
+                // logika history pengembalian
+                if ($isHistory) {
+                    $historyLoans[] = $dataItem;
+                } else {
+                    $activeLoans[] = $dataItem;
+                }
             }
 
             // B. Ambil Detail Prasarana (Ruangan)
@@ -77,24 +92,34 @@ class HistoriPeminjamanController extends BaseController
                 ->findAll();
 
             foreach ($itemsPrasarana as $item) {
-                $loans[] = [
+                $dataItem = [
                     'id_peminjaman' => $pinjam['id_peminjaman'],
                     'id_detail'     => $item['id_detail_prasarana'],
                     'nama_item'     => $item['nama_prasarana'],
                     'kode'          => $item['kode_prasarana'],
                     'kegiatan'      => $pinjam['kegiatan'],
                     'tgl_pinjam'    => $pinjam['tgl_pinjam_dimulai'],
-                    'status'        => $pinjam['status_peminjaman_global'],
+                    'tgl_selesai'   => $pinjam['tgl_pinjam_selesai'], // tambahan untuk history
+                    'status'        => $status,
                     'foto_sebelum'  => $item['foto_sebelum'],
                     'foto_sesudah'  => $item['foto_sesudah'],
+                    'keterangan'    => $pinjam['keterangan'],
                     'aksi'          => $this->determineAction($pinjam['status_peminjaman_global']),
                     'tipe'          => 'Prasarana'
                 ];
+
+                if ($isHistory) {
+                    $historyLoans[] = $dataItem;
+                } else {
+                    $activeLoans[] = $dataItem;
+                }
             }
         }
         $data = [
             'title'       => 'Histori Peminjaman',
-            'loans'       => $loans,
+            // 'loans'       => $loans,
+            'activeLoans'  => $activeLoans,  // Data untuk Tab 1
+            'historyLoans' => $historyLoans, // Data untuk Tab 2
             'peminjaman'  => $listPeminjamanDitolak,
             'showSidebar' => true,
             'breadcrumbs' => [
@@ -102,6 +127,7 @@ class HistoriPeminjamanController extends BaseController
                 ['name' => 'Histori Peminjaman'],
             ]
         ];
+
 
         // Memuat file view yang akan kita buat selanjutnya
         return view('peminjam/histori_peminjaman_view', $data);
@@ -143,15 +169,12 @@ class HistoriPeminjamanController extends BaseController
             'peminjaman' => $peminjaman,
             'itemsSarana' => $itemsSarana,
             'itemsPrasarana' => $itemsPrasarana,
-            'showSidebar' => true,
             'breadcrumbs' => [
                 ['name' => 'Beranda', 'url' => site_url('peminjam/dashboard')],
                 ['name' => 'Histori', 'url' => site_url('peminjam/histori-peminjaman')],
                 ['name' => 'Detail Peminjaman'],
             ]
         ];
-
-        // dd($peminjaman);
 
         // Arahkan ke view detail_peminjaman_view.php
         return view('peminjam/detail_peminjaman_view', $data);
