@@ -198,7 +198,7 @@ class SaranaController extends BaseController
                   $file->move(FCPATH . 'uploads/sarana', $newName);
 
                   // Simpan path ke database
-                  if (dd([
+                  if ($fotoModel->save([
                      'id_sarana'    => $id_sarana_baru,
                      'id_prasarana' => null,
                      'url_foto'     => 'uploads/sarana/' . $newName,
@@ -222,7 +222,7 @@ class SaranaController extends BaseController
          return redirect()->to(site_url('admin/inventaris'))->with('message', 'Data Sarana dan Foto berhasil disimpan.');
       } catch (\Exception $e) {
          // Tangkap error tak terduga
-         return redirect()->back()->withInput()->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+         return redirect()->back()->withInput()->with('error', 'Terjadi kesalahan: ' . $e->getMessage() . ' ya');
       }
 
       return redirect()->to(site_url('admin/inventaris'))->with('message', 'Data berhasil disimpan.');
@@ -332,16 +332,9 @@ class SaranaController extends BaseController
                      'url_foto'     => 'uploads/sarana/' . $newName,
                      'deskripsi'    => $file->getClientName()
                   ]) === false) {
-                     // DEBUG: Lihat errornya jika gagal simpan
-                     dd($fotoModel->errors());
+                     // Trigger rollback manual atau throw exception agar ditangkap catch
+                     throw new \Exception('Gagal menyimpan foto: ' . implode(', ', $fotoModel->errors()));
                   }
-
-                  // $fotoModel->save([
-                  //    'id_sarana'    => $id_sarana_baru,
-                  //    'id_prasarana' => null, // Pastikan ini null
-                  //    'url_foto'     => 'uploads/sarana/' . $newName,
-                  //    'deskripsi'    => $file->getClientName() // Opsional: simpan nama asli sbg deskripsi
-                  // ]);
                }
             }
          }
