@@ -23,7 +23,7 @@ class LaporanKerusakanController extends BaseController
       $prasarana = $this->prasaranaModel->getPrasaranaForKatalog();
 
       $data = [
-         'title' => 'Katalog Sarpras',
+         'title' => 'Kelola Laporan Kerusakan',
          'sarana' => $sarana,
          'prasarana' => $prasarana,
          'showSidebar' => true, // flag untuk sidebar
