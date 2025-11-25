@@ -7,7 +7,7 @@ use App\Models\Peminjaman\PeminjamanModel;
 use App\Models\Peminjaman\DetailPeminjamanSaranaModel;
 use App\Models\Peminjaman\DetailPeminjamanPrasaranaModel;
 use App\Models\Sarpras\SaranaModel;
-use App\Models\Sarpras\PrasaranaModel; // Uncomment jika sudah menangani prasarana
+use App\Models\Sarpras\PrasaranaModel;
 
 use App\Services\PeminjamanService;
 
@@ -22,8 +22,6 @@ class PeminjamanController extends BaseController
    protected $prasaranaModel;
 
    protected $peminjamanService;
-
-   // protected $helpers = ['upload'];
 
    public function __construct()
    {
