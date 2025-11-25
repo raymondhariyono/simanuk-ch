@@ -64,13 +64,13 @@
                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z" />
             </svg>
             <span>Verifikasi Peminjaman</span>
+            <?= view_cell('App\Cells\NotificationCell::renderBadge') ?>
          </a>
          <a href="<?= site_url('tu/verifikasi-pengembalian') ?>" class="<?= getLinkClasses('tu/verifikasi-pengembalian') ?>">
             <svg class="w-6 h-6 <?= getIconClasses('tu/verifikasi-pengembalian') ?>" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                <path stroke-linecap="round" stroke-linejoin="round" d="M10.125 2.25h-4.5c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125v-9M10.125 2.25h.375m0 0l3.004 3.004m-3.004-3.004v3.75m0 0h3.75m-3.75 0h.375m0 0l3.004 3.004M16.125 21.75l1.623-2.435a1.125 1.125 0 011.609-.31l1.13 1.13a1.125 1.125 0 001.761-.31l1.623-2.435m-5.132 4.075L16.125 21.75m-2.625-4.125l1.623-2.435a1.125 1.125 0 011.609-.31l1.13 1.13a1.125 1.125 0 001.761-.31l1.623-2.435m-5.132 4.075L13.5 17.625" />
             </svg>
             <span>Verifikasi Pengembalian</span>
-            <?= view_cell('App\Cells\NotificationCell::renderBadge') ?>
          </a>
          <a href="<?= site_url('tu/kelola-laporan-kerusakan') ?>" class="<?= getLinkClasses('tu/kelola-laporan-kerusakan') ?>">
             <svg class="w-6 h-6 <?= getIconClasses('tu/kelola-laporan-kerusakan') ?>" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">

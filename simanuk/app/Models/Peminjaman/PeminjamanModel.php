@@ -41,4 +41,20 @@ class PeminjamanModel extends Model
          ->orderBy('created_at', 'DESC')
          ->findAll();
    }
+
+   /**
+    * Mengecek apakah user memiliki peminjaman yang terlambat dikembalikan.
+    * Syarat Terlambat:
+    * 1. Status Global = 'Dipinjam' (Artinya barang masih di user)
+    * 2. Tanggal Selesai < Waktu Sekarang (Sudah lewat tenggat)
+    * * @param int $userId
+    * @return int Jumlah transaksi yang overdue
+    */
+   public function hasOverdueLoans(int $userId): int
+   {
+      return $this->where('id_peminjam', $userId)
+         ->where('status_peminjaman_global', self::STATUS_DIPINJAM) // Pastikan pakai konstanta 'Dipinjam'
+         ->where('tgl_pinjam_selesai <', date('Y-m-d H:i:s'))
+         ->countAllResults();
+   }
 }
