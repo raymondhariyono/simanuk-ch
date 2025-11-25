@@ -61,6 +61,18 @@
                               <td class="p-3 font-mono text-sm text-gray-500"><?= esc($item['kode_sarana']) ?></td>
                               <td class="p-3 text-center font-bold"><?= esc($item['jumlah']) ?></td>
                            </tr>
+                           <?php if ($peminjaman['status_peminjaman_global'] == 'Diajukan' && !empty($item['foto_sebelum'])) : ?>
+                              <div class="text-center">
+                                 <p class="text-xs font-bold text-gray-500 mb-2">FOTO SEBELUM (SAAT AMBIL)</p>
+                                 <?php if ($item['foto_sebelum']): ?>
+                                    <a href="<?= base_url($item['foto_sebelum']) ?>" target="_blank">
+                                       <img src="<?= base_url($item['foto_sebelum']) ?>" class="h-32 mx-auto object-cover rounded border border-gray-300 hover:opacity-75 transition">
+                                    </a>
+                                 <?php else: ?>
+                                    <div class="h-32 flex items-center justify-center text-gray-400 text-xs border border-dashed border-gray-300">Tidak ada foto</div>
+                                 <?php endif; ?>
+                              </div>
+                           <?php endif; ?>
                         <?php endforeach; ?>
                      </tbody>
                   </table>

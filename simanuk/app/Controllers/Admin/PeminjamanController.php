@@ -106,7 +106,7 @@ class PeminjamanController extends BaseController
    {
       $peminjaman = $this->peminjamanModel->find($id);
 
-      if (!$peminjaman || $peminjaman['status_peminjaman_global'] != 'Diajukan') {
+      if (!$peminjaman || $peminjaman['status_peminjaman_global'] != PeminjamanModel::STATUS_DIAJUKAN) {
          return redirect()->back()->with('error', 'Data tidak valid atau sudah diproses.');
       }
 

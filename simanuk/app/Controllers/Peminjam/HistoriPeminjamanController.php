@@ -132,7 +132,6 @@ class HistoriPeminjamanController extends BaseController
             ]
         ];
 
-
         // Memuat file view yang akan kita buat selanjutnya
         return view('peminjam/histori_peminjaman_view', $data);
     }
