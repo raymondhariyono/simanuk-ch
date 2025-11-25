@@ -31,7 +31,7 @@ class VerifikasiPeminjamanController extends BaseController
         $dataPeminjaman = $this->peminjamanModel
             ->select('peminjaman.*, users.username, users.nama_lengkap, users.organisasi')
             ->join('users', 'users.id = peminjaman.id_peminjam')
-            ->where('status_peminjaman_global', 'Diajukan')
+            ->where('status_peminjaman_global', PeminjamanModel::STATUS_DIAJUKAN)
             ->orderBy('created_at', 'DESC')
             ->findAll();
 
@@ -107,9 +107,9 @@ class VerifikasiPeminjamanController extends BaseController
             }
 
             $this->peminjamanModel->update($id, [
-                'status_verifikasi'        => 'Disetujui',
-                'status_persetujuan'       => 'Disetujui',
-                'status_peminjaman_global' => 'Disetujui', 
+                'status_verifikasi'        => PeminjamanModel::STATUS_DISETUJUI,
+                'status_persetujuan'       => PeminjamanModel::STATUS_DISETUJUI,
+                'status_peminjaman_global' => PeminjamanModel::STATUS_DISETUJUI, 
                 'id_tu_approver'           => auth()->user()->id
             ]);
 
@@ -135,9 +135,9 @@ class VerifikasiPeminjamanController extends BaseController
         $keteranganBaru = $peminjaman['keterangan'] . " [DITOLAK TU: $alasan]";
 
         $this->peminjamanModel->update($id, [
-            'status_verifikasi'        => 'Ditolak',
-            'status_persetujuan'       => 'Ditolak',
-            'status_peminjaman_global' => 'Ditolak',
+            'status_verifikasi'        => PeminjamanModel::STATUS_DITOLAK,
+            'status_persetujuan'       => PeminjamanModel::STATUS_DITOLAK,
+            'status_peminjaman_global' => PeminjamanModel::STATUS_DITOLAK,
             'keterangan'               => $keteranganBaru,
             'id_tu_approver'           => auth()->user()->id
         ]);
@@ -153,7 +153,7 @@ class VerifikasiPeminjamanController extends BaseController
         $dataPeminjaman = $this->peminjamanModel
             ->select('peminjaman.*, users.nama_lengkap, users.organisasi')
             ->join('users', 'users.id = peminjaman.id_peminjam')
-            ->where('status_peminjaman_global', 'Dipinjam') 
+            ->where('status_peminjaman_global', PeminjamanModel::STATUS_DIPINJAM) 
             ->orderBy('tgl_pinjam_selesai', 'ASC')
             ->findAll();
 
@@ -190,7 +190,7 @@ class VerifikasiPeminjamanController extends BaseController
             }
 
             $this->peminjamanModel->update($id, [
-                'status_peminjaman_global' => 'Selesai',
+                'status_peminjaman_global' => PeminjamanModel::STATUS_SELESAI,
                 'updated_at'               => date('Y-m-d H:i:s')
             ]);
 

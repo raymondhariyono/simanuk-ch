@@ -38,7 +38,7 @@ class PengembalianController extends BaseController
       $peminjaman = $this->peminjamanModel
          ->select('peminjaman.*, users.username, users.nama_lengkap, users.organisasi')
          ->join('users', 'users.id = peminjaman.id_peminjam')
-         ->where('status_peminjaman_global', 'Dipinjam')
+         ->where('status_peminjaman_global', PeminjamanModel::STATUS_DIPINJAM)
          ->orderBy('tgl_pinjam_selesai', 'ASC') // deadline yang paling dekat berada di atas
          ->findAll();
 
@@ -137,7 +137,7 @@ class PengembalianController extends BaseController
 
          // 3. UPDATE STATUS GLOBAL -> SELESAI
          $this->peminjamanModel->update($id, [
-            'status_peminjaman_global' => 'Selesai',
+            'status_peminjaman_global' => PeminjamanModel::STATUS_SELESAI,
             // Opsional: Catat tanggal pengembalian aktual admin
             'updated_at' => date('Y-m-d H:i:s') 
          ]);

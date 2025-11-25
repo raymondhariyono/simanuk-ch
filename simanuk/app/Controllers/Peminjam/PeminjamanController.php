@@ -76,9 +76,26 @@ class PeminjamanController extends BaseController
 
          return redirect()->to(site_url('peminjam/histori-peminjaman'))
             ->with('message', 'Pengajuan peminjaman berhasil dibuat.');
-      } catch (\Exception $e) {
-         // 3. Tangkap error bisnis (Stok habis, Jadwal bentrok, dll)
-         return redirect()->back()->withInput()->with('error', $e->getMessage());
+      } catch (\Throwable $e) {
+         $db->transRollback();
+
+         // 1. LOG ERROR ASLI (Untuk Developer)
+         // Pesan ini akan masuk ke file log di folder /writable/logs/
+         log_message('error', '[Peminjaman::create] Gagal menyimpan peminjaman. User ID: ' . auth()->user()->id . '. Error: ' . $e->getMessage());
+
+         // 2. CEK JENIS ERROR (Opsional)
+         // Jika error berasal dari validasi bisnis (yang kita throw manual), boleh ditampilkan
+         // Contoh: throw new \Exception("Stok habis");
+         $pesanUser = 'Terjadi kesalahan sistem. Silakan hubungi admin.';
+
+         // Deteksi jika ini error bisnis yang aman ditampilkan
+         // (Anda bisa membuat Custom Exception class untuk membedakan)
+         if ($e->getMessage() == "Tanggal selesai tidak valid." || strpos($e->getMessage(), 'Stok') !== false) {
+            $pesanUser = $e->getMessage();
+         }
+
+         // 3. KEMBALIKAN PESAN AMAN KE USER
+         return redirect()->back()->withInput()->with('error', $pesanUser);
       }
    }
 
@@ -101,7 +118,7 @@ class PeminjamanController extends BaseController
       }
 
       // Cek Status
-      if ($peminjaman['status_peminjaman_global'] != 'Diajukan') {
+      if ($peminjaman['status_peminjaman_global'] != PeminjamanModel::STATUS_DIAJUKAN) {
          return redirect()->back()->with('error', 'Peminjaman tidak dapat dibatalkan karena sudah diproses/berjalan.');
       }
 
@@ -143,7 +160,7 @@ class PeminjamanController extends BaseController
          return redirect()->back()->with('error', 'Akses ditolak.');
       }
 
-      if ($peminjaman['status_peminjaman_global'] != 'Diajukan') {
+      if ($peminjaman['status_peminjaman_global'] != PeminjamanModel::STATUS_DIAJUKAN) {
          return redirect()->back()->with('error', 'Tidak bisa membatalkan item karena status sudah diproses.');
       }
 
@@ -192,9 +209,11 @@ class PeminjamanController extends BaseController
 
       // 2. Proses Upload
       $file = $this->request->getFile('foto_bukti');
-      $newName = $file->getRandomName();
-      $file->move(FCPATH . 'uploads/peminjaman/bukti_awal', $newName);
-      $pathFoto = 'uploads/peminjaman/bukti_awal/' . $newName;
+      $pathFoto = upload_file($file, 'uploads/peminjaman/bukti_akhir');
+
+      if (!$pathFoto) {
+         return redirect()->back()->with('error', 'Gagal mengupload file.');
+      }
 
       // 3. Update Database Detail
       $idPeminjaman = null;
@@ -231,7 +250,7 @@ class PeminjamanController extends BaseController
       // Jika Total Item == Total yang Sudah Upload, baru update status Global
       if (($totalSarana + $totalPrasarana) == ($doneSarana + $donePrasarana)) {
          $this->peminjamanModel->update($idPeminjaman, [
-            'status_peminjaman_global' => 'Dipinjam'
+            'status_peminjaman_global' => PeminjamanModel::STATUS_DIAJUKAN
          ]);
       }
       // Jika belum semua, biarkan status tetap 'Disetujui'

@@ -36,6 +36,12 @@ class PrasaranaModel extends Model
    protected $createdField  = 'created_at';
    protected $updatedField  = 'updated_at';
 
+   // DEFINISI KONSTANTA KETERSEDIAAN PRASARANA
+   public const STATUS_TERSEDIA       = 'Tersedia';
+   public const STATUS_DIPINJAM       = 'Dipinjam';
+   public const STATUS_RENOVASI       = 'Renovasi';
+   public const STATUS_TIDAK_TERSEDIA = 'Tidak Tersedia';
+
    public function getPrasaranaForKatalog($kode_prasarana = false)
    {
       $builder = $this->select('prasarana.*, kategori.nama_kategori, lokasi.nama_lokasi, lokasi.alamat, prasarana.nama_prasarana');

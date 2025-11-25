@@ -34,6 +34,12 @@ class SaranaModel extends Model
    protected $createdField  = 'created_at';
    protected $updatedField  = 'updated_at';
 
+   // DEFINISI KONSTANTA KETERSEDIAAN SARANA
+   public const STATUS_TERSEDIA       = 'Tersedia';
+   public const STATUS_DIPINJAM       = 'Dipinjam';
+   public const STATUS_PERAWATAN      = 'Perawatan';
+   public const STATUS_TIDAK_TERSEDIA = 'Tidak Tersedia';
+
    public function getSaranaForKatalog($kode_sarana = false)
    {
       $builder = $this->select('sarana.*, kategori.nama_kategori, lokasi.nama_lokasi, lokasi.alamat, prasarana.nama_prasarana');
