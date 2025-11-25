@@ -35,7 +35,7 @@ class LaporanKerusakanController extends BaseController
       // Pisahkan data untuk Tab Sarana & Prasarana
       $laporanSarana = [];
       $laporanPrasarana = [];
-
+ 
       foreach ($laporan as $row) {
          // Ambil detail nama aset
          if ($row['tipe_aset'] == 'Sarana') {

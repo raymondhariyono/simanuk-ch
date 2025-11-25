@@ -150,6 +150,8 @@ $routes->group('tu', ['filter' => ['session', 'role:TU']], static function ($rou
    $routes->get('verifikasi-peminjaman', 'TU\PeminjamanController::index');
    $routes->get('kelola-laporan-kerusakan', 'TU\LaporanKerusakanController::index');
    $routes->get('generate-laporan', 'TU\LaporanController::index');
+   $routes->get('pengembalian/detail/(:num)', 'TU\PengembalianController::detail/$1');
+   $routes->post('pengembalian/proses/(:num)', 'TU\PengembalianController::prosesKembali/$1');
 });
 
 // ----------------------------------------------------

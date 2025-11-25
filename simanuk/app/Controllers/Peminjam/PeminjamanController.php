@@ -78,6 +78,8 @@ class PeminjamanController extends BaseController
          return redirect()->to(site_url('peminjam/histori-peminjaman'))
             ->with('message', 'Pengajuan peminjaman berhasil dibuat.');
       } catch (\Throwable $e) {
+         // Pastikan koneksi DB tersedia sebelum rollback
+         $db = \Config\Database::connect();
          $db->transRollback();
 
          // 1. LOG ERROR ASLI (Untuk Developer)
