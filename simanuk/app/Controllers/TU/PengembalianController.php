@@ -120,7 +120,7 @@ class PengembalianController extends BaseController
             }
 
             $this->peminjamanModel->update($id, [
-                'status_peminjaman_global' => 'Selesai',
+                'status_peminjaman_global' => PeminjamanModel::STATUS_SELESAI,
                 'tgl_kembali_realisasi'    => date('Y-m-d H:i:s'),
                 'updated_at'               => date('Y-m-d H:i:s')
             ]);

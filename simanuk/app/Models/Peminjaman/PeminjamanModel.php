@@ -26,6 +26,14 @@ class PeminjamanModel extends Model
    ];
    protected $useTimestamps    = true; // created_at, updated_at
 
+   // KONSTANTA STATUS PEMINJAMAN GLOBAL
+   public const STATUS_DIAJUKAN   = 'Diajukan';
+   public const STATUS_DISETUJUI  = 'Disetujui';
+   public const STATUS_DIPINJAM   = 'Dipinjam';
+   public const STATUS_SELESAI    = 'Selesai';
+   public const STATUS_DITOLAK    = 'Ditolak';
+   public const STATUS_DIBATALKAN = 'Dibatalkan';
+
    // Helper untuk mengambil history per user
    public function getHistoryByUser($userId)
    {

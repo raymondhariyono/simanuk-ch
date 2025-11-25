@@ -150,9 +150,9 @@ class PeminjamanController extends BaseController
 
          // 2. Update Status Peminjaman
          $this->peminjamanModel->update($id, [
-            'status_verifikasi'        => 'Disetujui',
-            'status_persetujuan'       => 'Disetujui',
-            'status_peminjaman_global' => 'Disetujui', // Siap diambil
+            'status_verifikasi'        => PeminjamanModel::STATUS_DISETUJUI,
+            'status_persetujuan'       => PeminjamanModel::STATUS_DISETUJUI,
+            'status_peminjaman_global' => PeminjamanModel::STATUS_DISETUJUI, // Siap diambil
             'id_admin_verifikator'     => auth()->user()->id // Catat siapa yang approve
          ]);
 
@@ -176,7 +176,7 @@ class PeminjamanController extends BaseController
    {
       $peminjaman = $this->peminjamanModel->find($id);
 
-      if (!$peminjaman || $peminjaman['status_peminjaman_global'] != 'Diajukan') {
+      if (!$peminjaman || $peminjaman['status_peminjaman_global'] != PeminjamanModel::STATUS_DIAJUKAN) {
          return redirect()->back()->with('error', 'Data tidak valid atau sudah diproses.');
       }
 
@@ -188,9 +188,9 @@ class PeminjamanController extends BaseController
       $keteranganBaru = $peminjaman['keterangan'] . " [DITOLAK: $alasan]";
 
       $this->peminjamanModel->update($id, [
-         'status_verifikasi'        => 'Ditolak',
-         'status_persetujuan'       => 'Ditolak',
-         'status_peminjaman_global' => 'Ditolak',
+         'status_verifikasi'        => PeminjamanModel::STATUS_DITOLAK,
+         'status_persetujuan'       => PeminjamanModel::STATUS_DITOLAK,
+         'status_peminjaman_global' => PeminjamanModel::STATUS_DITOLAK,
          'keterangan'               => $keteranganBaru,
          'id_admin_verifikator'     => auth()->user()->id
       ]);
