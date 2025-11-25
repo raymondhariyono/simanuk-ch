@@ -6,8 +6,8 @@ use App\Controllers\BaseController;
 use App\Models\Sarpras\SaranaModel;
 use App\Models\Sarpras\PrasaranaModel;
 
-use App\Models\KategoriModel;
-use App\Models\LokasiModel;
+use App\Models\DataMaster\KategoriModel;
+use App\Models\DataMaster\LokasiModel;
 use App\Models\FotoAsetModel;
 
 class SaranaController extends BaseController
