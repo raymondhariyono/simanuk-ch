@@ -63,6 +63,8 @@ $routes->group('admin', ['filter' => ['session', 'role:Admin']], static function
 
    // --- LAPORAN KERUSAKAN ---
    $routes->get('laporan-kerusakan', 'Admin\LaporanKerusakanController::index');
+   $routes->post('laporan-kerusakan/update/(:num)', 'Admin\LaporanKerusakanController::updateStatus/$1');
+
    // --- MANAJEMEN AKUN PENGGUNA ---
    $routes->get('manajemen-akun', 'Admin\ManajemenAkunController::index');
 
