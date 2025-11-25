@@ -10,6 +10,8 @@ use App\Models\DataMaster\KategoriModel;
 use App\Models\DataMaster\LokasiModel;
 use App\Models\FotoAsetModel;
 
+use App\Models\LaporanKerusakanModel;
+
 class SaranaController extends BaseController
 {
    protected $saranaModel;
@@ -360,7 +362,15 @@ class SaranaController extends BaseController
 
    public function delete($id)
    {
-      // dd($this->saranaModel->getNamaSarana($id));
+      // Pengecekan Integritas laporan
+      $activeReport = model(LaporanKerusakanModel::class)
+         ->where('id_sarana', $id)
+         ->whereIn('status_laporan', ['Diajukan', 'Diproses'])
+         ->first();
+
+      if ($activeReport) {
+         return redirect()->back()->with('error', 'Gagal menghapus! Sarana ini memiliki laporan kerusakan yang sedang diproses. Harap selesaikan laporan (ID: ' . $activeReport['id_laporan'] . ') terlebih dahulu.');
+      }
 
       $fotoModel = $this->fotoAsetModel;
 
