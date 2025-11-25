@@ -9,6 +9,8 @@ use App\Models\DataMaster\KategoriModel;
 use App\Models\DataMaster\LokasiModel;
 use App\Models\FotoAsetModel;
 
+use App\Models\LaporanKerusakanModel;
+
 class PrasaranaController extends BaseController
 {
    protected $prasaranaModel;
@@ -346,6 +348,16 @@ class PrasaranaController extends BaseController
 
    public function delete($id)
    {
+      // Pengecekan Integritas
+      $activeReport = model(LaporanKerusakanModel::class)
+         ->where('id_prasarana', $id)
+         ->whereIn('status_laporan', ['Diajukan', 'Diproses'])
+         ->first();
+
+      if ($activeReport) {
+         return redirect()->back()->with('error', 'Gagal menghapus! Prasarana ini memiliki laporan kerusakan yang sedang diproses. Harap selesaikan laporan (ID: ' . $activeReport['id_laporan'] . ') terlebih dahulu.');
+      }
+
       $fotoModel = $this->fotoAsetModel;
 
       // 1. Ambil daftar foto dari database SEBELUM menghapus data induk

@@ -34,6 +34,7 @@
                         <th class="px-4 py-3">Laporan</th>
                         <th class="px-4 py-3">Status</th>
                         <th class="px-4 py-3">Tanggal</th>
+                        <th class="px-4 py-3">Tindak Lanjut Admin</th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y">
@@ -64,6 +65,13 @@
                                 </td>
                                 <td class="px-4 py-3 text-sm">
                                     <?= date('d M Y', strtotime($row['created_at'])) ?>
+                                </td>
+                                <td class="px-4 py-3 text-xs">
+                                    <?php if ($row['tindak_lanjut']): ?>
+                                        <div class="mt-2 p-2 bg-gray-50 text-xs border rounded">
+                                            <b>Catatan Admin:</b> <?= esc($row['tindak_lanjut']) ?>
+                                        </div>
+                                    <?php endif; ?>
                                 </td>
                             </tr>
                         <?php endforeach; ?>

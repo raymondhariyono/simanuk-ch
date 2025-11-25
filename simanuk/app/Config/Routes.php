@@ -67,6 +67,11 @@ $routes->group('admin', ['filter' => ['session', 'role:Admin']], static function
 
    // --- MANAJEMEN AKUN PENGGUNA ---
    $routes->get('manajemen-akun', 'Admin\ManajemenAkunController::index');
+   $routes->get('manajemen-akun/new', 'Admin\ManajemenAkunController::new');
+   $routes->post('manajemen-akun/create', 'Admin\ManajemenAkunController::create');
+   $routes->get('manajemen-akun/edit/(:num)', 'Admin\ManajemenAkunController::edit/$1');
+   $routes->post('manajemen-akun/update/(:num)', 'Admin\ManajemenAkunController::update/$1');
+   $routes->post('manajemen-akun/delete/(:num)', 'Admin\ManajemenAkunController::delete/$1');
 
    // data master (KATEGORI & LOKASI)
    $routes->get('master', 'Admin\MasterDataController::index');
