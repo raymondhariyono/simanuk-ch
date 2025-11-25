@@ -1,35 +1,49 @@
 <?php
 
-/**
- * Helper function kecil untuk menghasilkan kelas-kelas CSS
- * berdasarkan apakah link tersebut aktif atau tidak.
- */
-function getLinkClasses($path)
-{
-   global $currentPath;
-   $targetPath = rtrim(preg_replace('#^' . preg_quote(site_url(), '#') . '#', '', site_url($path)), '/');
+if (!function_exists('getLinkClasses')) {
+   /**
+    * Menentukan class CSS untuk link sidebar (Active vs Inactive).
+    * Mengambil URI saat ini secara otomatis.
+    */
+   function getLinkClasses(string $targetPath)
+   {
+      // Ambil service URI dari CodeIgniter
+      $uri = service('uri');
 
-   // Cek jika path saat ini sama persis atau merupakan "anak" dari path target
-   // Pengecualian untuk '/' agar tidak selalu aktif
-   $isActive = ($targetPath === $currentPath) || ($targetPath !== '' && str_starts_with($currentPath, $targetPath));
+      // Ambil path saat ini (misal: 'admin/dashboard')
+      $currentPath = trim($uri->getPath(), '/');
+      $targetPath  = trim($targetPath, '/');
 
-   $baseClasses = 'flex items-center space-x-3 p-3 rounded-lg font-medium';
+      // Logika Cek: Apakah URL saat ini diawali dengan target path?
+      // Ini menangani sub-menu juga (misal: 'admin/peminjaman/detail' akan tetap mengaktifkan 'admin/peminjaman')
+      $isActive = ($currentPath === $targetPath) || ($targetPath !== '' && str_starts_with($currentPath, $targetPath . '/'));
 
-   if ($isActive) {
-      return $baseClasses . ' bg-blue-100 text-blue-700';
+      // Base classes (selalu dipakai)
+      $baseClasses = 'flex items-center space-x-3 p-3 rounded-lg font-medium transition-colors duration-200';
+
+      // State AKTIF
+      if ($isActive) {
+         return $baseClasses . ' bg-blue-100 text-blue-700';
+      }
+
+      // State TIDAK AKTIF
+      return $baseClasses . ' text-gray-600 hover:bg-blue-50 hover:text-blue-700';
    }
-
-   return $baseClasses . ' text-gray-600 hover:bg-blue-50 hover:text-blue-700';
 }
 
-/**
- * Helper function untuk kelas ikon
- */
-function getIconClasses($path)
-{
-   global $currentPath;
-   $targetPath = rtrim(preg_replace('#^' . preg_quote(site_url(), '#') . '#', '', site_url($path)), '/');
-   $isActive = ($targetPath === $currentPath) || ($targetPath !== '' && str_starts_with($currentPath, $targetPath));
+if (!function_exists('getIconClasses')) {
+   /**
+    * Menentukan warna Icon (Active vs Inactive).
+    */
+   function getIconClasses(string $targetPath)
+   {
+      $uri = service('uri');
+      $currentPath = trim($uri->getPath(), '/');
+      $targetPath  = trim($targetPath, '/');
 
-   return $isActive ? 'text-blue-700' : 'text-gray-500';
+      $isActive = ($currentPath === $targetPath) || ($targetPath !== '' && str_starts_with($currentPath, $targetPath . '/'));
+
+      // Return warna icon
+      return $isActive ? 'text-blue-700' : 'text-gray-500';
+   }
 }
