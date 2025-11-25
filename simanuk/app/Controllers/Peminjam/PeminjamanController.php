@@ -40,6 +40,11 @@ class PeminjamanController extends BaseController
     */
    public function new()
    {
+      // Jalankan pengecekan
+      if ($blocked = $this->checkBlockStatus()) {
+         return $blocked;
+      }
+
       $data = [
          'title' => 'Ajukan Peminjaman Baru',
          'sarana' => $this->saranaModel->where('status_ketersediaan', 'Tersedia')->findAll(),
@@ -59,6 +64,11 @@ class PeminjamanController extends BaseController
     */
    public function create()
    {
+      // Jalankan pengecekan lagi
+      if ($blocked = $this->checkBlockStatus()) {
+         return $blocked;
+      }
+
       // 1. Validasi Input Header
       if (!$this->validate([
          'kegiatan'           => 'required|min_length[3]',
@@ -373,5 +383,28 @@ class PeminjamanController extends BaseController
          ->countAllResults();
 
       return $booked > 0;
+   }
+
+   /**
+    * Helper untuk mengecek apakah user kena blokir
+    * @return \CodeIgniter\HTTP\RedirectResponse|null Kembali redirect jika diblokir, null jika aman.
+    */
+   private function checkBlockStatus()
+   {
+      $userId = auth()->user()->id;
+
+      // Panggil method yang baru kita buat di Model
+      $overdueCount = $this->peminjamanModel->hasOverdueLoans($userId);
+
+      if ($overdueCount > 0) {
+         $pesan = "⛔ AKUN ANDA DIBLOKIR SEMENTARA.<br>" .
+            "Anda memiliki <b>$overdueCount peminjaman</b> yang belum dikembalikan melewati batas waktu.<br>" .
+            "Silakan kembalikan barang tersebut terlebih dahulu untuk dapat meminjam kembali.";
+
+         return redirect()->to(site_url('peminjam/histori-peminjaman'))
+            ->with('error', $pesan);
+      }
+
+      return null;
    }
 }
