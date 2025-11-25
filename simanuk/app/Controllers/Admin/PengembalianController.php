@@ -101,6 +101,12 @@ class PengembalianController extends BaseController
     */
    public function prosesSelesai($id)
    {
+      $peminjaman = $this->peminjamanModel->find($id);
+
+      if (!$peminjaman || $peminjaman['status_peminjaman_global'] != PeminjamanModel::STATUS_DIPINJAM) {
+         return redirect()->back()->with('error', 'Data tidak valid atau sudah diproses.');
+      }
+
       $db = \Config\Database::connect();
       $db->transStart();
 

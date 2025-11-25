@@ -171,6 +171,10 @@
 
                                                             <?php endif; ?>
 
+                                                        <?php elseif ($loan['status'] == 'Diajukan' && !empty($loan['foto_sebelum'])): ?>
+                                                            <?= dd(empty($loan['foto_sebelum'])) ?>
+
+
                                                         <?php elseif ($loan['status'] == 'Selesai'): ?>
                                                             <a href="<?= site_url('peminjam/histori-peminjaman/detail/' . esc($loan['id_peminjaman'])) ?>"
                                                                 class="inline-flex items-center px-3 py-1.5 bg-neutral-100 text-neutral-600 hover:bg-neutral-300 border border-neutral-600 rounded-lg text-xs font-medium transition-colors">

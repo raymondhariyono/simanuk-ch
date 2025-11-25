@@ -11,6 +11,7 @@ use App\Models\Sarpras\PrasaranaModel; // Uncomment jika sudah menangani prasara
 
 use App\Services\PeminjamanService;
 
+
 class PeminjamanController extends BaseController
 {
    protected $peminjamanModel;
@@ -21,6 +22,8 @@ class PeminjamanController extends BaseController
    protected $prasaranaModel;
 
    protected $peminjamanService;
+
+   // protected $helpers = ['upload'];
 
    public function __construct()
    {
@@ -209,7 +212,7 @@ class PeminjamanController extends BaseController
 
       // 2. Proses Upload
       $file = $this->request->getFile('foto_bukti');
-      $pathFoto = upload_file($file, 'uploads/peminjaman/bukti_akhir');
+      $pathFoto = upload_file($file, 'uploads/peminjaman/bukti_sebelum');
 
       if (!$pathFoto) {
          return redirect()->back()->with('error', 'Gagal mengupload file.');
@@ -250,7 +253,7 @@ class PeminjamanController extends BaseController
       // Jika Total Item == Total yang Sudah Upload, baru update status Global
       if (($totalSarana + $totalPrasarana) == ($doneSarana + $donePrasarana)) {
          $this->peminjamanModel->update($idPeminjaman, [
-            'status_peminjaman_global' => PeminjamanModel::STATUS_DIAJUKAN
+            'status_peminjaman_global' => PeminjamanModel::STATUS_DIPINJAM
          ]);
       }
       // Jika belum semua, biarkan status tetap 'Disetujui'
@@ -305,10 +308,13 @@ class PeminjamanController extends BaseController
       }
 
       // 2. Upload Foto
+      // 2. Proses Upload
       $file = $this->request->getFile('foto_bukti');
-      $newName = $file->getRandomName();
-      $file->move(FCPATH . 'uploads/peminjaman/bukti_akhir', $newName);
-      $pathFoto = 'uploads/peminjaman/bukti_akhir/' . $newName;
+      $pathFoto = upload_file($file, 'uploads/peminjaman/bukti_akhir');
+
+      if (!$pathFoto) {
+         return redirect()->back()->with('error', 'Gagal mengupload file.');
+      }
 
       // 3. Update Database Detail (foto_sesudah & kondisi_akhir)
       $idPeminjaman = null;
