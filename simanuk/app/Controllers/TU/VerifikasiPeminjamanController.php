@@ -109,7 +109,7 @@ class VerifikasiPeminjamanController extends BaseController
             $this->peminjamanModel->update($id, [
                 'status_verifikasi'        => PeminjamanModel::STATUS_DISETUJUI,
                 'status_persetujuan'       => PeminjamanModel::STATUS_DISETUJUI,
-                'status_peminjaman_global' => PeminjamanModel::STATUS_DISETUJUI, 
+                'status_peminjaman_global' => PeminjamanModel::STATUS_DISETUJUI,
                 'id_tu_approver'           => auth()->user()->id
             ]);
 
@@ -131,7 +131,7 @@ class VerifikasiPeminjamanController extends BaseController
     {
         $alasan = $this->request->getPost('alasan_tolak');
         $peminjaman = $this->peminjamanModel->find($id);
-        
+
         $keteranganBaru = $peminjaman['keterangan'] . " [DITOLAK TU: $alasan]";
 
         $this->peminjamanModel->update($id, [
@@ -153,7 +153,7 @@ class VerifikasiPeminjamanController extends BaseController
         $dataPeminjaman = $this->peminjamanModel
             ->select('peminjaman.*, users.nama_lengkap, users.organisasi')
             ->join('users', 'users.id = peminjaman.id_peminjam')
-            ->where('status_peminjaman_global', PeminjamanModel::STATUS_DIPINJAM) 
+            ->where('status_peminjaman_global', PeminjamanModel::STATUS_DIPINJAM)
             ->orderBy('tgl_pinjam_selesai', 'ASC')
             ->findAll();
 
@@ -180,12 +180,12 @@ class VerifikasiPeminjamanController extends BaseController
             foreach ($items as $item) {
                 $sarana = $this->saranaModel->find($item['id_sarana']);
                 $newStok = $sarana['jumlah'] + $item['jumlah'];
-                
+
                 $updateData = ['jumlah' => $newStok];
                 if ($sarana['status_ketersediaan'] == 'Tidak Tersedia' && $newStok > 0) {
                     $updateData['status_ketersediaan'] = 'Tersedia';
                 }
-                
+
                 $this->saranaModel->update($item['id_sarana'], $updateData);
             }
 
@@ -196,7 +196,6 @@ class VerifikasiPeminjamanController extends BaseController
 
             $db->transComplete();
             return redirect()->to(site_url('tu/verifikasi-pengembalian'))->with('message', 'Barang telah dikembalikan dan transaksi Selesai.');
-
         } catch (\Exception $e) {
             $db->transRollback();
             return redirect()->back()->with('error', 'Gagal: ' . $e->getMessage());
