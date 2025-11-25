@@ -159,6 +159,8 @@ $routes->group('tu', ['filter' => ['session', 'role:TU']], static function ($rou
 // ----------------------------------------------------
 $routes->group('pimpinan', ['filter' => ['session', 'role:Pimpinan']], static function ($routes) {
    $routes->get('dashboard', 'Pimpinan\DashboardController::index');
+   $routes->get('lihat-laporan', 'Pimpinan\LaporanController::index');
+   $routes->get('lihat-laporan/detail', 'Pimpinan\LaporanController::detail');
 });
 
 
