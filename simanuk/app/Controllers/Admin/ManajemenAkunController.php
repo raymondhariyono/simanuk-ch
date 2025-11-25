@@ -114,6 +114,7 @@ class ManajemenAkunController extends BaseController
          'username' => "required|alpha_dash|min_length[3]|is_unique[users.username,id,{$id}]",
          'email' => "required|valid_email|is_unique[auth_identities.secret,user_id,{$id}]",
          'password' => 'permit_empty|min_length[8]',
+         'kontak' => "required|is_unique[users.kontak,id,{$id}]",
          'id_role' => 'required',
       ])) {
          return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
