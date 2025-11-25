@@ -55,4 +55,15 @@ abstract class BaseController extends Controller
 
         // E.g.: $this->session = service('session');
     }
+
+    protected function getPendingCount()
+    {
+        $peminjamanModel = model(\App\Models\Peminjaman\PeminjamanModel::class);
+
+        $pendingCount = $peminjamanModel
+            ->where('status_peminjaman_global', 'Diajukan')
+            ->countAllResults();
+
+        return $pendingCount;
+    }
 }
