@@ -213,4 +213,58 @@ class PeminjamanService
 
       return $builder->countAllResults() > 0;
    }
+
+   /**
+    * Menghitung jumlah peminjaman yang statusnya 'Diajukan'.
+    * Bisa ditambahkan parameter role jika logika pending Admin & TU berbeda.
+    */
+   public function countPendingLoans(): int
+   {
+      // Gunakan cache sederhana jika trafik tinggi (Opsional)
+      // return cache()->remember('count_pending_loans', 60, function() {
+      return $this->peminjamanModel
+         ->where('status_peminjaman_global', 'Diajukan')
+         ->countAllResults();
+      // });
+   }
+
+   /**
+    * Otomatis membatalkan peminjaman yang masih 'Diajukan' 
+    * tetapi sudah melewati batas waktu 24 jam sejak dibuat.
+    * * @return int Jumlah peminjaman yang dibatalkan
+    */
+   public function autoCancelExpiredLoans(): int
+   {
+      // Batas waktu: Sekarang dikurangi 24 Jam
+      $timeLimit = date('Y-m-d H:i:s', strtotime('-24 hours'));
+      
+      // testing 1 menit
+      // $timeLimit = date('Y-m-d H:i:s', strtotime('-1 minutes'));
+
+      // 1. Cari Peminjaman yang 'Diajukan' DAN 'created_at' < 24 jam lalu
+      // Cek dulu apakah ada data (agar tidak menjalankan update query kosong yang membebani log)
+      $countExpired = $this->peminjamanModel
+         ->where('status_peminjaman_global', 'Diajukan')
+         ->where('created_at <=', $timeLimit)
+         ->countAllResults();
+
+      if ($countExpired > 0) {
+         // Lakukan Update Massal
+         $this->peminjamanModel
+            ->where('status_peminjaman_global', 'Diajukan')
+            ->where('created_at <=', $timeLimit)
+            ->set([
+               'status_peminjaman_global' => 'Dibatalkan',
+               'status_verifikasi'        => 'Ditolak',
+               'status_persetujuan'       => 'Ditolak',
+               'keterangan'               => 'Dibatalkan otomatis oleh sistem (Melewati batas waktu verifikasi 24 jam).'
+            ])
+            ->update();
+
+         // Opsional: Anda bisa menambahkan log ke file jika perlu
+         log_message('info', "[AutoCancel] Membatalkan $countExpired peminjaman kedaluwarsa.");
+      }
+
+      return $countExpired;
+   }
 }

@@ -8,6 +8,7 @@ use App\Models\Peminjaman\DetailPeminjamanSaranaModel;
 use App\Models\Peminjaman\DetailPeminjamanPrasaranaModel;
 use App\Models\Sarpras\PrasaranaModel;
 use App\Models\Sarpras\SaranaModel;
+use App\Services\PeminjamanService;
 
 class PeminjamanController extends BaseController
 {
@@ -18,6 +19,8 @@ class PeminjamanController extends BaseController
    protected $saranaModel;
    protected $prasaranaModel;
 
+   protected $peminjamanService;
+
    public function __construct()
    {
       $this->peminjamanModel = new PeminjamanModel();
@@ -26,10 +29,20 @@ class PeminjamanController extends BaseController
 
       $this->saranaModel = new SaranaModel();
       $this->prasaranaModel = new PrasaranaModel();
+
+      $this->peminjamanService = new PeminjamanService();
    }
 
    public function index()
    {
+      // 1. JALANKAN AUTO CANCEL
+      $canceledCount = $this->peminjamanService->autoCancelExpiredLoans();
+
+      // Beri notifikasi flash message jika ada yang dibatalkan
+      if ($canceledCount > 0) {
+         session()->setFlashdata('info', "Sistem otomatis membatalkan $canceledCount pengajuan yang kedaluwarsa.");
+      }
+
       // Ambil data peminjaman + Data User Peminjam
       // Kita urutkan agar status 'Diajukan' muncul paling atas
       $dataPeminjaman = $this->peminjamanModel
