@@ -65,6 +65,15 @@ $routes->group('admin', ['filter' => ['session', 'role:Admin']], static function
    $routes->get('laporan-kerusakan', 'Admin\LaporanKerusakanController::index');
    // --- MANAJEMEN AKUN PENGGUNA ---
    $routes->get('manajemen-akun', 'Admin\ManajemenAkunController::index');
+
+   // data master (KATEGORI & LOKASI)
+   $routes->get('master', 'Admin\MasterDataController::index');
+
+   $routes->post('master/kategori/store', 'Admin\MasterDataController::storeKategori');
+   $routes->post('master/kategori/delete/(:num)', 'Admin\MasterDataController::deleteKategori/$1');
+
+   $routes->post('master/lokasi/store', 'Admin\MasterDataController::storeLokasi');
+   $routes->post('master/lokasi/delete/(:num)', 'Admin\MasterDataController::deleteLokasi/$1');
 });
 
 // ----------------------------------------------------
@@ -82,7 +91,7 @@ $routes->group('peminjam', ['filter' => ['session', 'role:Peminjam']], static fu
    // detail histori peminjaman
    // Untuk melihat halaman detail
    $routes->get('histori-peminjaman/detail/(:num)', 'Peminjam\HistoriPeminjamanController::detail/$1');
-   
+
    // Untuk proses aksi form pengembalian
    $routes->post('peminjaman/kembalikan-item/(:segment)/(:num)', 'Peminjam\PeminjamanController::kembalikanItem/$1/$2');
    // CRUD peminjaman
@@ -129,7 +138,7 @@ $routes->group('tu', ['filter' => ['session', 'role:TU']], static function ($rou
    $routes->post('verifikasi-peminjaman/approve/(:num)', 'TU\VerifikasiPeminjamanController::approve/$1');
    $routes->post('verifikasi-peminjaman/reject/(:num)', 'TU\VerifikasiPeminjamanController::reject/$1');
    $routes->get('verifikasi-pengembalian', 'TU\PengembalianController::index');
-   
+
    $routes->get('verifikasi-peminjaman', 'TU\PeminjamanController::index');
    $routes->get('kelola-laporan-kerusakan', 'TU\LaporanKerusakanController::index');
    $routes->get('generate-laporan', 'TU\LaporanController::index');

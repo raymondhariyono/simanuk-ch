@@ -7,7 +7,7 @@
             <svg class="w-6 h-6 <?= getIconClasses('admin/dashboard') ?>" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12l8.954-8.955c.44-.439 1.152-.439 1.591 0L21.75 12M4.5 9.75v10.125c0 .621.504 1.125 1.125 1.125H9.75v-4.875c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21h4.125c.621 0 1.125-.504 1.125-1.125V9.75M8.25 21h8.25" />
             </svg>
-            <span>Dashboard</span>
+            <span class="">Dashboard</span>
          </a>
          <a href="<?= site_url('admin/inventaris') ?>" class="<?= getLinkClasses('admin/inventaris') ?>">
             <svg class="w-6 h-6 <?= getIconClasses('admin/inventaris') ?>" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
@@ -38,6 +38,13 @@
                <path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 002.625.372 9.337 9.337 0 004.121-.952 4.125 4.125 0 00-7.533-2.493M15 19.128v-.003c0-1.113-.285-2.16-.786-3.07M15 19.128v.106A12.318 12.318 0 018.624 21c-2.331 0-4.512-.645-6.374-1.766l-.001-.109a6.375 6.375 0 0111.964-3.07M12 6.375a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zM8.625 15.125a3.375 3.375 0 116.75 0 3.375 3.375 0 01-6.75 0z" />
             </svg>
             <span>Manajemen Akun Pengguna</span>
+         </a>
+
+         <a href="<?= site_url('admin/master') ?>" class="<?= getLinkClasses('admin/master') ?>">
+            <svg class="w-6 h-6 <?= getIconClasses('admin/master') ?>" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
+               <path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+            </svg>
+            <span>Data Master (Kategori & Lokasi)</span>
          </a>
 
       <?php elseif (auth()->user()->inGroup('TU')) : ?>
@@ -71,7 +78,7 @@
             <svg class="w-6 h-6 <?= getIconClasses('peminjam/sarpras') ?>" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
             </svg>
-            <span>Katalog Sarpras</span>
+            <span class="">Katalog Sarpras</span>
          </a>
          <a href="<?= site_url('peminjam/histori-peminjaman') ?>" class="<?= getLinkClasses('peminjam/histori-peminjaman') ?>">
             <svg class="w-6 h-6 <?= getIconClasses('peminjam/histori-peminjaman') ?>" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
