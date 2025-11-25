@@ -113,7 +113,8 @@ $routes->group('peminjam', ['filter' => ['session', 'role:Peminjam']], static fu
    // --- LAPORAN KERUSAKAN ---
    $routes->get('laporan-kerusakan', 'Peminjam\LaporanKerusakanController::index');
    // Memproses pengiriman laporan (submit form)
-   $routes->post('laporan-kerusakan/save', 'Peminjam\LaporanKerusakanController::store');
+   $routes->get('laporan-kerusakan/new', 'Peminjam\LaporanKerusakanController::new');
+   $routes->post('laporan-kerusakan/create', 'Peminjam\LaporanKerusakanController::create');
 });
 
 $routes->group('pimpinan', ['filter' => ['session', 'role:Pimpinan']], static function ($routes) {
