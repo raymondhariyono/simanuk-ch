@@ -7,6 +7,7 @@ use App\Models\Peminjaman\PeminjamanModel;
 use App\Models\Peminjaman\DetailPeminjamanSaranaModel;
 use App\Models\Peminjaman\DetailPeminjamanPrasaranaModel;
 use App\Models\Sarpras\SaranaModel;
+use App\Models\Sarpras\PrasaranaModel;
 
 class PengembalianController extends BaseController
 {
@@ -14,6 +15,7 @@ class PengembalianController extends BaseController
     protected $detailSaranaModel;
     protected $detailPrasaranaModel;
     protected $saranaModel;
+    protected $prasaranaModel;
 
     public function __construct()
     {
@@ -21,10 +23,12 @@ class PengembalianController extends BaseController
         $this->detailSaranaModel = new DetailPeminjamanSaranaModel();
         $this->detailPrasaranaModel = new DetailPeminjamanPrasaranaModel();
         $this->saranaModel = new SaranaModel();
+        $this->prasaranaModel = new PrasaranaModel();
     }
 
     public function index()
     {
+        // Tampilkan peminjaman yang statusnya 'Dipinjam'
         $dataPeminjaman = $this->peminjamanModel
             ->select('peminjaman.*, users.username, users.nama_lengkap, users.organisasi')
             ->join('users', 'users.id = peminjaman.id_peminjam')
@@ -54,17 +58,19 @@ class PengembalianController extends BaseController
             ->first();
 
         if (!$peminjaman) {
-            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound();
+            return redirect()->back()->with('error', 'Data peminjaman tidak ditemukan.');
         }
 
+        // Ambil Detail Sarana
         $itemsSarana = $this->detailSaranaModel
-            ->select('detail_peminjaman_sarana.*, sarana.nama_sarana, sarana.kode_sarana, sarana.image')
+            ->select('detail_peminjaman_sarana.*, sarana.nama_sarana, sarana.kode_sarana')
             ->join('sarana', 'sarana.id_sarana = detail_peminjaman_sarana.id_sarana')
             ->where('id_peminjaman', $id)
             ->findAll();
 
+        // Ambil Detail Prasarana
         $itemsPrasarana = $this->detailPrasaranaModel
-            ->select('detail_peminjaman_prasarana.*, prasarana.nama_prasarana, prasarana.kode_prasarana, prasarana.image')
+            ->select('detail_peminjaman_prasarana.*, prasarana.nama_prasarana, prasarana.kode_prasarana')
             ->join('prasarana', 'prasarana.id_prasarana = detail_peminjaman_prasarana.id_prasarana')
             ->where('id_peminjaman', $id)
             ->findAll();
@@ -74,7 +80,7 @@ class PengembalianController extends BaseController
             'peminjaman'     => $peminjaman,
             'itemsSarana'    => $itemsSarana,
             'itemsPrasarana' => $itemsPrasarana,
-            'showSidebar' => true,
+            'showSidebar'    => true,
             'breadcrumbs'    => [
                 ['name' => 'Beranda', 'url' => site_url('tu/dashboard')],
                 ['name' => 'Verifikasi Pengembalian', 'url' => site_url('tu/pengembalian')],
@@ -87,55 +93,86 @@ class PengembalianController extends BaseController
 
     public function prosesKembali($id)
     {
-        // 1. Validasi Input 
-        // Admin biasanya menerima input kondisi akhir per barang
-        $kondisiAkhir = $this->request->getPost('kondisi_akhir'); 
+        // Cek data peminjaman
+        $peminjaman = $this->peminjamanModel->find($id);
+
+        if (!$peminjaman || $peminjaman['status_peminjaman_global'] != 'Dipinjam') {
+            return redirect()->back()->with('error', 'Data tidak valid atau sudah diproses.');
+        }
+
+        // Ambil Input Kondisi Akhir dari Form
+        // Format array: [id_detail => kondisi]
+        $kondisiAkhirSarana = $this->request->getPost('kondisi_akhir_sarana'); 
+        $kondisiAkhirPrasarana = $this->request->getPost('kondisi_akhir_prasarana'); 
         
         $db = \Config\Database::connect();
         $db->transStart();
 
         try {
-            $items = $this->detailSaranaModel->where('id_peminjaman', $id)->findAll();
+            // 1. PROSES PENGEMBALIAN SARANA (BARANG)
+            $itemsSarana = $this->detailSaranaModel->where('id_peminjaman', $id)->findAll();
             
-            foreach ($items as $item) {
-                $kondisi = isset($kondisiAkhir[$item['id']]) ? $kondisiAkhir[$item['id']] : 'Baik';
-                $this->detailSaranaModel->update($item['id'], ['kondisi_akhir' => $kondisi]);
+            foreach ($itemsSarana as $item) {
+                // A. Update Kondisi di Tabel Detail
+                $kondisi = isset($kondisiAkhirSarana[$item['id_detail_sarana']]) 
+                           ? $kondisiAkhirSarana[$item['id_detail_sarana']] 
+                           : 'Baik';
+                
+                $this->detailSaranaModel->update($item['id_detail_sarana'], [
+                    'kondisi_akhir' => $kondisi
+                ]);
 
+                // B. Kembalikan Stok ke Master Sarana
                 $sarana = $this->saranaModel->find($item['id_sarana']);
                 if ($sarana) {
                     $newStok = $sarana['jumlah'] + $item['jumlah'];
                     
                     $updateData = ['jumlah' => $newStok];
-                    if ($sarana['status_ketersediaan'] == 'Tidak Tersedia' && $newStok > 0) {
+                    // Jika status sebelumnya 'Tidak Tersedia'/'Dipinjam' dan sekarang stok ada, set 'Tersedia'
+                    if ($newStok > 0) {
                         $updateData['status_ketersediaan'] = 'Tersedia';
                     }
+                    
                     $this->saranaModel->update($item['id_sarana'], $updateData);
                 }
             }
 
-            $itemsPra = $this->detailPrasaranaModel->where('id_peminjaman', $id)->findAll();
-            foreach ($itemsPra as $item) {
-                 //update kondisi akhir saja
-                 // $this->detailPrasaranaModel->update($item['id'], ['kondisi_akhir' => 'Baik']);
+            // 2. PROSES PENGEMBALIAN PRASARANA (RUANGAN)
+            $itemsPrasarana = $this->detailPrasaranaModel->where('id_peminjaman', $id)->findAll();
+            
+            foreach ($itemsPrasarana as $item) {
+                // A. Update Kondisi di Tabel Detail
+                $kondisi = isset($kondisiAkhirPrasarana[$item['id_detail_prasarana']]) 
+                           ? $kondisiAkhirPrasarana[$item['id_detail_prasarana']] 
+                           : 'Baik';
+
+                $this->detailPrasaranaModel->update($item['id_detail_prasarana'], [
+                    'kondisi_akhir' => $kondisi
+                ]);
+
+                // B. Ubah Status Ruangan menjadi 'Tersedia'
+                $this->prasaranaModel->update($item['id_prasarana'], [
+                    'status_ketersediaan' => 'Tersedia'
+                ]);
             }
 
+            // 3. UPDATE STATUS GLOBAL PEMINJAMAN
             $this->peminjamanModel->update($id, [
                 'status_peminjaman_global' => PeminjamanModel::STATUS_SELESAI,
-                'tgl_kembali_realisasi'    => date('Y-m-d H:i:s'),
                 'updated_at'               => date('Y-m-d H:i:s')
             ]);
 
             $db->transComplete();
 
             if ($db->transStatus() === false) {
-                return redirect()->back()->with('error', 'Gagal memproses pengembalian.');
+                return redirect()->back()->with('error', 'Gagal memproses pengembalian. Transaksi dibatalkan.');
             }
 
-            return redirect()->to(site_url('tu/pengembalian'))->with('message', 'Pengembalian berhasil diverifikasi dan status Selesai.');
+            return redirect()->to(site_url('tu/pengembalian'))->with('message', 'Pengembalian berhasil diverifikasi. Stok dan status telah diperbarui.');
 
         } catch (\Exception $e) {
             $db->transRollback();
-            return redirect()->back()->with('error', $e->getMessage());
+            return redirect()->back()->with('error', 'Terjadi kesalahan sistem: ' . $e->getMessage());
         }
     }
 }
