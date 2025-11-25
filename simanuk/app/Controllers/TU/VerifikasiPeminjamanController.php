@@ -7,6 +7,7 @@ use App\Models\Peminjaman\PeminjamanModel;
 use App\Models\Peminjaman\DetailPeminjamanSaranaModel;
 use App\Models\Peminjaman\DetailPeminjamanPrasaranaModel;
 use App\Models\Sarpras\SaranaModel;
+use App\Services\PeminjamanService;
 
 class VerifikasiPeminjamanController extends BaseController
 {
@@ -15,12 +16,16 @@ class VerifikasiPeminjamanController extends BaseController
     protected $detailPrasaranaModel;
     protected $saranaModel;
 
+    protected $peminjamanService;
+
     public function __construct()
     {
         $this->peminjamanModel = new PeminjamanModel();
         $this->detailSaranaModel = new DetailPeminjamanSaranaModel();
         $this->detailPrasaranaModel = new DetailPeminjamanPrasaranaModel();
         $this->saranaModel = new SaranaModel();
+        
+        $this->peminjamanService = new PeminjamanService();
     }
 
     // -----------------------------------------------------------------------
@@ -28,6 +33,14 @@ class VerifikasiPeminjamanController extends BaseController
     // -----------------------------------------------------------------------
     public function index()
     {
+        // 1. JALANKAN AUTO CANCEL
+        $canceledCount = $this->peminjamanService->autoCancelExpiredLoans();
+
+        // Beri notifikasi flash message jika ada yang dibatalkan
+        if ($canceledCount > 0) {
+            session()->setFlashdata('info', "Sistem otomatis membatalkan $canceledCount pengajuan yang kedaluwarsa.");
+        }
+
         $dataPeminjaman = $this->peminjamanModel
             ->select('peminjaman.*, users.username, users.nama_lengkap, users.organisasi')
             ->join('users', 'users.id = peminjaman.id_peminjam')
