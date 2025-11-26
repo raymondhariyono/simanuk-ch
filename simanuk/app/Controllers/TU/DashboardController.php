@@ -8,6 +8,7 @@ use App\Models\Peminjaman\DetailPeminjamanSaranaModel;
 use App\Models\Peminjaman\DetailPeminjamanPrasaranaModel;
 use App\Models\Sarpras\SaranaModel;
 use App\Models\Sarpras\PrasaranaModel;
+use Dompdf\Dompdf;
 
 class DashboardController extends BaseController
 {
@@ -32,7 +33,7 @@ class DashboardController extends BaseController
    {
       $user = auth()->user();
 
-      // 1. STATISTIK REAL
+      // 1. STATISTIK REAL (KPI)
       $countMenunggu = $this->peminjamanModel
          ->where('status_peminjaman_global', PeminjamanModel::STATUS_DIAJUKAN)
          ->countAllResults();
@@ -41,12 +42,12 @@ class DashboardController extends BaseController
          ->where('status_peminjaman_global', PeminjamanModel::STATUS_DIPINJAM)
          ->countAllResults();
 
-      // Asumsi: Laporan kerusakan diambil dari Sarana yang kondisinya tidak 'Baik'
-      // (Atau bisa disesuaikan jika nanti ada tabel khusus laporan_kerusakan)
+      // KPI Laporan Kerusakan (Berdasarkan kondisi fisik Sarana)
       $countRusak = $this->saranaModel
          ->whereIn('kondisi', ['Rusak Ringan', 'Rusak Berat'])
          ->countAllResults();
 
+      // KPI Total Aset
       $totalAset = $this->saranaModel->countAll() + $this->prasaranaModel->countAll();
 
       $stats = [
@@ -56,42 +57,34 @@ class DashboardController extends BaseController
          'total_aset'          => $totalAset
       ];
 
-      // 2. DATA PEMINJAMAN PENDING (REAL)
-      // Ambil 5 pengajuan terbaru
+      // 2. DATA PEMINJAMAN PENDING (Untuk Tabel Dashboard)
       $rawPending = $this->peminjamanModel
          ->select('peminjaman.*, users.nama_lengkap, users.organisasi')
          ->join('users', 'users.id = peminjaman.id_peminjam')
          ->where('status_peminjaman_global', PeminjamanModel::STATUS_DIAJUKAN)
-         ->orderBy('tgl_pengajuan', 'ASC') // Yang paling lama menunggu di atas
+         ->orderBy('tgl_pengajuan', 'ASC')
          ->limit(5)
          ->findAll();
 
       $pendingApprovals = [];
-
       foreach ($rawPending as $row) {
-         // Ambil nama barang (sarana)
          $itemsSarana = $this->detailSaranaModel
             ->select('sarana.nama_sarana')
             ->join('sarana', 'sarana.id_sarana = detail_peminjaman_sarana.id_sarana')
             ->where('id_peminjaman', $row['id_peminjaman'])
             ->findAll();
 
-         // Ambil nama ruangan (prasarana)
          $itemsPrasarana = $this->detailPrasaranaModel
             ->select('prasarana.nama_prasarana')
             ->join('prasarana', 'prasarana.id_prasarana = detail_peminjaman_prasarana.id_prasarana')
             ->where('id_peminjaman', $row['id_peminjaman'])
             ->findAll();
 
-         // Gabungkan nama item menjadi string
          $itemNames = array_map(fn($i) => $i['nama_sarana'], $itemsSarana);
          $roomNames = array_map(fn($i) => $i['nama_prasarana'], $itemsPrasarana);
          $allItemNames = array_merge($itemNames, $roomNames);
 
-         $barangStr = empty($allItemNames)
-            ? 'Tidak ada item'
-            : implode(', ', array_slice($allItemNames, 0, 2)); // Ambil 2 nama pertama
-
+         $barangStr = empty($allItemNames) ? 'Tidak ada item' : implode(', ', array_slice($allItemNames, 0, 2));
          if (count($allItemNames) > 2) {
             $barangStr .= '... (+' . (count($allItemNames) - 2) . ' lainnya)';
          }
@@ -115,5 +108,73 @@ class DashboardController extends BaseController
       ];
 
       return view('tu/dashboard_view', $data);
+   }
+
+   /**
+    * GENERATE LAPORAN PDF (Sesuai 4 KPI)
+    */
+   public function downloadLaporan()
+   {
+      $bulan = $this->request->getGet('bulan') ?? date('m');
+      $tahun = $this->request->getGet('tahun') ?? date('Y');
+
+      // 1. DATA PENGAJUAN (Filter Bulan Ini)
+      $dataPengajuan = $this->peminjamanModel
+         ->select('peminjaman.*, users.nama_lengkap, users.organisasi')
+         ->join('users', 'users.id = peminjaman.id_peminjam')
+         ->where('status_peminjaman_global', PeminjamanModel::STATUS_DIAJUKAN)
+         ->where("MONTH(tgl_pengajuan)", $bulan)
+         ->where("YEAR(tgl_pengajuan)", $tahun)
+         ->findAll();
+
+      // 2. DATA SEDANG DIPINJAM (Snapshot Saat Ini)
+      $dataDipinjam = $this->peminjamanModel
+         ->select('peminjaman.*, users.nama_lengkap, users.organisasi')
+         ->join('users', 'users.id = peminjaman.id_peminjam')
+         ->where('status_peminjaman_global', PeminjamanModel::STATUS_DIPINJAM)
+         ->findAll();
+
+      // 3. DATA LAPORAN KERUSAKAN (Snapshot Aset Rusak)
+      $dataRusak = $this->saranaModel
+         ->select('sarana.*, lokasi.nama_lokasi')
+         ->join('lokasi', 'lokasi.id_lokasi = sarana.id_lokasi', 'left')
+         ->whereIn('kondisi', ['Rusak Ringan', 'Rusak Berat'])
+         ->findAll();
+
+      // 4. TOTAL ASET (Snapshot Semua Aset)
+      // Gabungan Sarana & Prasarana
+      $asetSarana = $this->saranaModel
+         ->select('sarana.nama_sarana as nama, sarana.kode_sarana as kode, sarana.kondisi, "Sarana" as jenis')
+         ->findAll();
+      $asetPrasarana = $this->prasaranaModel
+         ->select('prasarana.nama_prasarana as nama, prasarana.kode_prasarana as kode, "Baik" as kondisi, "Prasarana" as jenis')
+         ->findAll();
+      
+      $totalAset = array_merge($asetSarana, $asetPrasarana);
+
+      $data = [
+         'title'         => 'Laporan Rekapitulasi Dashboard TU',
+         'bulan'         => date('F', mktime(0, 0, 0, $bulan, 10)),
+         'tahun'         => $tahun,
+         'dataPengajuan' => $dataPengajuan,
+         'dataDipinjam'  => $dataDipinjam,
+         'dataRusak'     => $dataRusak,
+         'totalAset'     => $totalAset,
+         'kpi' => [
+            'pengajuan' => count($dataPengajuan),
+            'dipinjam'  => count($dataDipinjam),
+            'rusak'     => count($dataRusak),
+            'aset'      => count($totalAset)
+         ]
+      ];
+
+      $html = view('tu/laporan_pdf_view', $data);
+
+      $dompdf = new Dompdf();
+      $dompdf->loadHtml($html);
+      $dompdf->setPaper('A4', 'portrait');
+      $dompdf->render();
+
+      $dompdf->stream('Laporan_Dashboard_TU_' . date('Ymd') . '.pdf', ["Attachment" => true]);
    }
 }

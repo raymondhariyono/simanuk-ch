@@ -7,90 +7,72 @@
 
             <div class="mb-6">
                 <div class="text-sm text-gray-500 mb-1">Dashboard / Laporan</div>
-                <h1 class="text-2xl font-bold text-gray-900">Laporan Sistem</h1>
-                <p class="text-gray-500 mt-1 text-sm">Lihat, filter, dan pantau laporan inventaris serta peminjaman.</p>
+                <h1 class="text-2xl font-bold text-gray-900">Laporan Bulanan</h1>
+                <p class="text-gray-500 mt-1 text-sm">Pilih bulan untuk melihat detail atau mengunduh laporan lengkap.</p>
             </div>
 
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
-                <h3 class="text-sm font-semibold text-gray-800 mb-4">Filter Laporan</h3>
-                <form action="" method="get" class="grid grid-cols-1 md:grid-cols-12 gap-4 items-end">
-                    <div class="md:col-span-4">
-                        <label class="block text-xs font-medium text-gray-600 mb-1.5">Rentang Tanggal</label>
-                        <input type="date" class="w-full border-gray-300 rounded-lg text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                    </div>
+                <div class="flex flex-col md:flex-row md:items-end gap-4 justify-between">
+                    
+                    <form action="" method="get" class="flex flex-col md:flex-row gap-4 md:items-end w-full md:w-auto">
+                        <div>
+                            <label class="block text-xs font-medium text-gray-600 mb-1.5">Pilih Periode Bulan</label>
+                            <input type="month" name="bulan" value="<?= esc($filterBulan) ?>" 
+                                class="w-full md:w-64 border-gray-300 rounded-lg text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500">
+                        </div>
+                        <button type="submit" class="bg-blue-600 text-white px-5 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 shadow-sm transition flex items-center justify-center gap-2 h-[38px]">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                            Tampilkan
+                        </button>
+                    </form>
 
-                    <div class="md:col-span-4">
-                        <label class="block text-xs font-medium text-gray-600 mb-1.5">Jenis Laporan</label>
-                        <select name="jenis" class="w-full border-gray-300 rounded-lg text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500">
-                            <option value="Semua Jenis">Semua Jenis</option>
-                            <option value="Inventaris">Inventaris</option>
-                            <option value="Peminjaman">Peminjaman</option>
-                            <option value="Kerusakan">Kerusakan</option>
-                        </select>
-                    </div>
-
-                    <div class="md:col-span-4 flex gap-2">
-                        <button type="submit" class="bg-blue-600 text-white px-5 py-2 rounded-lg text-sm font-medium hover:bg-blue-700 shadow-sm transition">Terapkan</button>
-                        <a href="<?= site_url('pimpinan/lihat-laporan') ?>" class="bg-white border border-gray-300 text-gray-600 px-5 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 transition">Reset</a>
-                    </div>
-                </form>
+                    <a href="<?= site_url('pimpinan/lihat-laporan/cetak') ?>?bulan=<?= esc($filterBulan) ?>" target="_blank"
+                       class="flex items-center justify-center px-5 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition shadow-sm h-[38px]">
+                       <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
+                       Download PDF Lengkap (Semua Kategori)
+                    </a>
+                </div>
             </div>
 
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
+                    <h3 class="font-bold text-gray-700 text-sm">Rincian Laporan Periode: <?= date('F Y', strtotime($filterBulan)) ?></h3>
+                </div>
                 <div class="overflow-x-auto">
                     <table class="w-full whitespace-no-wrap text-left">
-                        <thead class="bg-white border-b border-gray-100">
+                        <thead class="bg-white text-gray-500 border-b border-gray-100 text-xs uppercase">
                             <tr>
-                                <th class="px-6 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Judul Laporan</th>
-                                <th class="px-6 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Jenis Laporan</th>
-                                <th class="px-6 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider">Tanggal Dibuat</th>
-                                <th class="px-6 py-4 text-xs font-semibold text-gray-400 uppercase tracking-wider text-right">Aksi</th>
+                                <th class="px-6 py-4 font-semibold">Jenis Laporan</th>
+                                <th class="px-6 py-4 font-semibold">Ringkasan Data</th>
+                                <th class="px-6 py-4 font-semibold text-right">Aksi</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-100">
-                            <?php if (empty($laporan)): ?>
-                                <tr>
-                                    <td colspan="4" class="px-6 py-8 text-center text-gray-500 text-sm">Tidak ada laporan ditemukan.</td>
+                            <?php foreach ($laporan as $row): ?>
+                                <tr class="hover:bg-gray-50 transition">
+                                    <td class="px-6 py-4">
+                                        <div class="flex items-center">
+                                            <div class="p-2 rounded-lg 
+                                                <?= $row['jenis'] == 'Inventaris' ? 'bg-blue-50 text-blue-600' : 
+                                                   ($row['jenis'] == 'Peminjaman' ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600') ?> mr-3">
+                                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                                            </div>
+                                            <span class="text-sm font-bold text-gray-800"><?= esc($row['judul']) ?></span>
+                                        </div>
+                                    </td>
+                                    <td class="px-6 py-4 text-sm text-gray-600">
+                                        <?= esc($row['ringkasan']) ?>
+                                    </td>
+                                    <td class="px-6 py-4 text-right">
+                                        <a href="<?= site_url('pimpinan/lihat-laporan/detail') ?>?tipe=<?= $row['tipe_data'] ?>&bulan=<?= esc($filterBulan) ?>&judul=<?= urlencode($row['judul']) ?>"
+                                            class="inline-block px-4 py-2 bg-white border border-gray-300 text-gray-700 text-xs font-medium rounded-lg hover:bg-gray-50 hover:text-blue-600 transition shadow-sm">
+                                            Lihat Detail
+                                        </a>
+                                    </td>
                                 </tr>
-                            <?php else: ?>
-                                <?php foreach ($laporan as $row): ?>
-                                    <tr class="hover:bg-gray-50 transition">
-                                        <td class="px-6 py-4 text-sm font-medium text-gray-800"><?= esc($row['judul']) ?></td>
-                                        <td class="px-6 py-4">
-                                            <?php
-                                            $badge = 'bg-gray-100 text-gray-600';
-                                            if ($row['jenis'] == 'Inventaris') $badge = 'bg-blue-100 text-blue-700';
-                                            if ($row['jenis'] == 'Peminjaman') $badge = 'bg-green-100 text-green-700';
-                                            if ($row['jenis'] == 'Kerusakan') $badge = 'bg-red-100 text-red-700';
-                                            ?>
-                                            <span class="px-2.5 py-1 rounded-md text-xs font-medium <?= $badge ?>"><?= esc($row['jenis']) ?></span>
-                                        </td>
-                                        <td class="px-6 py-4 text-sm text-gray-500"><?= esc($row['tanggal']) ?></td>
-                                        <td class="px-6 py-4 text-right space-x-2">
-                                            <a href="<?= site_url('pimpinan/lihat-laporan/detail') ?>?tipe=<?= $row['tipe_data'] ?>&judul=<?= urlencode($row['judul']) ?>"
-                                                class="inline-block px-3 py-1.5 bg-white border border-gray-300 text-gray-600 text-xs font-medium rounded hover:bg-gray-50 transition">
-                                                Lihat Detail
-                                            </a>
-                                            <!-- <button type="button" onclick="alert('Fitur unduh PDF belum tersedia.')" 
-                                           class="inline-block px-3 py-1.5 bg-blue-600 text-white text-xs font-medium rounded hover:bg-blue-700 transition shadow-sm">
-                                           <span class="mr-1">↓</span> Unduh
-                                        </button> -->
-                                        </td>
-                                    </tr>
-                                <?php endforeach; ?>
-                            <?php endif; ?>
+                            <?php endforeach; ?>
                         </tbody>
                     </table>
-                </div>
-                <div class="px-6 py-4 border-t border-gray-100 bg-gray-50 flex items-center justify-between">
-                    <span class="text-xs text-gray-500">Menampilkan <?= count($laporan) ?> dari 100</span>
-                    <div class="flex space-x-1">
-                        <button class="w-8 h-8 flex items-center justify-center rounded bg-white border border-gray-300 text-gray-500 text-xs hover:bg-gray-100">
-                            << /button>
-                                <button class="w-8 h-8 flex items-center justify-center rounded bg-blue-600 text-white text-xs shadow-sm">1</button>
-                                <button class="w-8 h-8 flex items-center justify-center rounded bg-white border border-gray-300 text-gray-500 text-xs hover:bg-gray-100">2</button>
-                                <button class="w-8 h-8 flex items-center justify-center rounded bg-white border border-gray-300 text-gray-500 text-xs hover:bg-gray-100">></button>
-                    </div>
                 </div>
             </div>
 

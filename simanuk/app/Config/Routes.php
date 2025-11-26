@@ -127,6 +127,7 @@ $routes->group('peminjam', ['filter' => ['session', 'role:Peminjam']], static fu
 
 $routes->group('pimpinan', ['filter' => ['session', 'role:Pimpinan']], static function ($routes) {
    $routes->get('dashboard', 'Pimpinan\DashboardController::index');
+   $routes->get('lihat-laporan/cetak', 'Pimpinan\LaporanController::cetak');
 });
 
 // ----------------------------------------------------
@@ -136,12 +137,7 @@ $routes->group('tu', ['filter' => ['session', 'role:TU']], static function ($rou
    $routes->get('dashboard', 'TU\DashboardController::index');
 
    // ** KELOLA AKUN PENGGUNA **
-   $routes->get('kelola/akun', 'TU\UserController::index', ['as' => 'tu-users']); // READ (Daftar Pengguna)
-   $routes->get('kelola/akun/new', 'TU\UserController::create'); // CREATE - Tampil Form
-   $routes->post('kelola/akun/save', 'TU\UserController::save'); // CREATE - Proses Simpan
-   $routes->get('kelola/akun/edit/(:num)', 'TU\UserController::edit/$1'); // UPDATE - Tampil Form
-   $routes->post('kelola/akun/update/(:num)', 'TU\UserController::update/$1'); // UPDATE - Proses Update
-   $routes->post('kelola/akun/delete/(:num)', 'TU\UserController::delete/$1'); // DELETE
+
    $routes->get('verifikasi-peminjaman', 'TU\VerifikasiPeminjamanController::index');
    $routes->get('verifikasi-peminjaman/detail/(:num)', 'TU\VerifikasiPeminjamanController::detail/$1');
    $routes->post('verifikasi-peminjaman/approve/(:num)', 'TU\VerifikasiPeminjamanController::approve/$1');
@@ -158,6 +154,7 @@ $routes->group('tu', ['filter' => ['session', 'role:TU']], static function ($rou
    $routes->get('generate-laporan', 'TU\LaporanController::index');
    $routes->get('pengembalian/detail/(:num)', 'TU\PengembalianController::detail/$1');
    $routes->post('pengembalian/proses/(:num)', 'TU\PengembalianController::prosesKembali/$1');
+   $routes->get('download-laporan', 'TU\DashboardController::downloadLaporan');
 });
 
 // ----------------------------------------------------
