@@ -32,7 +32,7 @@ class PengembalianController extends BaseController
         $dataPeminjaman = $this->peminjamanModel
             ->select('peminjaman.*, users.username, users.nama_lengkap, users.organisasi')
             ->join('users', 'users.id = peminjaman.id_peminjam')
-            ->whereIn('status_peminjaman_global', ['Dipinjam']) 
+            ->whereIn('status_peminjaman_global', ['Dipinjam'])
             ->orderBy('tgl_pinjam_selesai', 'ASC')
             ->findAll();
 
@@ -102,22 +102,22 @@ class PengembalianController extends BaseController
 
         // Ambil Input Kondisi Akhir dari Form
         // Format array: [id_detail => kondisi]
-        $kondisiAkhirSarana = $this->request->getPost('kondisi_akhir_sarana'); 
-        $kondisiAkhirPrasarana = $this->request->getPost('kondisi_akhir_prasarana'); 
-        
+        $kondisiAkhirSarana = $this->request->getPost('kondisi_akhir_sarana');
+        $kondisiAkhirPrasarana = $this->request->getPost('kondisi_akhir_prasarana');
+
         $db = \Config\Database::connect();
         $db->transStart();
 
         try {
             // 1. PROSES PENGEMBALIAN SARANA (BARANG)
             $itemsSarana = $this->detailSaranaModel->where('id_peminjaman', $id)->findAll();
-            
+
             foreach ($itemsSarana as $item) {
                 // A. Update Kondisi di Tabel Detail
-                $kondisi = isset($kondisiAkhirSarana[$item['id_detail_sarana']]) 
-                           ? $kondisiAkhirSarana[$item['id_detail_sarana']] 
-                           : 'Baik';
-                
+                $kondisi = isset($kondisiAkhirSarana[$item['id_detail_sarana']])
+                    ? $kondisiAkhirSarana[$item['id_detail_sarana']]
+                    : 'Baik';
+
                 $this->detailSaranaModel->update($item['id_detail_sarana'], [
                     'kondisi_akhir' => $kondisi
                 ]);
@@ -126,25 +126,25 @@ class PengembalianController extends BaseController
                 $sarana = $this->saranaModel->find($item['id_sarana']);
                 if ($sarana) {
                     $newStok = $sarana['jumlah'] + $item['jumlah'];
-                    
+
                     $updateData = ['jumlah' => $newStok];
                     // Jika status sebelumnya 'Tidak Tersedia'/'Dipinjam' dan sekarang stok ada, set 'Tersedia'
                     if ($newStok > 0) {
                         $updateData['status_ketersediaan'] = 'Tersedia';
                     }
-                    
+
                     $this->saranaModel->update($item['id_sarana'], $updateData);
                 }
             }
 
             // 2. PROSES PENGEMBALIAN PRASARANA (RUANGAN)
             $itemsPrasarana = $this->detailPrasaranaModel->where('id_peminjaman', $id)->findAll();
-            
+
             foreach ($itemsPrasarana as $item) {
                 // A. Update Kondisi di Tabel Detail
-                $kondisi = isset($kondisiAkhirPrasarana[$item['id_detail_prasarana']]) 
-                           ? $kondisiAkhirPrasarana[$item['id_detail_prasarana']] 
-                           : 'Baik';
+                $kondisi = isset($kondisiAkhirPrasarana[$item['id_detail_prasarana']])
+                    ? $kondisiAkhirPrasarana[$item['id_detail_prasarana']]
+                    : 'Baik';
 
                 $this->detailPrasaranaModel->update($item['id_detail_prasarana'], [
                     'kondisi_akhir' => $kondisi
@@ -169,7 +169,6 @@ class PengembalianController extends BaseController
             }
 
             return redirect()->to(site_url('tu/pengembalian'))->with('message', 'Pengembalian berhasil diverifikasi. Stok dan status telah diperbarui.');
-
         } catch (\Exception $e) {
             $db->transRollback();
             return redirect()->back()->with('error', 'Terjadi kesalahan sistem: ' . $e->getMessage());

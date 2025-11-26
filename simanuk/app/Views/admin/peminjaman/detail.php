@@ -82,7 +82,7 @@
 
          <?php if (!empty($itemsPrasarana)) : ?>
             <div class="bg-white shadow rounded-lg p-6">
-               <h4 class="font-bold text-gray-700 mt-6 mb-3">Daftar Ruangan</h4>
+               <h4 class="font-bold text-gray-700 mt-6 mb-3">Daftar Prasarana</h4>
                <?php foreach ($itemsPrasarana as $item) : ?>
                   <div class="bg-white rounded-lg shadow p-6 border-l-4 border-purple-500">
                      <h4 class="text-lg font-bold"><?= esc($item['nama_prasarana']) ?></h4>
