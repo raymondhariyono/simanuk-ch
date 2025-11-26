@@ -24,7 +24,7 @@ class VerifikasiPeminjamanController extends BaseController
         $this->detailSaranaModel = new DetailPeminjamanSaranaModel();
         $this->detailPrasaranaModel = new DetailPeminjamanPrasaranaModel();
         $this->saranaModel = new SaranaModel();
-        
+
         $this->peminjamanService = new PeminjamanService();
     }
 
@@ -33,6 +33,32 @@ class VerifikasiPeminjamanController extends BaseController
     // -----------------------------------------------------------------------
     public function index()
     {
+        // 1. Ambil semua data (Header + User info)
+        // Urutkan: Diajukan paling atas (Prioritas), lalu tanggal terbaru
+        $allData = $this->peminjamanModel
+            ->select('peminjaman.*, users.nama_lengkap, users.organisasi, users.username')
+            ->join('users', 'users.id = peminjaman.id_peminjam')
+            ->orderBy("FIELD(status_peminjaman_global, 'Diajukan', 'Disetujui', 'Dipinjam', 'Selesai', 'Ditolak', 'Dibatalkan')")
+            ->orderBy('created_at', 'DESC')
+            ->findAll();
+
+        // tab-tab dalam view
+        $pending = [];  // Tab 1: Verifikasi Baru
+        $active  = [];  // Tab 2: Sedang Berjalan (Disetujui/Dipinjam)
+        $history = [];  // Tab 3: Riwayat
+
+        foreach ($allData as $row) {
+            $status = $row['status_peminjaman_global'];
+
+            if ($status == 'Diajukan') {
+                $pending[] = $row;
+            } elseif (in_array($status, ['Disetujui', 'Dipinjam'])) {
+                $active[] = $row;
+            } else {
+                $history[] = $row;
+            }
+        }
+
         // 1. JALANKAN AUTO CANCEL
         $canceledCount = $this->peminjamanService->autoCancelExpiredLoans();
 
@@ -51,6 +77,10 @@ class VerifikasiPeminjamanController extends BaseController
         $data = [
             'title'       => 'Verifikasi Peminjaman Masuk',
             'peminjaman'  => $dataPeminjaman,
+            // tab-tab
+            'pendingLoans' => $pending,
+            'activeLoans'  => $active,
+            'historyLoans' => $history,
             'showSidebar' => true,
             'breadcrumbs' => [
                 ['name' => 'Beranda', 'url' => site_url('tu/dashboard')],
