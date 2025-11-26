@@ -24,32 +24,11 @@
             <?= render_breadcrumb($breadcrumbs); ?>
          <?php endif; ?>
 
-         <div class="mb-8 grid grid-cols-1 md:grid-cols-12 gap-x-6 gap-y-4 items-center">
-            <div class="md:col-span-7">
-               <div class="relative">
-                  <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
-                     <i class="fas fa-search text-gray-400"></i>
-                  </div>
-                  <input type="text" placeholder="Cari proyektor, kabel HDMI, dll..."
-                     class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
-               </div>
-            </div>
-
+         <?= $this->include('components/filter_bar', []) ?>
+         <div class="mb-8 gap-x-2 gap-y-2 items-end">
             <div class="md:col-span-5 flex flex-col items-stretch md:items-end space-y-3">
-               <div class="flex flex-col md:flex-row space-y-3 md:space-y-0 md:space-x-3 w-full md:w-auto">
-                  <select class="border border-gray-300 rounded-lg shadow-sm py-2 px-3 focus:border-blue-500 w-full md:w-auto">
-                     <option>Semua Kategori</option>
-                  </select>
-                  <select class="border border-gray-300 rounded-lg shadow-sm py-2 px-3 focus:border-blue-500 w-full md:w-auto">
-                     <option>Lokasi</option>
-                  </select>
-               </div>
-
                <a href="<?= site_url('peminjam/peminjaman/new') ?>" class="bg-blue-600 text-white py-2 px-4 rounded-lg font-semibold hover:bg-blue-700 w-full md:w-auto text-center whitespace-nowrap flex items-center justify-center">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                     <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
-                  </svg>
-                  Ajukan Peminjaman
+                  + Ajukan Peminjaman
                </a>
             </div>
 
@@ -187,6 +166,11 @@
          </div>
 
       </main>
+      <div class="flex justify-end">
+         <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+            <?= $pager_sarana->links('sarana', 'pager_sarpras') ?>
+         </div>
+      </div>
    </div>
 </div>
 

@@ -64,4 +64,67 @@ class PrasaranaModel extends Model
       // Jika tidak, kembalikan semua (findAll)
       return $builder->findAll();
    }
+
+   /**
+    * Scope Filter untuk pencarian dan penyaringan data Prasarana
+    */
+   public function filter(array $params)
+   {
+      // 1. Filter Keyword (Search)
+      if (!empty($params['keyword'])) {
+         $keyword = $params['keyword'];
+         $this->groupStart()
+            ->like('nama_prasarana', $keyword)
+            ->orLike('kode_prasarana', $keyword)
+            ->groupEnd();
+      }
+
+      // 2. Filter Kategori
+      if (!empty($params['kategori']) && $params['kategori'] != 'Semua') {
+         $this->where('prasarana.id_kategori', $params['kategori']);
+      }
+
+      // 3. Filter Lokasi
+      if (!empty($params['lokasi']) && $params['lokasi'] != 'Semua') {
+         $this->where('prasarana.id_lokasi', $params['lokasi']);
+      }
+
+      // Join Tabel Referensi
+      $this->select('prasarana.*, kategori.nama_kategori, lokasi.nama_lokasi');
+      $this->join('kategori', 'kategori.id_kategori = prasarana.id_kategori', 'left');
+      $this->join('lokasi', 'lokasi.id_lokasi = prasarana.id_lokasi', 'left');
+
+      return $this;
+   }
+
+   // ...
+   public function filterHistory(array $params, int $userId)
+   {
+      // Base Query: Hanya milik user login
+      $this->where('id_peminjam', $userId);
+
+      // 1. Filter Tab (Aktif vs Riwayat)
+      // Logika ini dipindahkan dari Controller ke Model agar rapi
+      if (isset($params['tab']) && $params['tab'] === 'riwayat') {
+         $this->whereIn('status_peminjaman_global', ['Selesai', 'Ditolak', 'Dibatalkan']);
+      } else {
+         // Default: Aktif
+         $this->whereIn('status_peminjaman_global', ['Diajukan', 'Disetujui', 'Dipinjam']);
+      }
+
+      // 2. Filter Keyword (Cari Kegiatan)
+      if (!empty($params['keyword'])) {
+         $this->groupStart()
+            ->like('kegiatan', $params['keyword'])
+            ->orLike('keterangan', $params['keyword'])
+            ->groupEnd();
+      }
+
+      // 3. Filter Tanggal (Opsional)
+      if (!empty($params['tanggal'])) {
+         $this->where('DATE(tgl_pinjam_dimulai)', $params['tanggal']);
+      }
+
+      return $this->orderBy('created_at', 'DESC');
+   }
 }
