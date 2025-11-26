@@ -35,17 +35,17 @@ class LaporanKerusakanController extends BaseController
       // Pisahkan data untuk Tab Sarana & Prasarana
       $laporanSarana = [];
       $laporanPrasarana = [];
- 
+
       foreach ($laporan as $row) {
          // Ambil detail nama aset
          if ($row['tipe_aset'] == 'Sarana') {
             $aset = $this->saranaModel->find($row['id_sarana']);
-            $row['nama_aset'] = $aset['nama_sarana'] ?? 'Item Terhapus';
+            $row['nama_aset'] = $aset['nama_sarana'] ?? 'Item / Sarana Terhapus';
             $row['kode_aset'] = $aset['kode_sarana'] ?? '-';
             $laporanSarana[] = $row;
          } else {
             $aset = $this->prasaranaModel->find($row['id_prasarana']);
-            $row['nama_aset'] = $aset['nama_prasarana'] ?? 'Ruangan Terhapus';
+            $row['nama_aset'] = $aset['nama_prasarana'] ?? 'Prasarana Terhapus';
             $row['kode_aset'] = $aset['kode_prasarana'] ?? '-';
             $laporanPrasarana[] = $row;
          }

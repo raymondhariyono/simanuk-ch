@@ -55,35 +55,35 @@
 
                   <div>
                      <label class="block text-gray-700 text-sm font-bold mb-2" for="lantai">
-                        Lantai Ruangan
+                        Lantai Prasarana
                      </label>
                      <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" id="lantai" name="lantai" type="number" min="1" value="<?= old('lantai', $prasarana['lantai']) ?>">
                   </div>
 
                   <div>
                      <label class="block text-gray-700 text-sm font-bold mb-2" for="luas_ruangan">
-                        Luas Ruangan <span class="text-gray-400">(m²)</span>
+                        Luas Prasarana <span class="text-gray-400">(m²)</span>
                      </label>
                      <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" id="luas_ruangan" name="luas_ruangan" type="number" min="1" value="<?= old('luas_ruangan', $prasarana['luas_ruangan']) ?>">
                   </div>
 
                   <div>
                      <label class="block text-gray-700 text-sm font-bold mb-2" for="kapasitas_orang">
-                        Kapasitas Orang
+                        Kapasitas Orang dalam Prasarana
                      </label>
                      <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" id="kapasitas_orang" name="kapasitas_orang" type="number" min="1" value="<?= old('kapasitas_orang', $prasarana['kapasitas_orang']) ?>">
                   </div>
 
                   <div>
                      <label class="block text-gray-700 text-sm font-bold mb-2" for="jenis_ruangan">
-                        Jenis Ruangan
+                        Jenis Prasarana
                      </label>
                      <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" id="jenis_ruangan" name="jenis_ruangan" type="text" placeholder="Contoh: Kelas" value="<?= old('jenis_ruangan', $prasarana['jenis_ruangan']) ?>">
                   </div>
 
                   <div>
                      <label class="block text-gray-700 text-sm font-bold mb-2" for="tata_letak">
-                        Tata Letak
+                        Tata Letak Prasarana
                      </label>
                      <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" id="tata_letak" name="tata_letak" type="text" placeholder="Contoh: Teater" value="<?= old('tata_letak', $prasarana['tata_letak']) ?>">
                   </div>
@@ -113,7 +113,7 @@
                </div>
 
                <div class="mt-6">
-                  <label class="block text-gray-700 text-sm font-bold mb-2">Fasilitas Ruangan</label>
+                  <label class="block text-gray-700 text-sm font-bold mb-2">Fasilitas Prasarana</label>
                   <div id="fasilitas-container" class="space-y-4">
                      <?php
                      $old_fasilitas = old('fasilitas', json_decode($prasarana['fasilitas'], true) ?: ['']);

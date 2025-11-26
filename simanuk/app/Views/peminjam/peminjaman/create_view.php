@@ -130,7 +130,7 @@
                      <tr>
                         <td class="p-2">
                            <select name="items[prasarana][]" class="w-full border-gray-300 rounded-md shadow-md">
-                              <option value="">-- Pilih Ruangan --</option>
+                              <option value="">-- Pilih Prasarana --</option>
                               <?php foreach ($prasarana as $p) : ?>
                                  <option value="<?= $p['id_prasarana'] ?>"><?= esc($p['nama_prasarana']) ?> (Kapasitas: <?= $p['kapasitas_orang'] ?>)</option>
                               <?php endforeach; ?>
@@ -147,7 +147,7 @@
                   </tbody>
                </table>
             </div>
-            <button type="button" id="addPrasaranaBtn" class="text-sm text-blue-600 font-medium hover:underline">+ Tambah Ruangan</button>
+            <button type="button" id="addPrasaranaBtn" class="text-sm text-blue-600 font-medium hover:underline">+ Tambah Prasarana</button>
          </div>
 
          <div class="flex justify-end gap-3">
