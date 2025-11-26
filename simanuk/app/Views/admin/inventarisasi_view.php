@@ -5,6 +5,7 @@
 <?= $this->endSection(); ?>
 
 <?= $this->section('content'); ?>
+
 <div class="flex min-h-screen">
     <div class="flex-1 flex flex-col overflow-hidden">
         <main class="flex-1 overflow-y-auto p-6 md:p-8">
@@ -42,31 +43,7 @@
                 </div>
             </div>
 
-            <div class="mb-8 flex flex-wrap gap-4 items-center">
-                <div class="relative flex-grow" style="min-width: 300px;">
-                    <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
-                        <i class="fas fa-search text-gray-400"></i>
-                    </div>
-                    <input type="text" placeholder="Cari berdasarkan nama atau kode"
-                        class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
-                </div>
-                <div class="flex items-center space-x-2">
-                    <label class="text-gray-600 font-medium">Kategori:</label>
-                    <select class="border border-gray-300 rounded-lg shadow-sm py-2 px-3 focus:border-blue-500">
-                        <option>Semua</option>
-                        <option>Sarana</option>
-                        <option>Prasarana</option>
-                    </select>
-                </div>
-                <div class="flex items-center space-x-2">
-                    <label class="text-gray-600 font-medium">Lokasi:</label>
-                    <select class="border border-gray-300 rounded-lg shadow-sm py-2 px-3 focus:border-blue-500">
-                        <option>Semua</option>
-                        <option>Gedung A</option>
-                        <option>Gedung B</option>
-                    </select>
-                </div>
-            </div>
+            <?= $this->include('components/filter_bar', []) ?>
 
             <div class="bg-white rounded-lg shadow-lg overflow-hidden">
                 <div class="overflow-x-auto">
@@ -206,18 +183,7 @@
                     </table>
                 </div>
 
-                <div class="p-4 flex justify-between items-center">
-                    <span class="text-sm text-gray-700">
-                        Menampilkan <span class="font-medium">1-5</span> dari <span class="font-medium">100</span>
-                    </span>
-                    <nav class="flex space-x-1">
-                        <a href="#" class="py-2 px-3 rounded-lg text-gray-600 hover:bg-gray-100">Sebelumnya</a>
-                        <a href="#" class="py-2 px-3 rounded-lg text-gray-600 hover:bg-gray-100">1</a>
-                        <a href="#" class="py-2 px-3 rounded-lg bg-blue-100 text-blue-600 font-medium">2</a>
-                        <a href="#" class="py-2 px-3 rounded-lg text-gray-600 hover:bg-gray-100">3</a>
-                        <a href="#" class="py-2 px-3 rounded-lg text-gray-600 hover:bg-gray-100">Berikutnya</a>
-                    </nav>
-                </div>
+                <?= $pager_sarana->links('sarana', 'pager_sarpras') ?>
             </div>
 
         </main>

@@ -3,51 +3,62 @@
 namespace App\Controllers\Peminjam;
 
 use App\Controllers\BaseController;
+use App\Models\DataMaster\KategoriModel;
+use App\Models\DataMaster\LokasiModel;
 use App\Models\Sarpras\SaranaModel;
 use App\Models\Sarpras\PrasaranaModel;
 use App\Models\FotoAsetModel;
+use App\Services\InventarisService;
 
 class KatalogSarprasController extends BaseController
 {
    protected $saranaModel;
    protected $prasaranaModel;
 
+   protected $kategoriModel;
+   protected $lokasiModel;
    protected $fotoAsetModel;
+
+   protected $inventarisService;
 
    public function __construct()
    {
-      $this->saranaModel = new SaranaModel();
+      $this->saranaModel    = new SaranaModel();
       $this->prasaranaModel = new PrasaranaModel();
 
+      $this->kategoriModel = new KategoriModel();
+      $this->lokasiModel   = new LokasiModel();
       $this->fotoAsetModel = new FotoAsetModel();
+
+      $this->inventarisService = new InventarisService();
    }
 
    public function index()
    {
-      $sarana = $this->saranaModel->getSaranaForKatalog();
-      $prasarana = $this->prasaranaModel->getPrasaranaForKatalog();
+      // 1. Ambil Parameter GET (Query String)
+      $filters = [
+         'keyword'  => $this->request->getGet('keyword'),
+         'kategori' => $this->request->getGet('kategori'),
+         'lokasi'   => $this->request->getGet('lokasi'),
+      ];
 
-      foreach ($sarana as &$item) {
-         // ambil foto berdasarkan id_sarana 
-         $foto = $this->fotoAsetModel->where('id_sarana', $item['id_sarana'])->first();
-
-         // jika ada, pakai url_foto, jika tidak pakai placeholder default
-         $item['url_foto'] = $foto ? $foto['url_foto'] : null;
-      }
-      unset($item); // hapus referensi pointer
-
-      foreach ($prasarana as &$item) {
-         // Ambil 1 foto saja (first) berdasarkan id_prasarana
-         $foto = $this->fotoAsetModel->where('id_prasarana', $item['id_prasarana'])->first();
-
-         $item['url_foto'] = $foto ? $foto['url_foto'] : null;
-      }
-      unset($item);
+      $sarana = $this->inventarisService->getSaranaFiltered($filters, 4);
+      $prasarana = $this->inventarisService->getPrasaranaFiltered($filters, 4);
 
       $data = [
          'title' => 'Katalog Sarpras',
+         'actionUrl' => site_url('peminjam/sarpras/filter'),
          'sarana' => $sarana,
-         'prasarana' => $prasarana,
+         'pager_sarana' => $this->inventarisService->getSaranaPager(),
+         'prasarana' => $prasarana, // 8 per page
+         'pager_prasarana' => $this->inventarisService->getPrasaranaPager(),
+
+         // Data untuk Dropdown Filter
+         'kategoriList' => $this->kategoriModel->findAll(),
+         'lokasiList'   => $this->lokasiModel->findAll(),
+         // Kirim balik filter agar input tidak reset
+         'filters' => $filters,
+
          'showSidebar' => true, // flag untuk sidebar
          'breadcrumbs' => [
             [
@@ -59,6 +70,7 @@ class KatalogSarprasController extends BaseController
             ]
          ]
       ];
+
 
       return view('peminjam/sarpras_view', $data);
    }

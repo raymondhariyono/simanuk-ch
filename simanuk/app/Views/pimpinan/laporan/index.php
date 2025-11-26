@@ -18,7 +18,7 @@
                         <label class="block text-xs font-medium text-gray-600 mb-1.5">Rentang Tanggal</label>
                         <input type="date" class="w-full border-gray-300 rounded-lg text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500">
                     </div>
-                    
+
                     <div class="md:col-span-4">
                         <label class="block text-xs font-medium text-gray-600 mb-1.5">Jenis Laporan</label>
                         <select name="jenis" class="w-full border-gray-300 rounded-lg text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500">
@@ -49,32 +49,34 @@
                         </thead>
                         <tbody class="divide-y divide-gray-100">
                             <?php if (empty($laporan)): ?>
-                                <tr><td colspan="4" class="px-6 py-8 text-center text-gray-500 text-sm">Tidak ada laporan ditemukan.</td></tr>
+                                <tr>
+                                    <td colspan="4" class="px-6 py-8 text-center text-gray-500 text-sm">Tidak ada laporan ditemukan.</td>
+                                </tr>
                             <?php else: ?>
-                                <?php foreach($laporan as $row): ?>
-                                <tr class="hover:bg-gray-50 transition">
-                                    <td class="px-6 py-4 text-sm font-medium text-gray-800"><?= esc($row['judul']) ?></td>
-                                    <td class="px-6 py-4">
-                                        <?php 
+                                <?php foreach ($laporan as $row): ?>
+                                    <tr class="hover:bg-gray-50 transition">
+                                        <td class="px-6 py-4 text-sm font-medium text-gray-800"><?= esc($row['judul']) ?></td>
+                                        <td class="px-6 py-4">
+                                            <?php
                                             $badge = 'bg-gray-100 text-gray-600';
-                                            if($row['jenis'] == 'Inventaris') $badge = 'bg-blue-100 text-blue-700';
-                                            if($row['jenis'] == 'Peminjaman') $badge = 'bg-green-100 text-green-700';
-                                            if($row['jenis'] == 'Kerusakan') $badge = 'bg-red-100 text-red-700';
-                                        ?>
-                                        <span class="px-2.5 py-1 rounded-md text-xs font-medium <?= $badge ?>"><?= esc($row['jenis']) ?></span>
-                                    </td>
-                                    <td class="px-6 py-4 text-sm text-gray-500"><?= esc($row['tanggal']) ?></td>
-                                    <td class="px-6 py-4 text-right space-x-2">
-                                        <a href="<?= site_url('pimpinan/lihat-laporan/detail') ?>?tipe=<?= $row['tipe_data'] ?>&judul=<?= urlencode($row['judul']) ?>" 
-                                           class="inline-block px-3 py-1.5 bg-white border border-gray-300 text-gray-600 text-xs font-medium rounded hover:bg-gray-50 transition">
-                                           Lihat Detail
-                                        </a>
-                                        <!-- <button type="button" onclick="alert('Fitur unduh PDF belum tersedia.')" 
+                                            if ($row['jenis'] == 'Inventaris') $badge = 'bg-blue-100 text-blue-700';
+                                            if ($row['jenis'] == 'Peminjaman') $badge = 'bg-green-100 text-green-700';
+                                            if ($row['jenis'] == 'Kerusakan') $badge = 'bg-red-100 text-red-700';
+                                            ?>
+                                            <span class="px-2.5 py-1 rounded-md text-xs font-medium <?= $badge ?>"><?= esc($row['jenis']) ?></span>
+                                        </td>
+                                        <td class="px-6 py-4 text-sm text-gray-500"><?= esc($row['tanggal']) ?></td>
+                                        <td class="px-6 py-4 text-right space-x-2">
+                                            <a href="<?= site_url('pimpinan/lihat-laporan/detail') ?>?tipe=<?= $row['tipe_data'] ?>&judul=<?= urlencode($row['judul']) ?>"
+                                                class="inline-block px-3 py-1.5 bg-white border border-gray-300 text-gray-600 text-xs font-medium rounded hover:bg-gray-50 transition">
+                                                Lihat Detail
+                                            </a>
+                                            <!-- <button type="button" onclick="alert('Fitur unduh PDF belum tersedia.')" 
                                            class="inline-block px-3 py-1.5 bg-blue-600 text-white text-xs font-medium rounded hover:bg-blue-700 transition shadow-sm">
                                            <span class="mr-1">↓</span> Unduh
                                         </button> -->
-                                    </td>
-                                </tr>
+                                        </td>
+                                    </tr>
                                 <?php endforeach; ?>
                             <?php endif; ?>
                         </tbody>
@@ -83,10 +85,11 @@
                 <div class="px-6 py-4 border-t border-gray-100 bg-gray-50 flex items-center justify-between">
                     <span class="text-xs text-gray-500">Menampilkan <?= count($laporan) ?> dari 100</span>
                     <div class="flex space-x-1">
-                        <button class="w-8 h-8 flex items-center justify-center rounded bg-white border border-gray-300 text-gray-500 text-xs hover:bg-gray-100"><</button>
-                        <button class="w-8 h-8 flex items-center justify-center rounded bg-blue-600 text-white text-xs shadow-sm">1</button>
-                        <button class="w-8 h-8 flex items-center justify-center rounded bg-white border border-gray-300 text-gray-500 text-xs hover:bg-gray-100">2</button>
-                        <button class="w-8 h-8 flex items-center justify-center rounded bg-white border border-gray-300 text-gray-500 text-xs hover:bg-gray-100">></button>
+                        <button class="w-8 h-8 flex items-center justify-center rounded bg-white border border-gray-300 text-gray-500 text-xs hover:bg-gray-100">
+                            << /button>
+                                <button class="w-8 h-8 flex items-center justify-center rounded bg-blue-600 text-white text-xs shadow-sm">1</button>
+                                <button class="w-8 h-8 flex items-center justify-center rounded bg-white border border-gray-300 text-gray-500 text-xs hover:bg-gray-100">2</button>
+                                <button class="w-8 h-8 flex items-center justify-center rounded bg-white border border-gray-300 text-gray-500 text-xs hover:bg-gray-100">></button>
                     </div>
                 </div>
             </div>
