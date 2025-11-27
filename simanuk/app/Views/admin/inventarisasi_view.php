@@ -183,7 +183,7 @@
                     </table>
                 </div>
 
-                <?= $pager_sarana->links('sarana', 'pager_sarpras') ?>
+                <?= $pager_sarana->links('sarana', 'tailwind_pagination') ?>
             </div>
 
         </main>

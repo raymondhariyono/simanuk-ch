@@ -40,8 +40,8 @@ class InventarisasiController extends BaseController
          'lokasi'   => $this->request->getGet('lokasi'),
       ];
 
-      $sarana = $this->inventarisService->getSaranaFiltered($filters, 3);
-      $prasarana = $this->inventarisService->getPrasaranaFiltered($filters, 3);
+      $sarana = $this->inventarisService->getSaranaFiltered($filters, 8);
+      $prasarana = $this->inventarisService->getPrasaranaFiltered($filters, 8);
 
       $data = [
          'title' => 'Katalog Sarpras',
