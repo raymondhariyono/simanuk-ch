@@ -352,7 +352,7 @@ class PeminjamanController extends BaseController
          // Di sini kita biarkan user menunggu verifikasi admin.
       }
 
-      return redirect()->back()->with('message', 'Barang berhasil dikembalikan. Menunggu verifikasi admin.');
+      return redirect()->back()->with('message', 'Sarana berhasil dikembalikan. Menunggu verifikasi admin.');
    }
 
    // Helper function private
@@ -397,9 +397,10 @@ class PeminjamanController extends BaseController
       $overdueCount = $this->peminjamanModel->hasOverdueLoans($userId);
 
       if ($overdueCount > 0) {
-         $pesan = "⛔ AKUN ANDA DIBLOKIR SEMENTARA.<br>" .
-            "Anda memiliki <b>$overdueCount peminjaman</b> yang belum dikembalikan melewati batas waktu.<br>" .
-            "Silakan kembalikan barang tersebut terlebih dahulu untuk dapat meminjam kembali.";
+         // Pesan yang lebih informatif mengenai aturan 3 hari
+         $pesan = "⛔ <b>AKUN ANDA DIBLOKIR SEMENTARA.</b><br><br>" .
+            "Sistem mendeteksi ada <b>$overdueCount peminjaman</b> yang belum dikembalikan lebih dari <b>3 hari</b> setelah tanggal selesai.<br>" .
+            "Sesuai kebijakan, Anda tidak dapat mengajukan pinjaman baru sampai barang tersebut dikembalikan.";
 
          return redirect()->to(site_url('peminjam/histori-peminjaman'))
             ->with('error', $pesan);

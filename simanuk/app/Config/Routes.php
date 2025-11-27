@@ -113,11 +113,6 @@ $routes->group('peminjam', ['filter' => ['session', 'role:Peminjam']], static fu
    // upload bukti foto (SESUDAH)
    $routes->post('peminjaman/upload-bukti-sesudah/(:segment)/(:num)', 'Peminjam\PeminjamanController::uploadBuktiSesudah/$1/$2');
 
-   // --- HISTORI PENGEMBALIAN ---
-   $routes->get('histori-pengembalian', 'Peminjam\HistoriPengembalianController::index');
-   // detail histori pengembalian
-   $routes->get('histori-pengembalian/detail/(:segment)', 'Peminjam\HistoriPengembalianController::detail/$1');
-
    // --- LAPORAN KERUSAKAN ---
    $routes->get('laporan-kerusakan', 'Peminjam\LaporanKerusakanController::index');
    // Memproses pengiriman laporan (submit form)
