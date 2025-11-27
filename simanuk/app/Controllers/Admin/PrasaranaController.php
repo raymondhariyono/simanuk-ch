@@ -104,6 +104,15 @@ class PrasaranaController extends BaseController
                'is_unique' => 'Kode prasarana yang sama sudah terdaftar',
             ]
          ],
+         // FK
+         'id_kategori' => [
+            'rules' => 'required',
+            'errors' => ['required' => 'Kategori wajib dipilih.']
+         ],
+         'id_lokasi' => [
+            'rules' => 'required',
+            'errors' => ['required' => 'Lokasi wajib dipilih.']
+         ],
          'luas_ruangan' => [
             'rules' => 'required|integer',
             'errors' => [
@@ -144,7 +153,7 @@ class PrasaranaController extends BaseController
          ],
          'foto_aset' => [
             'label' => 'Foto Aset',
-            'rules' => 'permit_empty|uploaded[foto_aset]|max_size[foto_aset,2048]|is_image[foto_aset]|mime_in[foto_aset,image/jpg,image/jpeg,image/png]',
+            'rules' => 'uploaded[foto_aset]|max_size[foto_aset,2048]|is_image[foto_aset]|mime_in[foto_aset,image/jpg,image/jpeg,image/png]',
             'errors' => [
                'uploaded' => 'Pilih setidaknya satu foto.',
                'max_size' => 'Ukuran foto terlalu besar (maks 2MB).',
@@ -155,11 +164,8 @@ class PrasaranaController extends BaseController
 
       // validasi input
       if (!$this->validate($rules)) {
-         // pesan kesalahan disimpan 
-         $validation = \Config\Services::validation();
-
          // input pengguna dan validasi yang didapat akan dikembalikan menjadi pesan
-         return redirect()->back()->withInput()->with('validation', $validation);
+         return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
       }
 
       $rawFasilitas = $this->request->getPost('fasilitas');
@@ -254,12 +260,52 @@ class PrasaranaController extends BaseController
                'is_unique' => 'Kode prasarana lain yang sama sudah terdaftar',
             ]
          ],
-         'luas_ruangan' => ['rules' => 'required|integer'],
-         'kapasitas_orang' => ['rules' => 'required|integer'],
-         'jenis_ruangan' => ['rules' => 'required'],
-         'lantai' => ['rules' => 'required|integer'],
-         'tata_letak' => ['rules' => 'required'],
-         'deskripsi' => ['rules' => 'required'],
+         'id_kategori' => [
+            'rules' => 'required',
+            'errors' => ['required' => 'Kategori wajib dipilih.']
+         ],
+         'id_lokasi' => [
+            'rules' => 'required',
+            'errors' => ['required' => 'Lokasi wajib dipilih.']
+         ],
+         'luas_ruangan' => [
+            'rules' => 'required|integer',
+            'errors' => [
+               'required' => 'Luas ruangan harus diisi (cm)',
+               'integer' => 'Luas ruangan harus berupa angka (cm)',
+            ]
+         ],
+         'kapasitas_orang' => [
+            'rules' => 'required',
+            'errors' => [
+               'required' => 'Kapasitas orang dalam ruangan harus diisi',
+            ]
+         ],
+         'jenis_ruangan' => [
+            'rules' => 'required',
+            'errors' => [
+               'required' => 'Kapasitas orang dalam ruangan harus diisi',
+            ]
+         ],
+         'lantai' => [
+            'rules' => 'required|integer',
+            'errors' => [
+               'required' => 'Lantai prasarana harus diisi',
+               'integer' => 'Lantai prasarana harus berupa angka',
+            ]
+         ],
+         'tata_letak' => [
+            'rules' => 'required',
+            'errors' => [
+               'required' => 'Lantai prasarana harus diisi',
+            ]
+         ],
+         'deskripsi' => [
+            'rules' => 'required',
+            'errors' => [
+               'required' => 'Deskripsi sarana harus diisi',
+            ]
+         ],
          'foto_aset' => [
             'label' => 'Foto Aset',
             'rules' => 'permit_empty|uploaded[foto_aset]|max_size[foto_aset,2048]|is_image[foto_aset]|mime_in[foto_aset,image/jpg,image/jpeg,image/png]',
