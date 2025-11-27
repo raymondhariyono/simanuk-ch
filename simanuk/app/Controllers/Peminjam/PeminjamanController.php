@@ -71,9 +71,27 @@ class PeminjamanController extends BaseController
 
       // 1. Validasi Input Header
       if (!$this->validate([
-         'kegiatan'           => 'required|min_length[3]',
-         'tgl_pinjam_dimulai' => 'required|valid_date',
-         'tgl_pinjam_selesai' => 'required|valid_date',
+         'kegiatan' => [
+            'rules' => "required|min_length[5]",
+            'errors' => [
+               'required' => 'Nama sarana wajib diisi.',
+               'min_length' => 'Nama kegiatan / acara minimal 5 huruf.',
+            ]
+         ],
+         'tgl_pinjam_dimulai' => [
+            'rules' => "required|valid_date",
+            'errors' => [
+               'required' => 'Tanggal mulainya peminjaman harus diisi.',
+               'valid_date' => 'Tanggal tidak valid.',
+            ]
+         ],
+         'tgl_pinjam_selesai' => [
+            'rules' => "required|valid_date",
+            'errors' => [
+               'required' => 'Tanggal selesainya peminjaman harus diisi.',
+               'valid_date' => 'Tanggal tidak valid.',
+            ]
+         ],
       ])) {
          return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
       }
@@ -99,7 +117,8 @@ class PeminjamanController extends BaseController
          // 2. CEK JENIS ERROR (Opsional)
          // Jika error berasal dari validasi bisnis (yang kita throw manual), boleh ditampilkan
          // Contoh: throw new \Exception("Stok habis");
-         $pesanUser = 'Terjadi kesalahan sistem. Silakan hubungi admin.';
+         // $pesanUser = 'Terjadi kesalahan sistem. Silakan hubungi admin.';
+         $pesanUser = 'Pilih setidaknya peminjaman sarana atau prasarana.';
 
          // Deteksi jika ini error bisnis yang aman ditampilkan
          // (Anda bisa membuat Custom Exception class untuk membedakan)
