@@ -150,6 +150,7 @@ $routes->group('tu', ['filter' => ['session', 'role:TU']], static function ($rou
    $routes->get('pengembalian/detail/(:num)', 'TU\PengembalianController::detail/$1');
    $routes->post('pengembalian/proses/(:num)', 'TU\PengembalianController::prosesKembali/$1');
    $routes->get('download-laporan', 'TU\DashboardController::downloadLaporan');
+
 });
 
 // ----------------------------------------------------
@@ -159,6 +160,8 @@ $routes->group('pimpinan', ['filter' => ['session', 'role:Pimpinan']], static fu
    $routes->get('dashboard', 'Pimpinan\DashboardController::index');
    $routes->get('lihat-laporan', 'Pimpinan\LaporanController::index');
    $routes->get('lihat-laporan/detail', 'Pimpinan\LaporanController::detail');
+   $routes->get('lihat-laporan/cetak', 'Pimpinan\LaporanController::cetak');     
+   $routes->get('lihat-laporan/excel', 'Pimpinan\LaporanController::excel');
 });
 
 

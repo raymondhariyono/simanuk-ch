@@ -7,9 +7,12 @@ use App\Models\Peminjaman\PeminjamanModel;
 use App\Models\Sarpras\SaranaModel;
 use App\Models\Sarpras\PrasaranaModel;
 use App\Models\LaporanKerusakanModel;
-// Tambahkan namespace Dompdf
 use Dompdf\Dompdf;
 use Dompdf\Options;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Style\Border;
 
 class LaporanController extends BaseController
 {
@@ -198,5 +201,109 @@ class LaporanController extends BaseController
         }
 
         return ['rows' => $rows, 'columns' => $columns];
+    }
+    public function excel()
+    {
+        $bulan = $this->request->getGet('bulan');
+        if (!$bulan) $bulan = date('Y-m');
+
+        $namaBulan = date('F Y', strtotime($bulan));
+
+        // 1. Ambil Semua Data (Menggunakan fungsi yang sudah ada)
+        $dataPeminjaman = $this->getDataLaporan('peminjaman', $bulan);
+        $dataKerusakan  = $this->getDataLaporan('kerusakan', $bulan);
+        $dataInventaris = $this->getDataLaporan('inventaris', $bulan);
+
+        // 2. Buat Spreadsheet Baru
+        $spreadsheet = new Spreadsheet();
+
+        // --- SHEET 1: PEMINJAMAN ---
+        $sheet = $spreadsheet->getActiveSheet();
+        $sheet->setTitle('Peminjaman');
+        $this->writeSheet($sheet, $dataPeminjaman, 'DATA PEMINJAMAN - ' . $namaBulan);
+
+        // --- SHEET 2: KERUSAKAN ---
+        $sheet2 = $spreadsheet->createSheet();
+        $sheet2->setTitle('Kerusakan');
+        $this->writeSheet($sheet2, $dataKerusakan, 'DATA KERUSAKAN - ' . $namaBulan);
+
+        // --- SHEET 3: INVENTARIS ---
+        $sheet3 = $spreadsheet->createSheet();
+        $sheet3->setTitle('Inventaris');
+        $this->writeSheet($sheet3, $dataInventaris, 'REKAPITULASI INVENTARIS - ' . $namaBulan);
+
+        // 3. Set Header untuk Download
+        $filename = 'Laporan_Sarpras_' . date('F_Y', strtotime($bulan)) . '.xlsx';
+        
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="' . $filename . '"');
+        header('Cache-Control: max-age=0');
+
+        // 4. Tulis ke Output
+        $writer = new Xlsx($spreadsheet);
+        $writer->save('php://output');
+        exit;
+    }
+
+    private function writeSheet($sheet, $data, $title) {
+        // Header Judul
+        $sheet->setCellValue('A1', $title);
+        $sheet->mergeCells('A1:G1'); // Sesuaikan merge dengan perkiraan jumlah kolom
+        $sheet->getStyle('A1')->getFont()->setBold(true)->setSize(14);
+        $sheet->getStyle('A1')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+
+        // Header Tabel (Baris ke-3)
+        $columns = $data['columns'];
+        $sheet->setCellValue('A3', 'No');
+        
+        $colChar = 'B';
+        foreach ($columns as $col) {
+            $sheet->setCellValue($colChar . '3', $col);
+            $colChar++;
+        }
+
+        // Styling Header Tabel
+        $lastCol = chr(ord($colChar) - 1); // Huruf kolom terakhir
+        $headerStyle = [
+            'font' => ['bold' => true],
+            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
+            'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+            'fill' => [
+                'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                'startColor' => ['argb' => 'FFEFEFEF']
+            ]
+        ];
+        $sheet->getStyle("A3:{$lastCol}3")->applyFromArray($headerStyle);
+
+        // Isi Data (Mulai Baris ke-4)
+        $rows = $data['rows'];
+        $rowNum = 4;
+        $no = 1;
+
+        foreach ($rows as $row) {
+            $sheet->setCellValue('A' . $rowNum, $no++);
+            $c = 'B';
+            foreach ($row as $key => $val) {
+                 // Skip kolom ID jika ada
+                 if (strpos($key, 'id_') !== false) continue;
+                 
+                 $sheet->setCellValue($c . $rowNum, $val);
+                 $c++;
+            }
+            $rowNum++;
+        }
+
+        // Styling Border Data
+        if ($rowNum > 4) {
+            $lastRow = $rowNum - 1;
+            $sheet->getStyle("A4:{$lastCol}{$lastRow}")->applyFromArray([
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]]
+            ]);
+        }
+
+        // Auto Size Kolom
+        foreach (range('A', $lastCol) as $col) {
+            $sheet->getColumnDimension($col)->setAutoSize(true);
+        }
     }
 }
