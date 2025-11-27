@@ -162,10 +162,11 @@ class PrasaranaController extends BaseController
          return redirect()->back()->withInput()->with('validation', $validation);
       }
 
-      // Ambil data fasilitas sebagai array dari input dengan nama "fasilitas[]".
-      $fasilitas = $this->request->getPost('fasilitas') ?? [];
-      // Filter untuk menghapus nilai fasilitas yang kosong dan reset index array.
-      $fasilitas = array_values(array_filter($fasilitas, fn($value) => trim($value) !== ''));
+      $rawFasilitas = $this->request->getPost('fasilitas');
+      if (!is_array($rawFasilitas)) {
+         $rawFasilitas = []; // Default array kosong
+      }
+      $fasilitas = array_values(array_filter($rawFasilitas, fn($value) => trim($value) !== ''));
 
       $db = \Config\Database::connect();
       $db->transStart();
