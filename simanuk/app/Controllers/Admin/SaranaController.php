@@ -100,14 +100,14 @@ class SaranaController extends BaseController
       // rules untuk validasi input
       $rules = [
          'nama_sarana' => [
-            'rules' => 'required|is_unique[sarana.nama_sarana,id_sarana,{id_sarana}]',
+            'rules' => 'required|is_unique[sarana.nama_sarana,id_sarana]',
             'errors' => [
                'required' => 'Nama sarana wajib diisi',
                'is_unique' => 'Sarana yang sama sudah terdaftar',
             ]
          ],
          'kode_sarana' => [
-            'rules' => 'required|is_unique[sarana.kode_sarana,id_sarana,{id_sarana}]',
+            'rules' => 'required|is_unique[sarana.kode_sarana,id_sarana]',
             'errors' => [
                'required' => 'Kode sarana harus diisi',
                'is_unique' => 'Kode sarana yang sama sudah terdaftar',
