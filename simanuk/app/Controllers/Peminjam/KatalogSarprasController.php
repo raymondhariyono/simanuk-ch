@@ -42,15 +42,15 @@ class KatalogSarprasController extends BaseController
          'lokasi'   => $this->request->getGet('lokasi'),
       ];
 
-      $sarana = $this->inventarisService->getSaranaFiltered($filters, 4);
-      $prasarana = $this->inventarisService->getPrasaranaFiltered($filters, 4);
+      $sarana = $this->inventarisService->getSaranaFiltered($filters, 8);
+      $prasarana = $this->inventarisService->getPrasaranaFiltered($filters, 8);
 
       $data = [
          'title' => 'Katalog Sarpras',
          'actionUrl' => site_url('peminjam/sarpras/filter'),
          'sarana' => $sarana,
          'pager_sarana' => $this->inventarisService->getSaranaPager(),
-         'prasarana' => $prasarana, // 8 per page
+         'prasarana' => $prasarana,
          'pager_prasarana' => $this->inventarisService->getPrasaranaPager(),
 
          // Data untuk Dropdown Filter
