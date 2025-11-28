@@ -160,9 +160,7 @@
                   </tbody>
                </table>
             </div>
-            <button type="button" id="addPrasaranaBtn" class="text-sm text-blue-600 font-medium hover:underline">+ Tambah Prasarana
-               
-            </button>
+            <button type="button" id="addPrasaranaBtn" class="text-sm text-blue-600 font-medium hover:underline">+ Tambah Prasarana</button>
          </div>
 
          <div class="flex justify-end gap-3">

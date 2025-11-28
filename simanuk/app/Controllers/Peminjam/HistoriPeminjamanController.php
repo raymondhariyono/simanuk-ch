@@ -88,6 +88,7 @@ class HistoriPeminjamanController extends BaseController
                     'foto_sebelum'  => $item['foto_sebelum'],
                     'foto_sesudah'  => $item['foto_sesudah'],
                     'keterangan'    => $pinjam['keterangan'],
+                    'catatan_penolakan' => $item['catatan_penolakan'],
                     // Tentukan jenis aksi berdasarkan status
                     'aksi'          => $this->determineAction($pinjam['status_peminjaman_global']),
                     'tipe'          => 'Sarana'
@@ -111,6 +112,7 @@ class HistoriPeminjamanController extends BaseController
                     'foto_sebelum'  => $item['foto_sebelum'],
                     'foto_sesudah'  => $item['foto_sesudah'],
                     'keterangan'    => $pinjam['keterangan'],
+                    'catatan_penolakan' => $item['catatan_penolakan'],
                     'aksi'          => $this->determineAction($pinjam['status_peminjaman_global']),
                     'tipe'          => 'Prasarana'
                 ];

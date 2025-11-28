@@ -55,6 +55,8 @@ $routes->group('admin', ['filter' => ['session', 'role:Admin']], static function
    // Route Proses Peminjaman
    $routes->post('peminjaman/approve/(:num)', 'Admin\PeminjamanController::approve/$1');
    $routes->post('peminjaman/reject/(:num)', 'Admin\PeminjamanController::reject/$1');
+   // tolak foto SEBELUM dan SESUDAH
+   $routes->post('peminjaman/tolak-foto/(:segment)/(:segment)/(:num)', 'Admin\PeminjamanController::tolakFoto/$1/$2/$3');
 
    // --- KELOLA PENGEMBALIAN ---
    $routes->get('pengembalian', 'Admin\PengembalianController::index');

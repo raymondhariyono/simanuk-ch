@@ -15,7 +15,8 @@ class DetailPeminjamanPrasaranaModel extends Model
       'foto_sesudah',
       'kondisi_awal',
       'kondisi_akhir',
-      'catatan'
+      'catatan',
+      'catatan_penolakan'
    ];
    protected $useTimestamps    = true;
 }
