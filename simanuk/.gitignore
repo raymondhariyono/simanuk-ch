@@ -124,3 +124,9 @@ _modules/*
 
 /results/
 /phpunit*.xml
+
+# Abaikan semua isi folder uploads
+public/uploads/*
+
+# Kecuali file index.html (agar folder uploads tetap ada di repo meski kosong)
+!public/uploads/index.html
