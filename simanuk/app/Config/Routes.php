@@ -150,6 +150,7 @@ $routes->group('tu', ['filter' => ['session', 'role:TU']], static function ($rou
    $routes->get('pengembalian/detail/(:num)', 'TU\PengembalianController::detail/$1');
    $routes->post('pengembalian/proses/(:num)', 'TU\PengembalianController::prosesKembali/$1');
    $routes->get('download-laporan', 'TU\DashboardController::downloadLaporan');
+   $routes->get('laporan/excel', 'TU\DashboardController::downloadExcel');
 
 });
 
