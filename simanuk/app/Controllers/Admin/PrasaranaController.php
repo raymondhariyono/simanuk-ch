@@ -195,8 +195,6 @@ class PrasaranaController extends BaseController
          $files = $this->request->getFileMultiple('foto_aset');
          $fotoModel = new FotoAsetModel();
 
-         // dd($files);
-
          if ($files) {
             foreach ($files as $file) {
                if ($file->isValid() && !$file->hasMoved()) {
