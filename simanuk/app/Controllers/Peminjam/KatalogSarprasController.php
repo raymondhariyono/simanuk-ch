@@ -8,6 +8,7 @@ use App\Models\DataMaster\LokasiModel;
 use App\Models\Sarpras\SaranaModel;
 use App\Models\Sarpras\PrasaranaModel;
 use App\Models\FotoAsetModel;
+use App\Models\Peminjaman\PeminjamanModel;
 use App\Services\InventarisService;
 
 class KatalogSarprasController extends BaseController
@@ -19,6 +20,8 @@ class KatalogSarprasController extends BaseController
    protected $lokasiModel;
    protected $fotoAsetModel;
 
+   protected $peminjamanModel;
+
    protected $inventarisService;
 
    public function __construct()
@@ -29,6 +32,8 @@ class KatalogSarprasController extends BaseController
       $this->kategoriModel = new KategoriModel();
       $this->lokasiModel   = new LokasiModel();
       $this->fotoAsetModel = new FotoAsetModel();
+
+      $this->peminjamanModel = new PeminjamanModel();
 
       $this->inventarisService = new InventarisService();
    }
@@ -77,6 +82,37 @@ class KatalogSarprasController extends BaseController
 
    public function detail($kode)
    {
+      // 1. Siapkan Variabel Kalender (Ambil dari URL atau Default)
+      $request = service('request');
+      $bulan   = $request->getGet('bulan') ? (int)$request->getGet('bulan') : date('n');
+      $tahun   = $request->getGet('tahun') ? (int)$request->getGet('tahun') : date('Y');
+
+      // Validasi navigasi bulan
+      if ($bulan < 1) {
+         $bulan = 12;
+         $tahun--;
+      }
+      if ($bulan > 12) {
+         $bulan = 1;
+         $tahun++;
+      }
+
+      // Logika Kalender Dasar
+      $jumlahHari   = cal_days_in_month(CAL_GREGORIAN, $bulan, $tahun);
+      $hariPertama  = date('N', strtotime("$tahun-$bulan-01")); // 1 (Senin) - 7 (Minggu)
+      $paddingAwal  = $hariPertama - 1;
+      $namaBulan    = date('F', mktime(0, 0, 0, $bulan, 10));
+
+      // Siapkan data kalender untuk dikirim ke view
+      $calendarData = [
+         'bulan'       => $bulan,
+         'tahun'       => $tahun,
+         'namaBulan'   => $namaBulan,
+         'jumlahHari'  => $jumlahHari,
+         'paddingAwal' => $paddingAwal,
+         'bookedDates' => [] // Nanti diisi setelah tahu jenis asetnya
+      ];
+
       // Coba cari sebagai sarana terlebih dahulu
       $sarana = $this->saranaModel->getSaranaForKatalog($kode);
 
@@ -92,10 +128,19 @@ class KatalogSarprasController extends BaseController
 
          $fotoSarana = $this->fotoAsetModel->getBySarana($sarana['id_sarana']);
 
+         // AMBIL JADWAL BOOKING KHUSUS SARANA INI
+         $calendarData['bookedDates'] = $this->peminjamanModel->getAssetSchedule(
+            $sarana['id_sarana'],
+            'sarana',
+            $bulan,
+            $tahun
+         );
+
          $data = [
             'title' => 'Detail Sarana',
             'sarana' => $sarana,
             'fotoSarana' => $fotoSarana,
+            'calendar' => $calendarData,
             'breadcrumbs' => [
                ['name' => 'Beranda', 'url' => site_url('peminjam/dashboard')],
                ['name' => 'Sarpras', 'url' => site_url('peminjam/sarpras')],
@@ -121,10 +166,19 @@ class KatalogSarprasController extends BaseController
             $prasarana['fasilitas'] = [];
          }
 
+         // AMBIL JADWAL BOOKING KHUSUS PRASARANA INI
+         $calendarData['bookedDates'] = $this->peminjamanModel->getAssetSchedule(
+            $prasarana['id_prasarana'],
+            'prasarana',
+            $bulan,
+            $tahun
+         );
+
          $data = [
             'title' => 'Detail Prasarana',
             'prasarana' => $prasarana,
             'fotoPrasarana' => $fotoPrasarana,
+            'calendar' => $calendarData,
             'breadcrumbs' => [
                ['name' => 'Beranda', 'url' => site_url('peminjam/dashboard')],
                ['name' => 'Sarpras', 'url' => site_url('peminjam/sarpras')],

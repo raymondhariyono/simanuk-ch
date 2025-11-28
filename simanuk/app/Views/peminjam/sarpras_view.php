@@ -17,6 +17,9 @@
                   Cari dan pinjam sarana & prasarana yang tersedia di Fakultas Teknik.
                </p>
             </div>
+            <div class="mb-8 gap-x-2 gap-y-2 items-end">
+               <div class="md:col-span-5 flex flex-col items-stretch md:items-end space-y-3"> <a href="<?= site_url('peminjam/peminjaman/new') ?>" class="bg-blue-600 text-white py-2 px-4 rounded-lg font-semibold hover:bg-blue-700 w-full md:w-auto text-center whitespace-nowrap flex items-center justify-center"> + Ajukan Peminjaman </a> </div>
+            </div>
          </div>
 
          <?php if (isset($breadcrumbs)) : ?>
@@ -55,9 +58,6 @@
                   </button>
                </li>
             </ul>
-         </div>
-         <div class="mb-8 gap-x-2 gap-y-2 items-end">
-            <div class="md:col-span-5 flex flex-col items-stretch md:items-end space-y-3"> <a href="<?= site_url('peminjam/peminjaman/new') ?>" class="bg-blue-600 text-white py-2 px-4 rounded-lg font-semibold hover:bg-blue-700 w-full md:w-auto text-center whitespace-nowrap flex items-center justify-center"> + Ajukan Peminjaman </a> </div>
          </div>
 
          <div id="tab-sarana-content">
