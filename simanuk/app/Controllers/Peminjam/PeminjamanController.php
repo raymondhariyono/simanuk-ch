@@ -302,22 +302,24 @@ class PeminjamanController extends BaseController
 
       // 2. Upload Foto
       $file = $this->request->getFile('foto_sesudah');
-      $newName = $file->getRandomName();
-      $file->move(FCPATH . 'uploads/peminjaman/bukti_akhir', $newName);
-      $pathFoto = 'uploads/peminjaman/bukti_akhir/' . $newName;
+      $pathFoto = upload_file($file, 'uploads/peminjaman/bukti_akhir');
+
+      if (!$pathFoto) {
+         return redirect()->back()->with('error', 'Gagal mengupload foto ke server.');
+      }
+
+      // 3. Update Database Detail Sesuai Tipe
+      $dataUpdate = [
+         'foto_sesudah'  => $pathFoto,
+         'kondisi_akhir' => $this->request->getPost('kondisi_akhir')
+      ];
 
       // 3. Update Database
       // Kita hanya update detail item, tidak mengubah status header 'Selesai' (itu tugas Admin)
       if ($tipe == 'sarana') {
-         $this->detailSaranaModel->update($idDetail, [
-            'foto_sesudah'  => $pathFoto,
-            'kondisi_akhir' => $this->request->getPost('kondisi_akhir')
-         ]);
+         $this->detailSaranaModel->update($idDetail, $dataUpdate);
       } else if ($tipe == 'prasarana') {
-         $this->detailPrasaranaModel->update($idDetail, [
-            'foto_sesudah'  => $pathFoto,
-            'kondisi_akhir' => $this->request->getPost('kondisi_akhir')
-         ]);
+         $this->detailPrasaranaModel->update($idDetail, $dataUpdate);
       }
 
       return redirect()->back()->with('message', 'Bukti pengembalian berhasil dikirim.');

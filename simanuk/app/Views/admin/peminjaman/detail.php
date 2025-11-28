@@ -68,10 +68,30 @@
                                     <a href="<?= base_url($item['foto_sebelum']) ?>" target="_blank">
                                        <img src="<?= base_url($item['foto_sebelum']) ?>" class="h-32 mx-auto object-cover rounded border border-gray-300 hover:opacity-75 transition">
                                     </a>
+
+                                    <button onclick="openRejectModal('<?= $item['id_detail_sarana'] ?>', 'sarana', 'sebelum')"
+                                       class="mt-2 text-xs text-red-600 hover:text-red-800 underline">
+                                       ❌ Tolak Foto Ini
+                                    </button>
                                  <?php else: ?>
                                     <div class="h-32 flex items-center justify-center text-gray-400 text-xs border border-dashed border-gray-300">Tidak ada foto</div>
                                  <?php endif; ?>
                               </div>
+
+                              <div id="rejectPhotoModal" class="hidden fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
+                                 <div class="bg-white p-6 rounded-lg w-96">
+                                    <h3 class="text-lg font-bold mb-2">Tolak Foto Bukti</h3>
+                                    <form id="formRejectPhoto" method="post">
+                                       <?= csrf_field() ?>
+                                       <textarea name="alasan" class="w-full border p-2 text-sm rounded" placeholder="Alasan penolakan (contoh: Foto buram)" required></textarea>
+                                       <div class="flex justify-end gap-2 mt-4">
+                                          <button type="button" onclick="document.getElementById('rejectPhotoModal').classList.add('hidden')" class="px-3 py-1 bg-gray-200 rounded text-sm">Batal</button>
+                                          <button type="submit" class="px-3 py-1 bg-red-600 text-white rounded text-sm">Tolak Foto</button>
+                                       </div>
+                                    </form>
+                                 </div>
+                              </div>
+
                            <?php endif; ?>
                         <?php endforeach; ?>
                      </tbody>
@@ -170,6 +190,12 @@
    function toggleRejectForm() {
       const form = document.getElementById('rejectForm');
       form.classList.toggle('hidden');
+   }
+
+   function openRejectModal(idDetail, tipe, jenisFoto) {
+      const form = document.getElementById('formRejectPhoto');
+      form.action = '<?= site_url("admin/peminjaman/tolak-foto/") ?>' + tipe + '/' + jenisFoto + '/' + idDetail;
+      document.getElementById('rejectPhotoModal').classList.remove('hidden');
    }
 </script>
 <?= $this->endSection(); ?>

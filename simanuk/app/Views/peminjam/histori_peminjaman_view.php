@@ -169,8 +169,21 @@
                                                                 </button>
                                                             </form>
                                                         <?php elseif ($loan['status'] == 'Disetujui' || $loan['status'] == 'Dipinjam'): ?>
-                                                            <?php if (empty($loan['foto_sebelum'])): ?>
+                                                            <?php if (!empty($loan['catatan_penolakan']) || empty($loan['foto_sebelum'])): ?>
+                                                                <div class="my-4">
+                                                                    <button type="button"
+                                                                        data-reason="<?= esc($loan['catatan_penolakan']) ?>"
+                                                                        onclick="openRejectionModal(this)"
+                                                                        class="text-xs text-red-600 hover:text-red-800 underline font-medium flex items-center gap-1">
+                                                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                                                        </svg>
+                                                                        Lihat Alasan Penolakan
+                                                                    </button>
+                                                                </div>
+                                                            <?php endif; ?>
 
+                                                            <?php if (empty($loan['foto_sebelum'])): ?>
                                                                 <button type="button"
                                                                     onclick="openUploadModal('sebelum', '<?= $loan['tipe'] ?>', '<?= $loan['id_detail'] ?>', '<?= esc($loan['nama_item']) ?>')"
                                                                     class="inline-flex items-center px-3 py-1.5 bg-yellow-100 text-yellow-600 hover:bg-yellow-300 border border-yellow-600 rounded-lg text-xs font-medium transition-colors">
@@ -189,10 +202,6 @@
                                                                 <?php endif; ?>
 
                                                             <?php endif; ?>
-
-                                                        <?php elseif ($loan['status'] == 'Diajukan' && !empty($loan['foto_sebelum'])): ?>
-                                                            <?= dd(empty($loan['foto_sebelum'])) ?>
-
 
                                                         <?php elseif ($loan['status'] == 'Selesai'): ?>
                                                             <a href="<?= site_url('peminjam/histori-peminjaman/detail/' . esc($loan['id_peminjaman'])) ?>"
@@ -215,6 +224,46 @@
                                         <?php endif; ?>
                                     </tbody>
                                 </table>
+                            </div>
+
+                            <div id="rejectionModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
+                                <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+
+                                    <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" onclick="closeRejectionModal()"></div>
+                                    <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+
+                                    <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full border-l-4 border-red-500">
+                                        <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+                                            <div class="sm:flex sm:items-start">
+                                                <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+                                                    <svg class="h-6 w-6 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                                    </svg>
+                                                </div>
+                                                <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+                                                    <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
+                                                        Foto Bukti Ditolak
+                                                    </h3>
+                                                    <div class="mt-2">
+                                                        <p class="text-sm text-gray-500">
+                                                            Admin telah menolak foto bukti yang Anda lampirkan dengan alasan berikut:
+                                                        </p>
+                                                        <div class="mt-3 p-3 bg-red-50 rounded-md text-red-800 text-sm font-medium" id="rejectionReasonText">
+                                                        </div>
+                                                        <p class="text-xs text-gray-400 mt-3">
+                                                            Silakan upload ulang foto yang sesuai pada tombol "Upload Foto" di tabel.
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                                            <button type="button" onclick="closeRejectionModal()" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none sm:ml-3 sm:w-auto sm:text-sm">
+                                                Saya Paham
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
 
                             <div class="p-4 flex justify-between items-center">
@@ -531,6 +580,21 @@
             closeDetailPenolakanModal();
         }
     });
+
+    function openRejectionModal(button) {
+        // Ambil data alasan dari atribut data-reason pada tombol yang diklik
+        const reason = button.getAttribute('data-reason');
+
+        // Isi teks ke dalam modal
+        document.getElementById('rejectionReasonText').innerText = reason;
+
+        // Tampilkan modal
+        document.getElementById('rejectionModal').classList.remove('hidden');
+    }
+
+    function closeRejectionModal() {
+        document.getElementById('rejectionModal').classList.add('hidden');
+    }
 </script>
 
 <?= $this->endSection(); ?>

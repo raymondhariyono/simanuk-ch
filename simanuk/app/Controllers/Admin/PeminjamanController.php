@@ -240,4 +240,44 @@ class PeminjamanController extends BaseController
 
       return redirect()->to(site_url('admin/peminjaman'))->with('message', 'Peminjaman telah ditolak.');
    }
+
+   /**
+    * Fitur untuk menolak foto bukti (Sebelum/Sesudah)
+    * @param string $tipe 'sarana' atau 'prasarana'
+    * @param string $jenisFoto 'sebelum' atau 'sesudah'
+    * @param int $idDetail
+    */
+   public function tolakFoto($tipe, $jenisFoto, $idDetail)
+   {
+      $alasan = $this->request->getPost('alasan');
+      if (empty($alasan)) {
+         return redirect()->back()->with('error', 'Harap isi alasan penolakan foto.');
+      }
+
+      // Tentukan Model & Kolom
+      $model = ($tipe == 'sarana') ? $this->detailSaranaModel : $this->detailPrasaranaModel;
+      $kolomFoto = ($jenisFoto == 'sebelum') ? 'foto_sebelum' : 'foto_sesudah';
+
+      // 1. Ambil Data Lama untuk Hapus File Fisik
+      $item = $model->find($idDetail);
+      $pathLama = $item[$kolomFoto];
+
+      if ($pathLama && is_file(FCPATH . $pathLama)) {
+         unlink(FCPATH . $pathLama);
+      }
+
+      // 2. Update Database: Kosongkan Foto & Isi Catatan
+      $updateData = [
+         $kolomFoto => null, // Reset foto jadi null
+         'catatan_penolakan' => "Foto $jenisFoto DITOLAK: " . $alasan
+      ];
+
+      // Khusus jika menolak foto 'sebelum', status global mungkin perlu dikembalikan
+      // Tapi agar simple, kita cukup reset fotonya saja. 
+      // Logika di View User akan mendeteksi 'foto_sebelum' kosong -> Munculkan tombol upload.
+
+      $model->update($idDetail, $updateData);
+
+      return redirect()->back()->with('message', 'Foto berhasil ditolak. User diminta upload ulang.');
+   }
 }
