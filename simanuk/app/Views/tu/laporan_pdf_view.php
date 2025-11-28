@@ -21,7 +21,7 @@
 <body>
     <div class="header">
         <h2>FAKULTAS TEKNIK - UNIVERSITAS LAMBUNG MANGKURAT</h2>
-        <p>LAPORAN REKAPITULASI DASHBOARD</p>
+        <p>LAPORAN REKAPITULASI</p>
         <p>Periode Cetak: <?= $bulan ?> <?= $tahun ?></p>
     </div>
 
