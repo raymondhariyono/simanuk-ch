@@ -183,7 +183,9 @@
                     </table>
                 </div>
 
-                <?= $pager_sarana->links('sarana', 'tailwind_pagination') ?>
+                <div class="flex justify-end p-4">
+                    <?= $pager_sarana->links('sarana', 'tailwind_pagination') ?>
+                </div>
             </div>
 
         </main>

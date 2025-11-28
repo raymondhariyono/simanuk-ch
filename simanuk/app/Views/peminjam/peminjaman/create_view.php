@@ -46,12 +46,25 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                <div>
                   <label class="block text-sm font-medium text-gray-700 mb-1">Tanggal Mulai</label>
-                  <input type="date" name="tgl_pinjam_dimulai" value="<?= old('tgl_pinjam_dimulai') ?>" class="w-full border border-gray-300 px-2 py-2 rounded-md shadow-md focus:ring-blue-500 focus:border-blue-500">
+                  <input type="date"
+                     id="tgl_mulai"
+                     name="tgl_pinjam_dimulai"
+                     min="<?= date('Y-m-d') ?>"
+                     value="<?= old('tgl_pinjam_dimulai') ?>"
+                     class="w-full border border-gray-300 px-2 py-2 rounded-md shadow-md focus:ring-blue-500 focus:border-blue-500"
+                     required>
                </div>
 
                <div>
                   <label class="block text-sm font-medium text-gray-700 mb-1">Tanggal Selesai</label>
-                  <input type="date" name="tgl_pinjam_selesai" value="<?= old('tgl_pinjam_selesai') ?>" class="w-full border border-gray-300 px-2 py-2  rounded-md shadow-md focus:ring-blue-500 focus:border-blue-500">
+                  <input type="date"
+                     id="tgl_selesai"
+                     name="tgl_pinjam_selesai"
+                     min="<?= date('Y-m-d') ?>"
+                     value="<?= old('tgl_pinjam_selesai') ?>"
+                     class="w-full border border-gray-300 px-2 py-2 rounded-md shadow-md focus:ring-blue-500 focus:border-blue-500"
+                     required>
+                  <p id="durasi_info" class="text-xs text-gray-500 mt-1"></p>
                </div>
             </div>
 
@@ -147,7 +160,9 @@
                   </tbody>
                </table>
             </div>
-            <button type="button" id="addPrasaranaBtn" class="text-sm text-blue-600 font-medium hover:underline">+ Tambah Prasarana</button>
+            <button type="button" id="addPrasaranaBtn" class="text-sm text-blue-600 font-medium hover:underline">+ Tambah Prasarana
+               
+            </button>
          </div>
 
          <div class="flex justify-end gap-3">
@@ -195,6 +210,68 @@
       const row = table.rows[0].cloneNode(true);
       row.querySelector('select').value = '';
       table.appendChild(row);
+   });
+
+   document.addEventListener("DOMContentLoaded", function() {
+      const tglMulai = document.getElementById('tgl_mulai');
+      const tglSelesai = document.getElementById('tgl_selesai');
+      const durasiInfo = document.getElementById('durasi_info');
+
+      // Batas Booking Window (2 Bulan dari hari ini, sesuai logika PHP)
+      // PHP: $maxAdvanceDate = date('Y-m-d', strtotime('+2 months'));
+      const maxBookingDate = new Date();
+      maxBookingDate.setMonth(maxBookingDate.getMonth() + 2);
+      const maxString = maxBookingDate.toISOString().split('T')[0];
+
+      // Set atribut max awal untuk kedua input
+      tglMulai.setAttribute('max', maxString);
+      tglSelesai.setAttribute('max', maxString);
+
+      // Event Listener saat Tanggal Mulai berubah
+      tglMulai.addEventListener('change', function() {
+         const startDateVal = this.value;
+
+         if (startDateVal) {
+            // 1. Reset Tanggal Selesai jika lebih kecil dari Tanggal Mulai baru
+            if (tglSelesai.value && tglSelesai.value < startDateVal) {
+               tglSelesai.value = startDateVal;
+            }
+
+            // 2. Set atribut MIN pada Tanggal Selesai agar tidak bisa pilih tanggal sebelum Mulai
+            tglSelesai.setAttribute('min', startDateVal);
+
+            // 3. (Opsional) Hitung estimasi durasi realtime
+            checkDuration();
+         }
+      });
+
+      tglSelesai.addEventListener('change', checkDuration);
+
+      function checkDuration() {
+         if (tglMulai.value && tglSelesai.value) {
+            const start = new Date(tglMulai.value);
+            const end = new Date(tglSelesai.value);
+            const diffTime = Math.abs(end - start);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+
+            let pesan = "Durasi: " + diffDays + " Hari.";
+            let warna = "text-gray-500";
+
+            // Peringatan Visual Sederhana (Validasi keras tetap di server)
+            // Kita tidak tahu user pinjam Sarana atau Prasarana saat ini (karena dinamis),
+            // jadi kita beri info umum saja atau warning jika > 31 hari.
+            if (diffDays > 60) {
+               pesan += " (Melebihi batas maksimal Prasarana 2 bulan)";
+               warna = "text-red-500 font-bold";
+            } else if (diffDays > 3) {
+               pesan += " (Perhatikan: Batas maksimal Sarana adalah 1 bulan dan Prasarana 2 bulan)";
+               warna = "text-yellow-600";
+            }
+
+            durasiInfo.innerText = pesan;
+            durasiInfo.className = "text-xs mt-1 " + warna;
+         }
+      }
    });
 </script>
 

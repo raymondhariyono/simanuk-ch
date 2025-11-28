@@ -130,16 +130,29 @@ class PeminjamanService
    {
       $start = $data['tgl_pinjam_dimulai'];
       $end   = $data['tgl_pinjam_selesai'];
+      $today = date('Y-m-d'); // Tanggal hari ini
 
       // 1. Cek Validitas Tanggal
       if ($start > $end) {
          throw new \Exception('Tanggal selesai tidak boleh lebih awal dari tanggal mulai.');
       }
-      if ($start < date('Y-m-d')) {
-         throw new \Exception('Tanggal mulai tidak boleh di masa lalu.');
+      if ($start < $today) {
+         throw new \Exception('Tanggal mulai peminjaman tidak boleh di masa lalu. Minimal hari ini.');
       }
 
-      // 2. Cek Minimal Satu Item Dipilih
+      // ---------------------------------------------------------
+      // 2. VALIDASI BATAS RESERVASI (BOOKING WINDOW)
+      // ---------------------------------------------------------
+      // Aturan: Peminjaman maksimal dilakukan untuk 2 bulan ke depan.
+      // Mencegah user mem-booking aset untuk tahun depan yang jadwalnya belum pasti.
+
+      $maxAdvanceDate = date('Y-m-d', strtotime('+2 months'));
+
+      if ($end > $maxAdvanceDate) {
+         throw new \Exception('Batas reservasi peminjaman maksimal adalah 2 bulan ke depan. Anda tidak bisa mengajukan untuk tanggal di luar batas tersebut.');
+      }
+
+      // 3. Cek Minimal Satu Item Dipilih
       $hasSarana    = !empty(array_filter($data['items']['sarana'] ?? []));
       $hasPrasarana = !empty(array_filter($data['items']['prasarana'] ?? []));
 
@@ -147,7 +160,7 @@ class PeminjamanService
          throw new \Exception('Mohon pilih minimal satu Barang (Sarana) atau Ruangan (Prasarana).');
       }
 
-      // 3. Validasi Ketersediaan Prasarana (Cek Bentrok Jadwal)
+      // 4. Validasi Ketersediaan Prasarana (Cek Bentrok Jadwal)
       if ($hasPrasarana) {
          foreach ($data['items']['prasarana'] as $idPrasarana) {
             if (empty($idPrasarana)) continue;
@@ -160,7 +173,7 @@ class PeminjamanService
          }
       }
 
-      // 4. Validasi Stok Sarana
+      // 5. Validasi Stok Sarana
       // (Opsional: Cek apakah stok master cukup untuk permintaan ini)
       if ($hasSarana) {
          foreach ($data['items']['sarana'] as $index => $idSarana) {
@@ -237,7 +250,7 @@ class PeminjamanService
    {
       // Batas waktu: Sekarang dikurangi 24 Jam
       $timeLimit = date('Y-m-d H:i:s', strtotime('-24 hours'));
-      
+
       // testing 1 menit
       // $timeLimit = date('Y-m-d H:i:s', strtotime('-1 minutes'));
 
