@@ -52,9 +52,14 @@ class PeminjamanModel extends Model
     */
    public function hasOverdueLoans(int $userId): int
    {
+      // Hitung batas waktu toleransi: Waktu Sekarang dikurangi 3 Hari
+      // Artinya: Kita mencari peminjaman yang 'tgl_pinjam_selesai'-nya 
+      // lebih kecil (lebih lampau) daripada 3 hari yang lalu.
+      $toleranceLimit = date('Y-m-d H:i:s', strtotime('-3 days'));
+
       return $this->where('id_peminjam', $userId)
-         ->where('status_peminjaman_global', self::STATUS_DIPINJAM) // Pastikan pakai konstanta 'Dipinjam'
-         ->where('tgl_pinjam_selesai <', date('Y-m-d H:i:s'))
+         ->where('status_peminjaman_global', self::STATUS_DIPINJAM) // Pastikan konstanta 'Dipinjam'
+         ->where('tgl_pinjam_selesai <', $toleranceLimit) // Logika Grace Period
          ->countAllResults();
    }
 }

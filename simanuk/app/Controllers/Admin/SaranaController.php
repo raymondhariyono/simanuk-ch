@@ -100,18 +100,27 @@ class SaranaController extends BaseController
       // rules untuk validasi input
       $rules = [
          'nama_sarana' => [
-            'rules' => 'required|is_unique[sarana.nama_sarana,id_sarana]',
+            'rules' => 'required|is_unique[sarana.nama_sarana]',
             'errors' => [
-               'required' => 'Nama sarana wajib diisi',
+               'required' => 'Nama item / sarana wajib diisi',
                'is_unique' => 'Sarana yang sama sudah terdaftar',
             ]
          ],
          'kode_sarana' => [
-            'rules' => 'required|is_unique[sarana.kode_sarana,id_sarana]',
+            'rules' => 'required|is_unique[sarana.kode_sarana]',
             'errors' => [
                'required' => 'Kode sarana harus diisi',
                'is_unique' => 'Kode sarana yang sama sudah terdaftar',
             ]
+         ],
+         // fk
+         'id_kategori' => [
+            'rules' => 'required',
+            'errors' => ['required' => 'Kategori wajib dipilih.']
+         ],
+         'id_lokasi' => [
+            'rules' => 'required',
+            'errors' => ['required' => 'Lokasi wajib dipilih.']
          ],
          'jumlah' => [
             'rules' => 'required|integer',
@@ -134,7 +143,7 @@ class SaranaController extends BaseController
          ],
          'foto_aset' => [
             'label' => 'Foto Aset',
-            'rules' => 'permit_empty|uploaded[foto_aset]|max_size[foto_aset,2048]|is_image[foto_aset]|mime_in[foto_aset,image/jpg,image/jpeg,image/png]',
+            'rules' => 'uploaded[foto_aset]|max_size[foto_aset,2048]|is_image[foto_aset]|mime_in[foto_aset,image/jpg,image/jpeg,image/png]',
             'errors' => [
                'uploaded' => 'Pilih setidaknya satu foto.',
                'max_size' => 'Ukuran foto terlalu besar (maks 2MB).',
@@ -145,11 +154,8 @@ class SaranaController extends BaseController
 
       // validasi input
       if (!$this->validate($rules)) {
-         // pesan kesalahan disimpan 
-         $validation = \Config\Services::validation();
-
          // input pengguna dan validasi yang didapat akan dikembalikan menjadi pesan
-         return redirect()->back()->withInput()->with('validation', $validation);
+         return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
       }
 
       // Ambil data spesifikasi dari form
@@ -249,6 +255,15 @@ class SaranaController extends BaseController
                'is_unique' => 'Kode sarana lain yang sama sudah terdaftar',
             ]
          ],
+         // FK
+         'id_kategori' => [
+            'rules' => 'required',
+            'errors' => ['required' => 'Kategori wajib dipilih.']
+         ],
+         'id_lokasi' => [
+            'rules' => 'required',
+            'errors' => ['required' => 'Lokasi wajib dipilih.']
+         ],
          'jumlah' => [
             'rules' => 'required|integer',
             'errors' => [
@@ -280,6 +295,7 @@ class SaranaController extends BaseController
       ];
 
       if (!$this->validate($rules)) {
+         // input pengguna dan validasi yang didapat akan dikembalikan menjadi pesan
          return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
       }
 
