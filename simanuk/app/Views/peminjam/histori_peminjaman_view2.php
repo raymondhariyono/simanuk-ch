@@ -80,6 +80,10 @@
                   <?= $this->setData(['h' => $h, 'isHistory' => false])->render('peminjam/components/accordion_item') ?>
                <?php endforeach; ?>
             </div>
+
+            <div class="mt-4 flex justify-end">
+               <?= $pager->links('active', 'tailwind_pagination') ?>
+            </div>
          <?php endif; ?>
       </div>
 
@@ -93,6 +97,10 @@
                <?php foreach ($historyLoans as $h) : ?>
                   <?= $this->setData(['h' => $h, 'isHistory' => true])->render('peminjam/components/accordion_item') ?>
                <?php endforeach; ?>
+
+               <div class="mt-4 flex justify-end">
+                  <?= $pager->links('active', 'tailwind_pagination') ?>
+               </div>
             </div>
          <?php endif; ?>
       </div>

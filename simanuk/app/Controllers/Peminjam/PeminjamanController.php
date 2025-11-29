@@ -41,7 +41,9 @@ class PeminjamanController extends BaseController
    public function new()
    {
       // Jalankan pengecekan
-      if ($blocked = $this->checkBlockStatus()) { return $blocked; }
+      if ($blocked = $this->checkBlockStatus()) {
+         return $blocked;
+      }
 
       $data = [
          'title' => 'Ajukan Peminjaman Baru',
@@ -426,5 +428,53 @@ class PeminjamanController extends BaseController
       }
 
       return null;
+   }
+
+   /**
+    * API untuk mengecek tanggal yang sudah dibooking untuk prasarana tertentu
+    * Diakses via AJAX
+    */
+   public function checkPrasaranaAvailability($idPrasarana)
+   {
+      if (!$this->request->isAJAX()) {
+         return $this->response->setStatusCode(404);
+      }
+
+      $tglMulai = $this->request->getGet('start');
+      $tglSelesai = $this->request->getGet('end');
+
+      if (!$tglMulai || !$tglSelesai) {
+         return $this->response->setJSON(['status' => 'error', 'message' => 'Tanggal tidak valid']);
+      }
+
+      // Query Mencari Tanggal Bentrok
+      // Kita cari transaksi yang statusnya 'Disetujui' atau 'Dipinjam'
+      // Dan periodenya beririsan dengan request user
+
+      $bentrok = $this->detailPrasaranaModel
+         ->select('peminjaman.tgl_pinjam_dimulai, peminjaman.tgl_pinjam_selesai, peminjaman.kegiatan')
+         ->join('peminjaman', 'peminjaman.id_peminjam = detail_peminjaman_prasarana.id_peminjaman')
+         ->where('detail_peminjaman_prasarana.id_prasarana', $idPrasarana)
+         ->whereIn('peminjaman.status_peminjaman_global', ['Disetujui', 'Dipinjam'])
+         ->where('peminjaman.tgl_pinjam_dimulai <=', $tglSelesai)
+         ->where('peminjaman.tgl_pinjam_selesai >=', $tglMulai)
+         ->findAll();
+
+      if (empty($bentrok)) {
+         return $this->response->setJSON(['status' => 'available']);
+      }
+
+      // Jika ada bentrok, format pesannya
+      $listBentrok = [];
+      foreach ($bentrok as $b) {
+         $start = date('d M', strtotime($b['tgl_pinjam_dimulai']));
+         $end = date('d M', strtotime($b['tgl_pinjam_selesai']));
+         $listBentrok[] = "$start - $end ({$b['kegiatan']})";
+      }
+
+      return $this->response->setJSON([
+         'status' => 'booked',
+         'message' => 'Ruangan terpakai pada: ' . implode(', ', $listBentrok)
+      ]);
    }
 }

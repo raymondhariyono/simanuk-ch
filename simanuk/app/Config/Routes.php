@@ -98,7 +98,7 @@ $routes->group('peminjam', ['filter' => ['session', 'role:Peminjam']], static fu
 
    // --- HISTORI PEMINJAMAN ---
    $routes->get('histori-peminjaman', 'Peminjam\HistoriPeminjamanController::index');
-   
+
    $routes->get('histori-peminjaman2', 'Peminjam\HistoriPeminjamanController::index2');
 
 
@@ -112,7 +112,9 @@ $routes->group('peminjam', ['filter' => ['session', 'role:Peminjam']], static fu
    $routes->get('peminjaman/new', 'Peminjam\PeminjamanController::new'); // Form view
    $routes->post('peminjaman/create', 'Peminjam\PeminjamanController::create'); // Save
    $routes->post('peminjaman/delete-item/(:segment)/(:num)', 'Peminjam\PeminjamanController::deleteItem/$1/$2'); // batal (delete) untuk item tertentu
-   // $routes->post('peminjaman/delete/(:num)', 'Peminjam\PeminjamanController::delete/$1'); // Batal (Delete)
+
+   // API Check Availability
+   $routes->get('api/check-prasarana/(:num)', 'Peminjam\PeminjamanController::checkPrasaranaAvailability/$1');
 
    // upload bukti foto (SEBELUM)
    $routes->post('peminjaman/upload-bukti-sebelum/(:segment)/(:num)', 'Peminjam\PeminjamanController::uploadBuktiSebelum/$1/$2');
@@ -157,7 +159,6 @@ $routes->group('tu', ['filter' => ['session', 'role:TU']], static function ($rou
    $routes->post('pengembalian/proses/(:num)', 'TU\PengembalianController::prosesKembali/$1');
    $routes->get('download-laporan', 'TU\DashboardController::downloadLaporan');
    $routes->get('laporan/excel', 'TU\DashboardController::downloadExcel');
-
 });
 
 // ----------------------------------------------------
@@ -167,7 +168,7 @@ $routes->group('pimpinan', ['filter' => ['session', 'role:Pimpinan']], static fu
    $routes->get('dashboard', 'Pimpinan\DashboardController::index');
    $routes->get('lihat-laporan', 'Pimpinan\LaporanController::index');
    $routes->get('lihat-laporan/detail', 'Pimpinan\LaporanController::detail');
-   $routes->get('lihat-laporan/cetak', 'Pimpinan\LaporanController::cetak');     
+   $routes->get('lihat-laporan/cetak', 'Pimpinan\LaporanController::cetak');
    $routes->get('lihat-laporan/excel', 'Pimpinan\LaporanController::excel');
 });
 
