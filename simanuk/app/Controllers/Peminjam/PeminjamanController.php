@@ -431,50 +431,42 @@ class PeminjamanController extends BaseController
    }
 
    /**
-    * API untuk mengecek tanggal yang sudah dibooking untuk prasarana tertentu
-    * Diakses via AJAX
+    * API Endpoint untuk cek ketersediaan via AJAX
     */
    public function checkPrasaranaAvailability($idPrasarana)
    {
-      if (!$this->request->isAJAX()) {
-         return $this->response->setStatusCode(404);
-      }
+      // 1. Cek apakah request valid
+      $start = $this->request->getGet('start');
+      $end   = $this->request->getGet('end');
 
-      $tglMulai = $this->request->getGet('start');
-      $tglSelesai = $this->request->getGet('end');
-
-      if (!$tglMulai || !$tglSelesai) {
+      if (!$start || !$end) {
          return $this->response->setJSON(['status' => 'error', 'message' => 'Tanggal tidak valid']);
       }
 
-      // Query Mencari Tanggal Bentrok
-      // Kita cari transaksi yang statusnya 'Disetujui' atau 'Dipinjam'
-      // Dan periodenya beririsan dengan request user
+      // 2. Gunakan helper isPrasaranaBooked yang sudah ada
+      // Helper ini melakukan query (StartA <= EndB) and (EndA >= StartB)
+      if ($this->isPrasaranaBooked($idPrasarana, $start, $end)) {
 
-      $bentrok = $this->detailPrasaranaModel
-         ->select('peminjaman.tgl_pinjam_dimulai, peminjaman.tgl_pinjam_selesai, peminjaman.kegiatan')
-         ->join('peminjaman', 'peminjaman.id_peminjam = detail_peminjaman_prasarana.id_peminjaman')
-         ->where('detail_peminjaman_prasarana.id_prasarana', $idPrasarana)
-         ->whereIn('peminjaman.status_peminjaman_global', ['Disetujui', 'Dipinjam'])
-         ->where('peminjaman.tgl_pinjam_dimulai <=', $tglSelesai)
-         ->where('peminjaman.tgl_pinjam_selesai >=', $tglMulai)
-         ->findAll();
+         // Ambil detail peminjaman yang bentrok untuk pesan error
+         $clash = $this->detailPrasaranaModel
+            ->join('peminjaman', 'peminjaman.id_peminjaman = detail_peminjaman_prasarana.id_peminjaman')
+            ->where('detail_peminjaman_prasarana.id_prasarana', $idPrasarana)
+            ->whereIn('peminjaman.status_peminjaman_global', ['Disetujui', 'Dipinjam'])
+            ->where('peminjaman.tgl_pinjam_dimulai <=', $end)
+            ->where('peminjaman.tgl_pinjam_selesai >=', $start)
+            ->first();
 
-      if (empty($bentrok)) {
-         return $this->response->setJSON(['status' => 'available']);
+         $kegiatan = $clash['kegiatan'] ?? 'Kegiatan Lain';
+         $tglMulai = date('d M', strtotime($clash['tgl_pinjam_dimulai']));
+         $tglSelesai = date('d M', strtotime($clash['tgl_pinjam_selesai']));
+
+         return $this->response->setJSON([
+            'status' => 'booked',
+            'message' => "Bentrok: $kegiatan ($tglMulai - $tglSelesai)"
+         ]);
       }
 
-      // Jika ada bentrok, format pesannya
-      $listBentrok = [];
-      foreach ($bentrok as $b) {
-         $start = date('d M', strtotime($b['tgl_pinjam_dimulai']));
-         $end = date('d M', strtotime($b['tgl_pinjam_selesai']));
-         $listBentrok[] = "$start - $end ({$b['kegiatan']})";
-      }
-
-      return $this->response->setJSON([
-         'status' => 'booked',
-         'message' => 'Ruangan terpakai pada: ' . implode(', ', $listBentrok)
-      ]);
+      // 3. Jika tidak ada bentrok
+      return $this->response->setJSON(['status' => 'available']);
    }
 }
