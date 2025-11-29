@@ -108,32 +108,6 @@
    </div>
 </div>
 
-<script>
-   function toggleSelect() {
-      const tipe = document.getElementById('tipeAset').value;
-      const divSarana = document.getElementById('selectSarana');
-      const divPrasarana = document.getElementById('selectPrasarana');
-
-      if (tipe === 'Sarana') {
-         divSarana.classList.remove('hidden');
-         divPrasarana.classList.add('hidden');
-      } else {
-         divSarana.classList.add('hidden');
-         divPrasarana.classList.remove('hidden');
-      }
-   }
-
-   function previewFile() {
-      const input = document.getElementById('fileInput');
-      const fileNameDisplay = document.getElementById('fileName');
-      if (input.files && input.files[0]) {
-         fileNameDisplay.textContent = 'File terpilih: ' + input.files[0].name;
-         fileNameDisplay.classList.remove('hidden');
-         // Opsional: Ubah border menjadi solid saat file dipilih
-         input.parentElement.classList.remove('border-dashed');
-         input.parentElement.classList.add('border-solid', 'border-gray-400', 'bg-white');
-      }
-   }
-</script>
+<script src="<?= base_url('js/peminjam/laporan_kerusakan.js') ?>"></script>
 
 <?= $this->endSection(); ?>
