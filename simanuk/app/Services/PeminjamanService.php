@@ -168,7 +168,7 @@ class PeminjamanService
             if ($this->isPrasaranaBooked($idPrasarana, $start, $end)) {
                $ruangan = $this->prasaranaModel->find($idPrasarana);
                $nama = $ruangan['nama_prasarana'] ?? 'Ruangan';
-               throw new \Exception("Ruangan '$nama' sudah dipinjam oleh kegiatan lain pada tanggal tersebut.");
+               throw new \Exception("Gagal: Ruangan '$nama' sudah dipinjam oleh kegiatan lain pada tanggal tersebut ($start s/d $end). Silakan pilih tanggal atau ruangan lain.");
             }
          }
       }

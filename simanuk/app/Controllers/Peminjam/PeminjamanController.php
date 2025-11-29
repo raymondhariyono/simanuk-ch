@@ -41,14 +41,12 @@ class PeminjamanController extends BaseController
    public function new()
    {
       // Jalankan pengecekan
-      if ($blocked = $this->checkBlockStatus()) {
-         return $blocked;
-      }
+      if ($blocked = $this->checkBlockStatus()) { return $blocked; }
 
       $data = [
          'title' => 'Ajukan Peminjaman Baru',
          'sarana' => $this->saranaModel->where('status_ketersediaan', 'Tersedia')->findAll(),
-         'prasarana' => $this->prasaranaModel->where('status_ketersediaan', 'Tersedia')->findAll(),
+         'prasarana' => $this->prasaranaModel->whereIn('status_ketersediaan', ['Tersedia', 'Dipinjam'])->findAll(),
          'breadcrumbs' => [
             ['name' => 'Beranda', 'url' => site_url('peminjam/dashboard')],
             ['name' => 'Peminjaman', 'url' => site_url('peminjam/histori-peminjaman')],
@@ -287,7 +285,7 @@ class PeminjamanController extends BaseController
       }
       // Jika belum semua, biarkan status tetap 'Disetujui'
 
-      return redirect()->back()->with('message', 'Foto Bukti Sebelum Berhasil di Upload dan Barang berhasil diambil.');
+      return redirect()->back()->with('message', 'Foto Bukti Sebelum Berhasil di Upload dan Sarana/Prasarana berhasil dipinjam.');
    }
 
    public function kembalikanItem($tipe, $idDetail)

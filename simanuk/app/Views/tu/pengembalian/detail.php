@@ -106,10 +106,10 @@
             <h3 class="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">Aksi Admin</h3>
 
             <p class="text-sm text-gray-600 mb-4">
-               Pastikan Anda telah memeriksa kondisi fisik barang sesuai dengan foto bukti yang dilampirkan.
+               Pastikan Anda telah memeriksa kondisi sarana/prasarana sesuai dengan foto bukti yang dilampirkan.
             </p>
 
-            <form action="<?= site_url('admin/pengembalian/selesai/' . $peminjaman['id_peminjaman']) ?>" method="post" onsubmit="return confirm('Pastikan semua barang sudah diterima kembali. Stok akan dikembalikan ke sistem.')">
+            <form action="<?= site_url('admin/pengembalian/selesai/' . $peminjaman['id_peminjaman']) ?>" method="post" onsubmit="return confirm('Pastikan semua sarana/prasarana sudah diterima kembali. Stok akan dikembalikan ke sistem.')">
                <?= csrf_field() ?>
 
                <?php

@@ -98,6 +98,10 @@ $routes->group('peminjam', ['filter' => ['session', 'role:Peminjam']], static fu
 
    // --- HISTORI PEMINJAMAN ---
    $routes->get('histori-peminjaman', 'Peminjam\HistoriPeminjamanController::index');
+   
+   $routes->get('histori-peminjaman2', 'Peminjam\HistoriPeminjamanController::index2');
+
+
    // detail histori peminjaman
    // Untuk melihat halaman detail
    $routes->get('histori-peminjaman/detail/(:num)', 'Peminjam\HistoriPeminjamanController::detail/$1');
