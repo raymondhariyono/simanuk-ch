@@ -51,7 +51,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
          fileStore.forEach((file, index) => {
             const reader = new FileReader();
-            reader.onload = function(e) {
+            reader.onload = function (e) {
                const previewWrapper = document.createElement('div');
                previewWrapper.className = 'relative border rounded-lg overflow-hidden';
                previewWrapper.innerHTML = `
@@ -66,14 +66,14 @@ document.addEventListener('DOMContentLoaded', function () {
       }
 
       // Event listener untuk input file
-      dropzoneInput.addEventListener('change', function(event) {
+      dropzoneInput.addEventListener('change', function (event) {
          // Ganti fileStore dengan file yang baru dipilih
          fileStore = Array.from(event.target.files);
          renderPreviews();
       });
 
       // Event listener untuk tombol hapus (menggunakan event delegation)
-      previewContainer.addEventListener('click', function(event) {
+      previewContainer.addEventListener('click', function (event) {
          if (event.target.matches('button[data-index]')) {
             const indexToRemove = parseInt(event.target.getAttribute('data-index'), 10);
 
@@ -94,4 +94,17 @@ document.addEventListener('DOMContentLoaded', function () {
 // Fungsi global untuk menghapus baris, bisa dipakai keduanya
 function removeRow(button) {
    button.parentElement.remove();
+}
+
+function formatRibuan(input) {
+   // 1. Hapus karakter selain angka
+   let value = input.value.replace(/[^0-9]/g, '');
+
+   // 2. Format ke ribuan (Indonesia menggunakan titik)
+   if (value) {
+      value = parseInt(value).toLocaleString('id-ID');
+   }
+
+   // 3. Kembalikan ke input
+   input.value = value;
 }

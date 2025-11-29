@@ -64,7 +64,7 @@
                      <label class="block text-gray-700 text-sm font-bold mb-2" for="luas_ruangan">
                         Luas Prasarana <span class="text-gray-400">(m²)</span>
                      </label>
-                     <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" id="luas_ruangan" name="luas_ruangan" type="number" min="1" value="<?= old('luas_ruangan', $prasarana['luas_ruangan']) ?>">
+                     <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700" id="luas_ruangan" name="luas_ruangan" type="number" min="1" value="<?= old('luas_ruangan', number_format($prasarana['luas_ruangan'], 0, ',', '.')) ?>" onkeyup="formatRibuan(this)">
                   </div>
 
                   <div>

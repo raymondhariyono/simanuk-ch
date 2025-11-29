@@ -71,10 +71,20 @@
                   </div>
 
                   <div>
-                     <label class="block text-gray-700 text-sm font-bold mb-2" for="luas_ruangan">
-                        Luas Prasarana <span class="text-gray-400">(hanya angka dan dalam satuan cm2)</span>
-                     </label>
-                     <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="luas_ruangan" name="luas_ruangan" type="number" min="1" value="<?= old('luas_ruangan', 1) ?>">
+                     <label class="block text-sm font-medium text-gray-700 mb-1">Luas Ruangan</label>
+                     <div class="relative mt-1 rounded-md shadow-sm">
+                        <input type="text"
+                           id="luas_ruangan"
+                           name="luas_ruangan"
+                           value="<?= old('luas_ruangan') ?>"
+                           class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                           placeholder="0"
+                           onkeyup="formatRibuan(this)">
+
+                        <div class="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
+                           <span class="text-gray-500 sm:text-sm">m²</span>
+                        </div>
+                     </div>
                   </div>
 
                   <div>

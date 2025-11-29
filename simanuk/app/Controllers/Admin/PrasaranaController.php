@@ -87,6 +87,16 @@ class PrasaranaController extends BaseController
 
    public function save()
    {
+      // 1. AMBIL DATA RAW
+      $dataPost = $this->request->getPost();
+
+
+      // 2. BERSIHKAN FORMAT RIBUAN (Hapus titik)
+      // Agar "10.000" menjadi "10000" (Integer murni)
+      if (isset($dataPost['luas_ruangan'])) {
+         $dataPost['luas_ruangan'] = (int) str_replace('.', '', (string) $dataPost['luas_ruangan']);
+      }
+
       // validasi input untuk tiap field pada form tambah event
       // rules untuk validasi input
       $rules = [
@@ -163,7 +173,7 @@ class PrasaranaController extends BaseController
       ];
 
       // validasi input
-      if (!$this->validate($rules)) {
+      if (!$this->validateData($dataPost, $rules)) {
          // input pengguna dan validasi yang didapat akan dikembalikan menjadi pesan
          return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
       }
@@ -180,17 +190,17 @@ class PrasaranaController extends BaseController
       try {
          // 2. Simpan Data Induk (Prasarana)
          $data = [
-            'nama_prasarana'        => $this->request->getPost('nama_prasarana'),
-            'kode_prasarana'        => $this->request->getPost('kode_prasarana'),
-            'id_kategori'        => $this->request->getPost('id_kategori'),
-            'id_lokasi'          => $this->request->getPost('id_lokasi'),
-            'luas_ruangan'             => $this->request->getPost('luas_ruangan'),
-            'kapasitas_orang'            => $this->request->getPost('kapasitas_orang'),
-            'jenis_ruangan'            => $this->request->getPost('jenis_ruangan'),
-            'lantai'            => $this->request->getPost('lantai'),
-            'tata_letak'            => $this->request->getPost('tata_letak'),
-            'status_ketersediaan' => $this->request->getPost('status_ketersediaan'),
-            'deskripsi'          => $this->request->getPost('deskripsi'),
+            'nama_prasarana'        => $dataPost['nama_prasarana'],
+            'kode_prasarana'        => $dataPost['kode_prasarana'],
+            'id_kategori'        => $dataPost['id_kategori'],
+            'id_lokasi'          => $dataPost['id_lokasi'],
+            'luas_ruangan'             => $dataPost['luas_ruangan'],
+            'kapasitas_orang'            => $dataPost['kapasitas_orang'],
+            'jenis_ruangan'            => $dataPost['jenis_ruangan'],
+            'lantai'            => $dataPost['lantai'],
+            'tata_letak'            => $dataPost['tata_letak'],
+            'status_ketersediaan' => $dataPost['status_ketersediaan'],
+            'deskripsi'          => $dataPost['deskripsi'],
             'fasilitas'        => json_encode($fasilitas),
          ];
 
@@ -242,6 +252,15 @@ class PrasaranaController extends BaseController
 
    public function update($id)
    {
+      // 1. AMBIL DATA RAW
+      $dataPost = $this->request->getPost();
+
+      // 2. BERSIHKAN FORMAT RIBUAN (Hapus titik)
+      // Agar "10.000" menjadi "10000" (Integer murni)
+      if (isset($dataPost['luas_ruangan'])) {
+         $dataPost['luas_ruangan'] = str_replace('.', '', $dataPost['luas_ruangan']);
+      }
+
       // Aturan validasi
       $rules = [
          'nama_prasarana' => [
@@ -315,7 +334,7 @@ class PrasaranaController extends BaseController
          ]
       ];
 
-      if (!$this->validate($rules)) {
+      if (!$this->validateData($dataPost, $rules)) {
          return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
       }
 
@@ -330,18 +349,18 @@ class PrasaranaController extends BaseController
       try {
          // 2. Simpan Data Induk (Sarana)
          $data = [
-            'nama_prasarana'        => $this->request->getPost('nama_prasarana'),
-            'kode_prasarana'        => $this->request->getPost('kode_prasarana'),
-            'id_kategori'           => $this->request->getPost('id_kategori'),
-            'id_lokasi'             => $this->request->getPost('id_lokasi'),
-            'luas_ruangan'          => $this->request->getPost('luas_ruangan'),
-            'kapasitas_orang'       => $this->request->getPost('kapasitas_orang'),
-            'jenis_ruangan'         => $this->request->getPost('jenis_ruangan'),
-            'lantai'                => $this->request->getPost('lantai'),
-            'tata_letak'            => $this->request->getPost('tata_letak'),
-            'status_ketersediaan'   => $this->request->getPost('status_ketersediaan'),
-            'deskripsi'             => $this->request->getPost('deskripsi'),
-            'fasilitas'             => json_encode($fasilitas),
+            'nama_prasarana'        => $dataPost['nama_prasarana'],
+            'kode_prasarana'        => $dataPost['kode_prasarana'],
+            'id_kategori'        => $dataPost['id_kategori'],
+            'id_lokasi'          => $dataPost['id_lokasi'],
+            'luas_ruangan'             => $dataPost['luas_ruangan'],
+            'kapasitas_orang'            => $dataPost['kapasitas_orang'],
+            'jenis_ruangan'            => $dataPost['jenis_ruangan'],
+            'lantai'            => $dataPost['lantai'],
+            'tata_letak'            => $dataPost['tata_letak'],
+            'status_ketersediaan' => $dataPost['status_ketersediaan'],
+            'deskripsi'          => $dataPost['deskripsi'],
+            'fasilitas'        => json_encode($fasilitas),
          ];
 
          $this->prasaranaModel->update($id, $data);
