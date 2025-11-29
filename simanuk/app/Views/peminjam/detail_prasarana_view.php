@@ -182,10 +182,6 @@
 
 </div>
 
-<script>
-   function changeImage(src) {
-      document.getElementById('mainImage').src = src;
-   }
-</script>
+<script src="<?= base_url('js/peminjam/detail_aset.js') ?>"></script>
 
 <?= $this->endSection(); ?>
