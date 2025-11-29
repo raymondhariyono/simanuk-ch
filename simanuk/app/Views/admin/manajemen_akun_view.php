@@ -49,11 +49,20 @@
                             </td>
                             <td class="px-4 py-3 text-sm">
                                 <div class="flex items-center space-x-2">
-                                    <a href="<?= site_url('admin/manajemen-akun/edit/' . $user->id) ?>" class="text-green-600 hover:text-green-800">Edit</a>
+                                    <a href="<?= site_url('admin/manajemen-akun/edit/' . $user->id) ?>" class="inline-flex items-center px-1 py-1 text-blue-500 rounded hover:bg-blue-100">
+                                        <svg class="w-6 h-6 text-gray-800 dark:text-blue-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+                                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.779 17.779 4.36 19.918 6.5 13.5m4.279 4.279 8.364-8.643a3.027 3.027 0 0 0-2.14-5.165 3.03 3.03 0 0 0-2.14.886L6.5 13.5m4.279 4.279L6.499 13.5m2.14 2.14 6.213-6.504M12.75 7.04 17 11.28" />
+                                        </svg>
+                                    </a>
 
-                                    <form action="<?= site_url('admin/manajemen-akun/delete/' . $user->id) ?>" method="post" onsubmit="return confirm('Yakin ingin menghapus akun ini?');">
+                                    <form action="<?= site_url('admin/manajemen-akun/delete/' . $user->id) ?>" method="post" class="inline-block" onsubmit="return confirm('Apakah Anda yakin ingin menghapus akun ini?');">
                                         <?= csrf_field() ?>
-                                        <button type="submit" class="text-red-600 hover:text-red-800">Hapus</button>
+                                        <input type="hidden" name="_method" value="DELETE">
+                                        <button type="submit" class="inline-flex items-center px-1 py-1 text-red-500 rounded hover:bg-red-100">
+                                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                            </svg>
+                                        </button>
                                     </form>
                                 </div>
                             </td>

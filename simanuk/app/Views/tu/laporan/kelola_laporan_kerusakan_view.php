@@ -192,7 +192,7 @@
          <?= csrf_field() ?>
          <div class="mb-4">
             <label class="block text-sm font-medium text-gray-700">Status Baru</label>
-            <select name="status_laporan" class="mt-1 block w-full border-gray-300 rounded-md shadow-sm">
+            <select name="status_laporan" class="mt-1 block w-full shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline">
                <option value="Diproses">Diproses (Sedang Diperbaiki)</option>
                <option value="Selesai">Selesai (Sudah Baik/Diganti)</option>
                <option value="Ditolak">Ditolak (Laporan Palsu)</option>
@@ -204,7 +204,7 @@
          </div>
          <div class="mb-4">
             <label class="block text-sm font-medium text-gray-700">Catatan Tindak Lanjut</label>
-            <textarea name="tindak_lanjut" rows="3" class="mt-1 px-2 block w-full border-gray-300 rounded-md shadow-sm" placeholder="Contoh: Kabel diganti baru..."></textarea>
+            <textarea name="tindak_lanjut" rows="3" class="mt-1 block w-full shadow border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="Contoh: Kabel diganti baru..."></textarea>
          </div>
          <div class="flex justify-end">
             <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Simpan Perubahan</button>
