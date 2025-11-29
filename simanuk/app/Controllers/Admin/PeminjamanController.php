@@ -160,7 +160,7 @@ class PeminjamanController extends BaseController
       try {
          // 1. Ambil Detail Item Sarana dan Prasarana
          $itemSarana = $this->detailSaranaModel->where('id_peminjaman', $id)->findAll();
-         $itemsPrasarana = $this->detailPrasaranaModel->where('id_peminjaman', $id)->findAll();
+         // $itemsPrasarana = $this->detailPrasaranaModel->where('id_peminjaman', $id)->findAll();
 
          foreach ($itemSarana as $item) {
             // Ambil data sarana terkini (untuk cek stok real-time)
@@ -186,10 +186,10 @@ class PeminjamanController extends BaseController
             $this->saranaModel->update($item['id_sarana'], $updateData);
          }
 
-         foreach ($itemsPrasarana as $item) {
-            // Set status master prasarana jadi 'Dipinjam' agar tampil merah di katalog
-            $this->prasaranaModel->update($item['id_prasarana'], ['status_ketersediaan' => 'Dipinjam']);
-         }
+         // foreach ($itemsPrasarana as $item) {
+         //    // Set status master prasarana jadi 'Dipinjam' agar tampil merah di katalog
+         //    $this->prasaranaModel->update($item['id_prasarana'], ['status_ketersediaan' => 'Dipinjam']);
+         // }
 
          // 2. Update Status Peminjaman
          $this->peminjamanModel->update($id, [

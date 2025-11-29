@@ -128,7 +128,7 @@
                               </td>
                               <td class="px-4 py-3 text-xs">
                                  <?php if ($row['status_peminjaman_global'] == 'Disetujui'): ?>
-                                    <span class="px-2 py-1 font-semibold leading-tight text-blue-700 bg-blue-100 rounded-full">Disetujui (Blm Diambil)</span>
+                                    <span class="px-2 py-1 font-semibold leading-tight text-blue-700 bg-blue-100 rounded-full">Disetujui (Belum Diambil)</span>
                                  <?php else: ?>
                                     <span class="px-2 py-1 font-semibold leading-tight text-indigo-700 bg-indigo-100 rounded-full">Dipinjam</span>
                                  <?php endif; ?>

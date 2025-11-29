@@ -20,6 +20,118 @@ class HistoriPeminjamanController extends BaseController
         $this->detailPrasaranaModel = new DetailPeminjamanPrasaranaModel();
     }
 
+    public function index2()
+    {
+        $userId = auth()->id();
+
+        // --- A. DATA PEMINJAMAN AKTIF (Diajukan, Disetujui, Dipinjam) ---
+        $activeTransactions = $this->peminjamanModel
+            ->where('id_peminjam', $userId)
+            ->whereIn('status_peminjaman_global', ['Diajukan', 'Disetujui', 'Dipinjam'])
+            ->orderBy('created_at', 'DESC')
+            ->findAll();
+
+        // Inject Item ke Transaksi Aktif
+        foreach ($activeTransactions as &$h) {
+            // 1. Ambil Items
+            $saranaItems = $this->detailSaranaModel
+                ->select('detail_peminjaman_sarana.*, sarana.nama_sarana, sarana.kode_sarana')
+                ->join('sarana', 'sarana.id_sarana = detail_peminjaman_sarana.id_sarana')
+                ->where('id_peminjaman', $h['id_peminjaman'])
+                ->findAll();
+
+            // 2. INJECT STATUS GLOBAL KE ITEM (FIX ERROR)
+            // Jika kolom 'status' di item kosong/null, pakai status global
+            foreach ($saranaItems as &$item) {
+                if (!isset($item['status'])) {
+                    $item['status'] = $h['status_peminjaman_global'];
+                }
+                // Fix juga untuk keterangan/catatan jika beda nama field
+                if (!isset($item['keterangan']) && isset($item['catatan'])) {
+                    $item['keterangan'] = $item['catatan'];
+                }
+            }
+            $h['items_sarana'] = $saranaItems;
+
+            // Lakukan hal yang sama untuk $items_prasarana...
+            $prasaranaItems = $this->detailPrasaranaModel
+                ->select('detail_peminjaman_prasarana.*, prasarana.nama_prasarana, prasarana.kode_prasarana')
+                ->join('prasarana', 'prasarana.id_prasarana = detail_peminjaman_prasarana.id_prasarana')
+                ->where('id_peminjaman', $h['id_peminjaman'])
+                ->findAll();
+
+            foreach ($prasaranaItems as &$item) {
+                if (!isset($item['status'])) {
+                    $item['status'] = $h['status_peminjaman_global'];
+                }
+                if (!isset($item['keterangan']) && isset($item['catatan'])) {
+                    $item['keterangan'] = $item['catatan'];
+                }
+            }
+            $h['items_prasarana'] = $prasaranaItems;
+        }
+
+        // --- B. DATA RIWAYAT SELESAI (Selesai, Ditolak, Dibatalkan) ---
+        $historyTransactions = $this->peminjamanModel
+            ->where('id_peminjam', $userId)
+            ->whereIn('status_peminjaman_global', ['Selesai', 'Ditolak', 'Dibatalkan'])
+            ->orderBy('updated_at', 'DESC')
+            ->findAll();
+
+        // Inject Item ke Transaksi Riwayat
+        foreach ($historyTransactions as &$h) {
+            // 1. Ambil Items
+            $saranaItems = $this->detailSaranaModel
+                ->select('detail_peminjaman_sarana.*, sarana.nama_sarana, sarana.kode_sarana')
+                ->join('sarana', 'sarana.id_sarana = detail_peminjaman_sarana.id_sarana')
+                ->where('id_peminjaman', $h['id_peminjaman'])
+                ->findAll();
+
+            // 2. INJECT STATUS GLOBAL KE ITEM (FIX ERROR)
+            // Jika kolom 'status' di item kosong/null, pakai status global
+            foreach ($saranaItems as &$item) {
+                if (!isset($item['status'])) {
+                    $item['status'] = $h['status_peminjaman_global'];
+                }
+                // Fix juga untuk keterangan/catatan jika beda nama field
+                if (!isset($item['keterangan']) && isset($item['catatan'])) {
+                    $item['keterangan'] = $item['catatan'];
+                }
+            }
+            $h['items_sarana'] = $saranaItems;
+
+            // Lakukan hal yang sama untuk $items_prasarana...
+            $prasaranaItems = $this->detailPrasaranaModel
+                ->select('detail_peminjaman_prasarana.*, prasarana.nama_prasarana, prasarana.kode_prasarana')
+                ->join('prasarana', 'prasarana.id_prasarana = detail_peminjaman_prasarana.id_prasarana')
+                ->where('id_peminjaman', $h['id_peminjaman'])
+                ->findAll();
+
+            foreach ($prasaranaItems as &$item) {
+                if (!isset($item['status'])) {
+                    $item['status'] = $h['status_peminjaman_global'];
+                }
+                if (!isset($item['keterangan']) && isset($item['catatan'])) {
+                    $item['keterangan'] = $item['catatan'];
+                }
+            }
+            $h['items_prasarana'] = $prasaranaItems;
+        }
+
+        $data = [
+            'title' => 'Histori Peminjaman',
+            'activeLoans' => $activeTransactions, // Data Grouping
+            'historyLoans' => $historyTransactions, // Data Grouping
+            'showSidebar' => true,
+            'breadcrumbs' => [
+                ['name' => 'Beranda', 'url' => site_url('peminjam/dashboard')],
+                ['name' => 'Histori Peminjaman'],
+            ]
+        ];
+
+        return view('peminjam/histori_peminjaman_view2', $data);
+    }
+
     public function index()
     {
         $userId = auth()->user()->id;

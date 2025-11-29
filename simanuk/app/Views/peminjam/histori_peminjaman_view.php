@@ -169,7 +169,7 @@
                                                                 </button>
                                                             </form>
                                                         <?php elseif ($loan['status'] == 'Disetujui' || $loan['status'] == 'Dipinjam'): ?>
-                                                            <?php if (!empty($loan['catatan_penolakan']) || empty($loan['foto_sebelum'])): ?>
+                                                            <?php if (!empty($loan['catatan_penolakan']) && empty($loan['foto_sebelum'])): ?>
                                                                 <div class="my-4">
                                                                     <button type="button"
                                                                         data-reason="<?= esc($loan['catatan_penolakan']) ?>"
@@ -194,7 +194,7 @@
                                                                 <?php if (empty($loan['foto_sesudah'])): ?>
                                                                     <button type="button"
                                                                         onclick="openUploadModal('sesudah', '<?= $loan['tipe'] ?>', '<?= $loan['id_detail'] ?>', '<?= esc($loan['nama_item']) ?>')"
-                                                                        class="inline-flex items-center px-3 py-1.5 bg-green-600 text-white hover:bg-green-700 rounded-lg text-xs font-medium transition-colors">
+                                                                        class="inline-flex items-center px-3 py-1.5 bg-green-100 text-green-600 hover:bg-green-300 border border-green-600 rounded-lg text-xs font-medium transition-colors">
                                                                         Kembalikan
                                                                     </button>
                                                                 <?php else: ?>

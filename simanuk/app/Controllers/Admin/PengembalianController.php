@@ -113,7 +113,7 @@ class PengembalianController extends BaseController
       try {
          // 1. RESTOCK SARANA (Barang)
          $itemsSarana = $this->detailSaranaModel->where('id_peminjaman', $id)->findAll();
-         $itemsPrasarana = $this->detailPrasaranaModel->where('id_peminjaman', $id)->findAll();
+         // $itemsPrasarana = $this->detailPrasaranaModel->where('id_peminjaman', $id)->findAll();
 
          foreach ($itemsSarana as $item) {
             $sarana = $this->saranaModel->find($item['id_sarana']);
@@ -131,15 +131,12 @@ class PengembalianController extends BaseController
             $this->saranaModel->update($item['id_sarana'], $updateData);
          }
 
-         // 2. RESTOCK PRASARANA (Ruangan)
-         $itemsPrasarana = $this->detailPrasaranaModel->where('id_peminjaman', $id)->findAll();
-
-         foreach ($itemsPrasarana as $item) {
-            // Untuk ruangan, cukup set status jadi Tersedia kembali
-            $this->prasaranaModel->update($item['id_prasarana'], [
-               'status_ketersediaan' => 'Tersedia'
-            ]);
-         }
+         // foreach ($itemsPrasarana as $item) {
+         //    // Untuk ruangan, cukup set status jadi Tersedia kembali
+         //    $this->prasaranaModel->update($item['id_prasarana'], [
+         //       'status_ketersediaan' => 'Tersedia'
+         //    ]);
+         // }
 
          // 3. UPDATE STATUS GLOBAL -> SELESAI
          $this->peminjamanModel->update($id, [
