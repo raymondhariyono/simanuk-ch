@@ -16,32 +16,32 @@
                 </div>
             <?php endif; ?>
 
-            <div class="flex justify-between items-center mb-6">
-                <div>
-                    <h1 class="text-3xl font-bold text-gray-900">Manajemen Inventarisasi Sarana Prasarana</h1>
-                    <?php if (isset($breadcrumbs)) : ?>
-                        <div class="mt-2">
-                            <?= render_breadcrumb($breadcrumbs); ?>
-                        </div>
-                    <?php endif; ?>
-                </div>
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+                    <div>
+                        <h1 class="text-2xl md:text-3xl font-bold text-gray-900">Manajemen Inventarisasi</h1>
+                        <?php if (isset($breadcrumbs)) : ?>
+                            <div class="mt-2">
+                                <?= render_breadcrumb($breadcrumbs); ?>
+                            </div>
+                        <?php endif; ?>
+                    </div>
 
-                <div class="flex items-center space-x-2">
-                    <a href="<?= site_url('admin/inventaris/sarana/create') ?>" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg flex items-center space-x-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
-                        </svg>
-                        <span>Tambah Sarana</span>
-                    </a>
+                    <div class="flex flex-col sm:flex-row w-full sm:w-auto items-stretch sm:items-center gap-3">
+                        <a href="<?= site_url('admin/inventaris/sarana/create') ?>" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg flex justify-center items-center space-x-2 text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+                            </svg>
+                            <span>Tambah Sarana</span>
+                        </a>
 
-                    <a href="<?= site_url('admin/inventaris/prasarana/create') ?>" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg flex items-center space-x-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
-                        </svg>
-                        <span>Tambah Prasarana</span>
-                    </a>
+                        <a href="<?= site_url('admin/inventaris/prasarana/create') ?>" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg flex justify-center items-center space-x-2 text-sm">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+                            </svg>
+                            <span>Tambah Prasarana</span>
+                        </a>
+                    </div>
                 </div>
-            </div>
 
             <?= $this->include('components/filter_bar', []) ?>
 

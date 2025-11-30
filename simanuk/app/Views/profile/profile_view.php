@@ -1,135 +1,123 @@
 <?= $this->extend('layout/template'); ?>
 
 <?= $this->section('title'); ?>
-<?= esc($title); ?>
+Profil Saya
 <?= $this->endSection(); ?>
 
 <?= $this->section('content'); ?>
-<div class="container-fluid bg-gray-100">
+<div class="container px-4 py-6 md:px-6 md:py-8 mx-auto">
+    
+    <div class="mb-6">
+        <h1 class="text-2xl font-bold text-gray-800">Profil Saya</h1>
+        <p class="text-gray-600 text-sm mt-1">Kelola informasi akun dan kata sandi Anda.</p>
+    </div>
 
-   <!-- Pesan Sukses atau Error -->
-   <?php if (session()->getFlashdata('msg')) : ?>
-      <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-         <?= session()->getFlashdata('msg') ?>
-      </div>
-   <?php endif; ?>
-   <?php if (session()->getFlashdata('error')) : ?>
-      <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-         <?php $errors = session()->getFlashdata('error'); ?>
-         <?php if (is_array($errors)) : ?>
-            <ul class="list-disc ml-5">
-               <?php foreach ($errors as $error) : ?>
-                  <li><?= esc($error) ?></li>
-               <?php endforeach ?>
+    <?php if (session()->getFlashdata('message')) : ?>
+        <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+            <?= session()->getFlashdata('message') ?>
+        </div>
+    <?php endif; ?>
+
+    <?php if (session()->getFlashdata('error')) : ?>
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+            <?= session()->getFlashdata('error') ?>
+        </div>
+    <?php endif; ?>
+
+    <?php if (session('errors')) : ?>
+        <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+            <ul class="list-disc pl-5">
+                <?php foreach (session('errors') as $error) : ?>
+                    <li><?= esc($error) ?></li>
+                <?php endforeach ?>
             </ul>
-         <?php else : ?>
-            <?= esc($errors) ?>
-         <?php endif; ?>
-      </div>
-   <?php endif; ?>
+        </div>
+    <?php endif ?>
 
-   <?php if (isset($breadcrumbs)) : ?>
-      <?= render_breadcrumb($breadcrumbs); ?>
-   <?php endif; ?>
-
-   <!-- <div class="mb-6">
-      <a href="javascript:history.back()" class="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-lg hover:bg-gray-100 hover:text-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
-         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
-         </svg>
-         Kembali
-      </a>
-   </div> -->
-
-   <div class="flex min-h-screen">
-      <div class="flex-1 flex flex-col overflow-hidden">
-         <main class="flex-1 p-6 md:p-8 overflow-y-auto">
-            <div class="bg-white rounded-lg shadow-xl p-6 md:p-8 max-w-4xl mx-auto">
-
-               <!-- Header Profil -->
-               <div class="flex items-center space-x-4 mb-6 pb-6 border-b">
-                  <div>
-                     <h2 class="text-2xl font-bold text-gray-900"><?= esc($user->username); ?></h2>
-                     <p class="text-gray-600"><?= esc($user->email); ?></p>
-                     <p class="text-gray-500 text-sm"><?= esc($user->organisasi) ?></p>
-                  </div>
-               </div>
-
-               <!-- Form Update Profil -->
-               <h3 class="text-lg font-semibold text-gray-800 mb-4">Perbarui Profil</h3>
-               <form action="<?= base_url('profile/update'); ?>" method="post" class="space-y-5 mb-8">
-                  <?= csrf_field(); ?>
-
-                  <div>
-                     <label for="email" class="block text-sm font-medium text-gray-600 mb-2">Alamat Email</label>
-                     <input type="email" id="email" name="email" value="<?= esc($user->email); ?>" readonly
-                        class="w-full p-2 border border-gray-300 rounded-md bg-gray-100 text-gray-600 cursor-not-allowed">
-                     <p class="text-xs text-gray-500 mt-1">Email tidak dapat diubah.</p>
-                  </div>
-
-                  <div>
-                     <label for="username" class="block text-sm font-medium text-gray-600 mb-2">Username</label>
-                     <input type="text" id="username" name="username" value="<?= esc($user->username); ?>"
-                        class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-blue-400">
-                  </div>
-
-                  <div>
-                     <label for="nama_lengkap" class="block text-sm font-medium text-gray-600 mb-2">Nama Lengkap</label>
-                     <input type="text" id="nama_lengkap" name="nama_lengkap" value="<?= esc($user->nama_lengkap); ?>"
-                        class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-blue-400">
-                  </div>
-
-                  <div>
-                     <label for="organisasi" class="block text-sm font-medium text-gray-600 mb-2">Organisasi / Unit</label>
-                     <input type="text" id="organisasi" name="organisasi" value="<?= esc($user->organisasi); ?>"
-                        class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-blue-400">
-                  </div>
-
-                  <div>
-                     <label for="kontak" class="block text-sm font-medium text-gray-600 mb-2">No. Kontak / WA</label>
-                     <input type="text" id="kontak" name="kontak" value="<?= esc($user->kontak); ?>"
-                        class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-blue-400">
-                  </div>
-
-                  <button type="submit"
-                     class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md font-semibold">
-                     Update Profil
-                  </button>
-               </form>
-
-               <!-- Form Ganti Password -->
-               <h3 class="text-lg font-semibold text-gray-800 mb-4">Ubah Kata Sandi</h3>
-               <form action="<?= base_url('profile/password'); ?>" method="post" class="space-y-5">
-                  <?= csrf_field(); ?>
-
-                  <div>
-                     <label for="password_lama" class="block text-sm font-medium text-gray-600 mb-2">Kata Sandi Lama</label>
-                     <input type="password" id="password_lama" name="password_lama" required
-                        class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-blue-400">
-                  </div>
-
-                  <div>
-                     <label for="password_baru" class="block text-sm font-medium text-gray-600 mb-2">Kata Sandi Baru</label>
-                     <input type="password" id="password_baru" name="password_baru" required
-                        class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-blue-400">
-                  </div>
-
-                  <div>
-                     <label for="konfirmasi_password" class="block text-sm font-medium text-gray-600 mb-2">Konfirmasi Kata Sandi Baru</label>
-                     <input type="password" id="konfirmasi_password" name="konfirmasi_password" required
-                        class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-blue-400">
-                  </div>
-
-                  <button type="submit"
-                     class="w-full sm:w-auto bg-yellow-400 hover:bg-yellow-500 text-black py-2 px-4 rounded-md font-semibold">
-                     Ubah Kata Sandi
-                  </button>
-               </form>
-
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        
+        <div class="lg:col-span-1">
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6 text-center">
+                <div class="w-24 h-24 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 text-3xl font-bold mx-auto mb-4 border-2 border-white shadow-sm">
+                    <?= strtoupper(substr(auth()->user()->nama_lengkap ?? 'U', 0, 1)) ?>
+                </div>
+                
+                <h3 class="text-lg font-bold text-gray-800"><?= esc(auth()->user()->nama_lengkap) ?></h3>
+                <p class="text-sm text-gray-500 mb-2"><?= esc(auth()->user()->username) ?></p>
+                
+                <div class="mt-4 flex justify-center space-x-2">
+                    <span class="px-3 py-1 text-xs font-semibold rounded-full bg-blue-50 text-blue-600 border border-blue-100">
+                        <?= auth()->user()->organisasi ?? 'Umum' ?>
+                    </span>
+                </div>
             </div>
-         </main>
-      </div>
-   </div>
+        </div>
 
+        <div class="lg:col-span-2">
+            <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+                <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
+                    <h3 class="font-semibold text-gray-700">Perbarui Informasi</h3>
+                </div>
+                
+                <div class="p-6">
+                    <form action="<?= site_url('profile/update') ?>" method="post">
+                        <?= csrf_field() ?>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Nama Lengkap</label>
+                                <input type="text" name="nama_lengkap" value="<?= old('nama_lengkap', auth()->user()->nama_lengkap) ?>" 
+                                    class="w-full rounded-md border-gray-300 bg-gray-50 text-gray-800 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3">
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Username</label>
+                                <input type="text" name="username" value="<?= old('username', auth()->user()->username) ?>" 
+                                    class="w-full rounded-md border-gray-300 bg-gray-50 text-gray-800 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3">
+                            </div>
+
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                                <input type="email" name="email" value="<?= old('email', auth()->user()->email) ?>" 
+                                    class="w-full rounded-md border-gray-300 bg-gray-50 text-gray-800 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3">
+                            </div>
+                            
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Organisasi / Unit</label>
+                                <input type="text" value="<?= esc(auth()->user()->organisasi) ?>" readonly disabled
+                                    class="w-full rounded-md border-gray-300 bg-gray-200 text-gray-500 cursor-not-allowed shadow-sm py-2 px-3">
+                                <p class="text-xs text-gray-400 mt-1">Hubungi admin untuk mengubah organisasi.</p>
+                            </div>
+                        </div>
+
+                        <div class="border-t border-gray-100 pt-6 mt-6">
+                            <h4 class="text-sm font-bold text-gray-700 mb-4">Ganti Password <span class="font-normal text-gray-500 text-xs ml-1">(Biarkan kosong jika tidak ingin mengubah)</span></h4>
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Password Baru</label>
+                                    <input type="password" name="password" 
+                                        class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-700 mb-2">Konfirmasi Password</label>
+                                    <input type="password" name="pass_confirm" 
+                                        class="w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 py-2 px-3">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-8 flex justify-end">
+                            <button type="submit" class="w-full sm:w-auto px-6 py-2.5 bg-blue-600 text-white font-medium text-sm rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300 transition shadow-md">
+                                Simpan Perubahan
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+
+    </div>
 </div>
 <?= $this->endSection(); ?>

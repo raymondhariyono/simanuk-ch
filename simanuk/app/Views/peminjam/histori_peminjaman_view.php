@@ -7,58 +7,59 @@
 <?= $this->section('content'); ?>
 <div class="flex min-h-screen">
     <div class="flex-1 flex flex-col overflow-hidden">
-        <main class="flex-1 overflow-y-auto p-6 md:p-8">
+        <main class="flex-1 overflow-y-auto p-4 md:p-8">
 
-            <div class="flex justify-between items-center mb-6">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
                 <div>
-                    <h1 class="text-3xl font-bold text-gray-900">HALAMAN PEMINJAMAN SAYA</h1>
+                    <h1 class="text-2xl md:text-3xl font-bold text-gray-900">Peminjaman Saya</h1>
                     <?php if (isset($breadcrumbs)) : ?>
-                        <div class="mt-2">
+                        <div class="mt-2 overflow-x-auto">
                             <?= render_breadcrumb($breadcrumbs); ?>
                         </div>
                     <?php endif; ?>
                 </div>
-                <a href="<?= site_url('peminjam/peminjaman/new') ?>" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg flex items-center space-x-2">
+                
+                <a href="<?= site_url('peminjam/peminjaman/new') ?>" 
+                   class="w-full md:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg flex justify-center items-center space-x-2 transition-colors shadow-sm">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                         <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
                     </svg>
-                    <span>Tambah Pinjaman Baru</span>
+                    <span>Ajukan Baru</span>
                 </a>
             </div>
 
             <?php if (session()->getFlashdata('message')) : ?>
-                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4 text-sm">
                     <?= session()->getFlashdata('message') ?>
                 </div>
             <?php endif; ?>
 
-            <div class="mb-8 flex flex-wrap gap-4 items-center">
-                <div class="relative flex-grow" style="min-width: 300px;">
+            <div class="mb-8 grid grid-cols-1 md:grid-cols-12 gap-4">
+                <div class="md:col-span-6 relative">
                     <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
-                        <i class="fas fa-search text-gray-400"></i>
+                        <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
                     </div>
-                    <input type="text" placeholder="Cari berdasarkan nama atau kode"
-                        class="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500">
+                    <input type="text" placeholder="Cari nama barang / kode..."
+                        class="w-full pl-10 pr-4 py-2.5 border border-gray-300 rounded-lg shadow-sm focus:border-blue-500 focus:ring-1 focus:ring-blue-500 text-sm">
                 </div>
-                <div class="flex items-center space-x-2">
-                    <label class="text-gray-600 font-medium">Kategori:</label>
-                    <select class="border border-gray-300 rounded-lg shadow-sm py-2 px-3 focus:border-blue-500">
-                        <option>Semua</option>
-                        <option>Sarana</option>
-                        <option>Prasarana</option>
+                
+                <div class="md:col-span-3">
+                    <select class="w-full border border-gray-300 rounded-lg shadow-sm py-2.5 px-3 focus:border-blue-500 text-sm bg-white">
+                        <option value="">Semua Kategori</option>
+                        <option value="Sarana">Sarana</option>
+                        <option value="Prasarana">Prasarana</option>
                     </select>
                 </div>
-                <div class="flex items-center space-x-2">
-                    <label class="text-gray-600 font-medium">Lokasi:</label>
-                    <select class="border border-gray-300 rounded-lg shadow-sm py-2 px-3 focus:border-blue-500">
-                        <option>Semua</option>
-                        <option>Gedung A</option>
-                        <option>Gedung B</option>
+
+                <div class="md:col-span-3">
+                    <select class="w-full border border-gray-300 rounded-lg shadow-sm py-2.5 px-3 focus:border-blue-500 text-sm bg-white">
+                        <option value="">Semua Lokasi</option>
+                        <option value="Gedung A">Gedung A</option>
+                        <option value="Gedung B">Gedung B</option>
                     </select>
                 </div>
             </div>
 
-            <!-- flash data untuk menampilkan bahwa pengajuan peminjaman lebih dari 24 jam dibatalkan -->
             <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6 rounded-r-lg shadow-sm">
                 <div class="flex">
                     <div class="flex-shrink-0">
@@ -68,19 +69,17 @@
                     </div>
                     <div class="ml-3">
                         <p class="text-sm text-yellow-700">
-                            <span class="font-bold">Aturan Peminjaman:</span>
-                            Pengajuan yang tidak ditindaklanjuti (diverifikasi) oleh Admin/TU dalam waktu <strong>24 Jam</strong> akan otomatis <strong>DIBATALKAN</strong> oleh sistem.
-                            <br>
-                            Jika status berubah menjadi "Dibatalkan", silakan ajukan peminjaman ulang.
+                            <span class="font-bold block mb-1">Aturan Peminjaman:</span>
+                            Pengajuan yang tidak diverifikasi dalam waktu <strong>24 Jam</strong> otomatis <strong>DIBATALKAN</strong>.
                         </p>
                     </div>
                 </div>
             </div>
 
-            <div class="mb-6 border-b border-gray-200">
-                <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="myTab" data-tabs-toggle="#myTabContent" role="tablist">
+            <div class="mb-6 border-b border-gray-200 overflow-x-auto no-scrollbar">
+                <ul class="flex flex-nowrap -mb-px text-sm font-medium text-center min-w-max" id="myTab" data-tabs-toggle="#myTabContent" role="tablist">
                     <li class="mr-2" role="presentation">
-                        <button class="inline-block p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300 text-blue-600 border-blue-600"
+                        <button class="inline-block p-4 border-b-2 rounded-t-lg hover:text-gray-600 hover:border-gray-300 text-blue-600 border-blue-600 whitespace-nowrap"
                             id="active-tab" data-tabs-target="#active" type="button" role="tab" aria-controls="active" aria-selected="true">
                             Peminjaman Aktif
                             <?php if (count($activeLoans) > 0): ?>
@@ -89,7 +88,7 @@
                         </button>
                     </li>
                     <li class="mr-2" role="presentation">
-                        <button class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 text-gray-500"
+                        <button class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 text-gray-500 whitespace-nowrap"
                             id="history-tab" data-tabs-target="#history" type="button" role="tab" aria-controls="history" aria-selected="false">
                             Riwayat Selesai
                         </button>
@@ -100,197 +99,135 @@
             <div id="myTabContent">
 
                 <div class="" id="active" role="tabpanel" aria-labelledby="active-tab">
-                    <div class="bg-white rounded-lg shadow-lg overflow-hidden">
-                        <div class="bg-white rounded-lg shadow-lg overflow-hidden">
-                            <div class="overflow-x-auto">
-                                <table class="w-full min-w-max">
-                                    <thead class="bg-gray-50 border-b border-gray-200">
+                    <div class="bg-white rounded-lg shadow-lg overflow-hidden border border-gray-200">
+                        <div class="overflow-x-auto">
+                            <table class="w-full min-w-max">
+                                <thead class="bg-gray-50 border-b border-gray-200">
+                                    <tr>
+                                        <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Item</th>
+                                        <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kode</th>
+                                        <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kegiatan & Tanggal</th>
+                                        <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                        <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="divide-y divide-gray-200">
+                                    <?php if (empty($activeLoans)) : ?>
                                         <tr>
-                                            <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Item</th>
-                                            <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kode</th>
-                                            <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kegiatan</th>
-                                            <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                            <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                                            <td colspan="5" class="py-8 px-6 text-center text-gray-500">
+                                                Belum ada data peminjaman aktif.
+                                            </td>
                                         </tr>
-                                    </thead>
-                                    <tbody class="divide-y divide-gray-200">
-                                        <?php if (empty($activeLoans)) : ?>
-                                            <tr>
-                                                <td colspan="5" class="py-6 px-6 text-center text-gray-500">
-                                                    Belum ada data peminjaman.
+                                    <?php else : ?>
+                                        <?php foreach ($activeLoans as $loan) : ?>
+                                            <tr class="hover:bg-gray-50 transition">
+                                                <td class="py-4 px-6 whitespace-nowrap">
+                                                    <div class="flex flex-col">
+                                                        <span class="font-bold text-gray-900 text-sm"><?= esc($loan['nama_item']); ?></span>
+                                                        <span class="text-xs text-gray-500 uppercase"><?= esc($loan['tipe']); ?></span>
+                                                    </div>
                                                 </td>
-                                            </tr>
-                                        <?php else : ?>
-                                            <?php foreach ($activeLoans as $loan) : ?>
-                                                <tr class="hover:bg-gray-50 transition">
-                                                    <td class="py-4 px-6 whitespace-nowrap">
-                                                        <div class="flex flex-col">
-                                                            <span class="font-medium text-gray-900"><?= esc($loan['nama_item']); ?></span>
-                                                            <span class="text-xs text-gray-500"><?= esc($loan['tipe']); ?></span>
-                                                        </div>
-                                                    </td>
-                                                    <td class="py-4 px-6 text-gray-700 whitespace-nowrap">
-                                                        <?= esc($loan['kode']); ?>
-                                                    </td>
-                                                    <td class="py-4 px-6 text-gray-700 whitespace-nowrap">
-                                                        <div class="flex flex-col">
-                                                            <span><?= esc($loan['kegiatan']); ?></span>
-                                                            <span class="text-xs text-gray-400"><?= date('d M Y', strtotime($loan['tgl_pinjam'])) ?></span>
-                                                        </div>
-                                                    </td>
-                                                    <td class="py-4 px-6 whitespace-nowrap">
-                                                        <?php
-                                                        $badgeClass = 'font-bold';
-                                                        switch ($loan['status']) {
-                                                            case 'Diajukan':
-                                                                break;
-                                                            case 'Disetujui':
-                                                                break;
-                                                            case 'Dipinjam':
-                                                                break;
-                                                            case 'Selesai':
-                                                                break;
-                                                            case 'Dibatalkan':
-                                                                break;
-                                                        }
-                                                        ?>
-                                                        <span class="text-sm font-bold px-3 py-1 rounded-full <?= $badgeClass ?>">
-                                                            <?= esc($loan['status']); ?>
+                                                <td class="py-4 px-6 text-gray-600 whitespace-nowrap text-sm font-mono">
+                                                    <?= esc($loan['kode']); ?>
+                                                </td>
+                                                <td class="py-4 px-6 text-gray-700">
+                                                    <div class="flex flex-col">
+                                                        <span class="text-sm font-medium truncate max-w-xs" title="<?= esc($loan['kegiatan']); ?>">
+                                                            <?= esc($loan['kegiatan']); ?>
                                                         </span>
-                                                    </td>
-                                                    <td class="py-4 px-6 whitespace-nowrap text-sm font-medium">
+                                                        <span class="text-xs text-gray-400 mt-1">
+                                                            Mulai: <?= date('d M Y', strtotime($loan['tgl_pinjam'])) ?>
+                                                        </span>
+                                                    </div>
+                                                </td>
+                                                <td class="py-4 px-6 whitespace-nowrap">
+                                                    <?php
+                                                    $statusColor = 'bg-gray-100 text-gray-800';
+                                                    switch ($loan['status']) {
+                                                        case 'Diajukan': $statusColor = 'bg-yellow-100 text-yellow-800'; break;
+                                                        case 'Disetujui': $statusColor = 'bg-blue-100 text-blue-800'; break;
+                                                        case 'Dipinjam': $statusColor = 'bg-indigo-100 text-indigo-800'; break;
+                                                        case 'Ditolak': $statusColor = 'bg-red-100 text-red-800'; break;
+                                                    }
+                                                    ?>
+                                                    <span class="text-xs font-bold px-2.5 py-1 rounded-full <?= $statusColor ?>">
+                                                        <?= esc($loan['status']); ?>
+                                                    </span>
+                                                </td>
+                                                <td class="py-4 px-6 whitespace-nowrap text-sm font-medium">
+                                                    <div class="flex flex-col space-y-2">
                                                         <?php if ($loan['status'] == 'Diajukan'): ?>
                                                             <form action="<?= site_url('peminjam/peminjaman/delete-item/' . $loan['tipe'] . '/' . $loan['id_detail']) ?>"
                                                                 method="post"
                                                                 onsubmit="return confirm('Batalkan peminjaman untuk item ini saja?');">
                                                                 <?= csrf_field() ?>
-                                                                <button type="submit" class="inline-flex items-center px-3 py-1.5 bg-red-50 text-red-600 hover:bg-red-200 border border-red-300 rounded-lg text-xs font-medium transition-colors">
+                                                                <button type="submit" class="w-full inline-flex justify-center items-center px-3 py-1.5 bg-white border border-red-300 text-red-600 hover:bg-red-50 rounded-lg text-xs font-medium transition-colors">
                                                                     Batal
                                                                 </button>
                                                             </form>
                                                         <?php elseif ($loan['status'] == 'Disetujui' || $loan['status'] == 'Dipinjam'): ?>
+                                                            
                                                             <?php if (!empty($loan['catatan_penolakan']) && empty($loan['foto_sebelum'])): ?>
-                                                                <div class="my-4">
-                                                                    <button type="button"
-                                                                        data-reason="<?= esc($loan['catatan_penolakan']) ?>"
-                                                                        onclick="openRejectionModal(this)"
-                                                                        class="text-xs text-red-600 hover:text-red-800 underline font-medium flex items-center gap-1">
-                                                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                                                        </svg>
-                                                                        Lihat Alasan Penolakan
-                                                                    </button>
-                                                                </div>
+                                                                <button type="button"
+                                                                    data-reason="<?= esc($loan['catatan_penolakan']) ?>"
+                                                                    onclick="openRejectionModal(this)"
+                                                                    class="text-xs text-red-600 hover:text-red-800 underline font-medium flex items-center gap-1 mb-1">
+                                                                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                                                                    Info Penolakan Foto
+                                                                </button>
                                                             <?php endif; ?>
 
                                                             <?php if (empty($loan['foto_sebelum'])): ?>
                                                                 <button type="button"
                                                                     onclick="openUploadModal('sebelum', '<?= $loan['tipe'] ?>', '<?= $loan['id_detail'] ?>', '<?= esc($loan['nama_item']) ?>')"
-                                                                    class="inline-flex items-center px-3 py-1.5 bg-yellow-100 text-yellow-600 hover:bg-yellow-300 border border-yellow-600 rounded-lg text-xs font-medium transition-colors">
-                                                                    Upload Foto <br>SEBELUM<span class="text-red-500 text-xl">*</span>
+                                                                    class="w-full inline-flex justify-center items-center px-3 py-1.5 bg-yellow-500 text-white hover:bg-yellow-600 rounded-lg text-xs font-medium transition-colors shadow-sm">
+                                                                    Upload Bukti Ambil
                                                                 </button>
-
                                                             <?php else: ?>
                                                                 <?php if (empty($loan['foto_sesudah'])): ?>
                                                                     <button type="button"
                                                                         onclick="openUploadModal('sesudah', '<?= $loan['tipe'] ?>', '<?= $loan['id_detail'] ?>', '<?= esc($loan['nama_item']) ?>')"
-                                                                        class="inline-flex items-center px-3 py-1.5 bg-green-100 text-green-600 hover:bg-green-300 border border-green-600 rounded-lg text-xs font-medium transition-colors">
+                                                                        class="w-full inline-flex justify-center items-center px-3 py-1.5 bg-green-600 text-white hover:bg-green-700 rounded-lg text-xs font-medium transition-colors shadow-sm">
                                                                         Kembalikan
                                                                     </button>
                                                                 <?php else: ?>
-                                                                    <span class="text-gray-500 text-xs italic">Menunggu Verifikasi Admin</span>
+                                                                    <span class="text-gray-500 text-xs italic bg-gray-100 px-2 py-1 rounded text-center">Menunggu Verifikasi</span>
                                                                 <?php endif; ?>
-
                                                             <?php endif; ?>
 
-                                                        <?php elseif ($loan['status'] == 'Selesai'): ?>
-                                                            <a href="<?= site_url('peminjam/histori-peminjaman/detail/' . esc($loan['id_peminjaman'])) ?>"
-                                                                class="inline-flex items-center px-3 py-1.5 bg-neutral-100 text-neutral-600 hover:bg-neutral-300 border border-neutral-600 rounded-lg text-xs font-medium transition-colors">
-                                                                Lihat Riwayat
-                                                            </a>
-                                                        <?php else: ?>
+                                                        <?php elseif ($loan['status'] == 'Ditolak'): ?>
                                                             <?php foreach ($peminjaman as $p): ?>
                                                                 <button type="button"
                                                                     onclick="openDetailPenolakanModal(this)"
                                                                     data-alasan="<?= esc($p['keterangan']) ?>"
-                                                                    class="inline-flex items-center px-3 py-1.5 bg-neutral-100 text-neutral-600 hover:bg-neutral-300 border border-neutral-600 rounded-lg text-xs font-medium transition-colors">
-                                                                    Lihat Alasan..
+                                                                    class="w-full inline-flex justify-center items-center px-3 py-1.5 bg-gray-100 text-gray-600 hover:bg-gray-200 border border-gray-300 rounded-lg text-xs font-medium transition-colors">
+                                                                    Lihat Alasan
                                                                 </button>
                                                             <?php endforeach; ?>
                                                         <?php endif; ?>
-                                                    </td>
-                                                </tr>
-                                            <?php endforeach; ?>
-                                        <?php endif; ?>
-                                    </tbody>
-                                </table>
-                            </div>
-
-                            <div id="rejectionModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-                                <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-
-                                    <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true" onclick="closeRejectionModal()"></div>
-                                    <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-
-                                    <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full border-l-4 border-red-500">
-                                        <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                                            <div class="sm:flex sm:items-start">
-                                                <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
-                                                    <svg class="h-6 w-6 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                                                    </svg>
-                                                </div>
-                                                <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                                                    <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">
-                                                        Foto Bukti Ditolak
-                                                    </h3>
-                                                    <div class="mt-2">
-                                                        <p class="text-sm text-gray-500">
-                                                            Admin telah menolak foto bukti yang Anda lampirkan dengan alasan berikut:
-                                                        </p>
-                                                        <div class="mt-3 p-3 bg-red-50 rounded-md text-red-800 text-sm font-medium" id="rejectionReasonText">
-                                                        </div>
-                                                        <p class="text-xs text-gray-400 mt-3">
-                                                            Silakan upload ulang foto yang sesuai pada tombol "Upload Foto" di tabel.
-                                                        </p>
                                                     </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                                            <button type="button" onclick="closeRejectionModal()" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none sm:ml-3 sm:w-auto sm:text-sm">
-                                                Saya Paham
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="p-4 flex justify-between items-center">
-                                <span class="text-sm text-gray-700">
-                                    Menampilkan <span class="font-medium">1-5</span> dari <span class="font-medium">100</span>
-                                </span>
-                                <nav class="flex space-x-1">
-                                    <a href="#" class="py-2 px-3 rounded-lg text-gray-600 hover:bg-gray-100">Sebelumnya</a>
-                                    <a href="#" class="py-2 px-3 rounded-lg text-gray-600 hover:bg-gray-100">1</a>
-                                    <a href="#" class="py-2 px-3 rounded-lg bg-blue-100 text-blue-600 font-medium">2</a>
-                                    <a href="#" class="py-2 px-3 rounded-lg text-gray-600 hover:bg-gray-100">3</a>
-                                    <a href="#" class="py-2 px-3 rounded-lg text-gray-600 hover:bg-gray-100">Berikutnya</a>
-                                </nav>
-                            </div>
+                                                </td>
+                                            </tr>
+                                        <?php endforeach; ?>
+                                    <?php endif; ?>
+                                </tbody>
+                            </table>
                         </div>
+                        
+                        <div class="p-4 border-t border-gray-200">
+                             </div>
                     </div>
                 </div>
 
                 <div class="hidden" id="history" role="tabpanel" aria-labelledby="history-tab">
-                    <div class="bg-white rounded-lg shadow-lg overflow-hidden">
+                    <div class="bg-white rounded-lg shadow-lg overflow-hidden border border-gray-200">
                         <div class="overflow-x-auto">
                             <table class="w-full min-w-max">
-                                <thead class="bg-gray-100 border-b border-gray-200">
+                                <thead class="bg-gray-50 border-b border-gray-200">
                                     <tr>
-                                        <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase">Nama Item</th>
+                                        <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase">Item</th>
                                         <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase">Kegiatan</th>
-                                        <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase">Tanggal</th>
+                                        <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase">Tanggal Selesai</th>
                                         <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
                                         <th class="py-3 px-6 text-left text-xs font-medium text-gray-500 uppercase">Aksi</th>
                                     </tr>
@@ -298,43 +235,45 @@
                                 <tbody class="divide-y divide-gray-200">
                                     <?php if (empty($historyLoans)) : ?>
                                         <tr>
-                                            <td colspan="5" class="py-6 px-6 text-center text-gray-500">Belum ada riwayat peminjaman.</td>
+                                            <td colspan="5" class="py-8 px-6 text-center text-gray-500">Belum ada riwayat peminjaman.</td>
                                         </tr>
                                     <?php else : ?>
                                         <?php foreach ($historyLoans as $loan) : ?>
                                             <tr class="hover:bg-gray-50 transition">
                                                 <td class="py-4 px-6">
                                                     <div class="flex flex-col">
-                                                        <span class="font-medium text-gray-900"><?= esc($loan['nama_item']); ?></span>
+                                                        <span class="font-medium text-gray-900 text-sm"><?= esc($loan['nama_item']); ?></span>
                                                         <span class="text-xs text-gray-500"><?= esc($loan['tipe']); ?> (<?= esc($loan['kode']); ?>)</span>
                                                     </div>
                                                 </td>
-                                                <td class="py-4 px-6 text-sm text-gray-700"><?= esc($loan['kegiatan']); ?></td>
-                                                <td class="py-4 px-6 text-sm text-gray-500">
+                                                <td class="py-4 px-6 text-sm text-gray-700 truncate max-w-xs" title="<?= esc($loan['kegiatan']); ?>">
+                                                    <?= esc($loan['kegiatan']); ?>
+                                                </td>
+                                                <td class="py-4 px-6 text-sm text-gray-500 whitespace-nowrap">
                                                     <?= date('d M Y', strtotime($loan['tgl_selesai'])) ?>
                                                 </td>
-                                                <td class="py-4 px-6">
+                                                <td class="py-4 px-6 whitespace-nowrap">
                                                     <?php
                                                     $color = 'bg-gray-100 text-gray-800';
                                                     if ($loan['status'] == 'Selesai') $color = 'bg-green-100 text-green-800';
                                                     if ($loan['status'] == 'Ditolak') $color = 'bg-red-100 text-red-800';
                                                     if ($loan['status'] == 'Dibatalkan') $color = 'bg-gray-200 text-gray-600';
                                                     ?>
-                                                    <span class="text-xs font-bold px-3 py-1 rounded-full <?= $color ?>">
+                                                    <span class="text-xs font-bold px-2.5 py-1 rounded-full <?= $color ?>">
                                                         <?= esc($loan['status']); ?>
                                                     </span>
                                                 </td>
-                                                <td class="py-4 px-6">
+                                                <td class="py-4 px-6 whitespace-nowrap">
                                                     <?php if ($loan['status'] == 'Selesai'): ?>
                                                         <a href="<?= site_url('peminjam/histori-peminjaman/detail/' . esc($loan['id_peminjaman'])) ?>"
-                                                            class="inline-flex items-center px-3 py-1.5 bg-neutral-100 text-neutral-600 hover:bg-neutral-300 border border-neutral-600 rounded-lg text-xs font-medium transition-colors">
-                                                            Lihat Riwayat
+                                                            class="inline-flex items-center px-3 py-1.5 bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 rounded-lg text-xs font-medium transition-colors">
+                                                            Lihat Detail
                                                         </a>
                                                     <?php else: ?>
                                                         <button type="button"
                                                             onclick="openDetailPenolakanModal(this)"
                                                             data-alasan="<?= esc($loan['keterangan']) ?>"
-                                                            class="inline-flex items-center px-3 py-1.5 bg-neutral-100 text-neutral-600 hover:bg-neutral-300 border border-neutral-600 rounded-lg text-xs font-medium transition-colors">
+                                                            class="inline-flex items-center px-3 py-1.5 bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 rounded-lg text-xs font-medium transition-colors">
                                                             Lihat Alasan
                                                         </button>
                                                     <?php endif; ?>
@@ -349,31 +288,32 @@
                 </div>
             </div>
 
-
-
-
             <div id="uploadModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
                 <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-                    <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" onclick="closeUploadModal()"></div>
+                    <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity backdrop-blur-sm" onclick="closeUploadModal()"></div>
                     <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
 
-                    <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full">
+                    <div class="inline-block align-bottom bg-white rounded-xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full">
                         <form id="formUploadBukti" action="" method="post" enctype="multipart/form-data">
                             <?= csrf_field() ?>
-                            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                                <h3 class="text-lg leading-6 font-medium text-gray-900" id="modalTitle">Upload Bukti</h3>
-
-                                <div class="mt-2 space-y-4">
+                            <div class="bg-white px-4 pt-5 pb-4 sm:p-6">
+                                <h3 class="text-lg leading-6 font-bold text-gray-900 mb-2" id="modalTitle">Upload Bukti</h3>
+                                <div class="space-y-4">
                                     <p class="text-sm text-gray-500" id="modalDescription"></p>
 
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700">Foto Bukti (Wajib)</label>
-                                        <input type="file" name="foto_bukti" required accept="image/*" class="px-2 py-2 mt-1 block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none">
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Foto Bukti (Wajib)</label>
+                                        <input type="file" name="foto_bukti" required accept="image/*" class="block w-full text-sm text-gray-500
+                                            file:mr-4 file:py-2 file:px-4
+                                            file:rounded-full file:border-0
+                                            file:text-sm file:font-semibold
+                                            file:bg-blue-50 file:text-blue-700
+                                            hover:file:bg-blue-100 cursor-pointer border border-gray-300 rounded-lg">
                                     </div>
 
                                     <div id="kondisiInputContainer" class="hidden">
-                                        <label class="block text-sm font-medium text-gray-700">Kondisi Sarana/Prasarana Saat Ini</label>
-                                        <select name="kondisi_akhir" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                                        <label class="block text-sm font-medium text-gray-700 mb-1">Kondisi Saat Ini</label>
+                                        <select name="kondisi_akhir" class="block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
                                             <option value="Baik">Baik</option>
                                             <option value="Rusak Ringan">Rusak Ringan</option>
                                             <option value="Rusak Berat">Rusak Berat</option>
@@ -381,11 +321,11 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                                <button type="submit" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 sm:ml-3 sm:w-auto sm:text-sm">
+                            <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse gap-2">
+                                <button type="submit" class="w-full inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-2 bg-blue-600 text-base font-medium text-white hover:bg-blue-700 sm:w-auto sm:text-sm">
                                     Simpan
                                 </button>
-                                <button type="button" onclick="closeUploadModal()" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+                                <button type="button" onclick="closeUploadModal()" class="mt-3 w-full inline-flex justify-center rounded-lg border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 sm:mt-0 sm:w-auto sm:text-sm">
                                     Batal
                                 </button>
                             </div>
@@ -394,69 +334,65 @@
                 </div>
             </div>
 
-            <div id="returnModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+            <div id="detailPenolakanModal" class="fixed inset-0 z-50 hidden overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
                 <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-                    <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" onclick="closeReturnModal()"></div>
+                    <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity backdrop-blur-sm" onclick="closeDetailPenolakanModal()"></div>
                     <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
 
-                    <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full">
-                        <form id="formReturn" action="" method="post" enctype="multipart/form-data">
-                            <?= csrf_field() ?>
-                            <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                                <h3 class="text-lg leading-6 font-medium text-gray-900">Form Pengembalian Barang</h3>
-                                <p class="text-sm text-gray-500 mt-1">Item: <b id="returnItemName"></b></p>
-
-                                <div class="mt-4 space-y-4">
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700">Foto Bukti Pengembalian <span class="text-red-500">*</span>
-                                        </label>
-                                        <input type="file" name="foto_sesudah" required accept="image/*" class="mt-1 block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none">
-                                        <p class="text-xs text-gray-500 mt-1">Upload foto kondisi barang saat dikembalikan.</p>
-                                    </div>
-
-                                    <div>
-                                        <label class="block text-sm font-medium text-gray-700">Kondisi Barang <span class="text-red-500">*</span></label>
-                                        <select name="kondisi_akhir" required class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
-                                            <option value="Baik">Baik</option>
-                                            <option value="Rusak Ringan">Rusak Ringan</option>
-                                            <option value="Rusak Berat">Rusak Berat</option>
-                                        </select>
+                    <div class="inline-block align-bottom bg-white rounded-xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-md w-full">
+                        <div class="bg-white px-4 pt-5 pb-4 sm:p-6">
+                            <div class="sm:flex sm:items-start">
+                                <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+                                    <svg class="h-6 w-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                </div>
+                                <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left w-full">
+                                    <h3 class="text-lg leading-6 font-medium text-gray-900">Alasan Penolakan</h3>
+                                    <div class="mt-2">
+                                        <p class="text-sm text-gray-600 bg-gray-50 p-3 rounded-md border border-gray-200" id="alasanPenolakanText">
+                                            </p>
                                     </div>
                                 </div>
                             </div>
-                            <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                                <button type="submit" class="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 sm:ml-3 sm:w-auto sm:text-sm">
-                                    Kirim & Kembalikan
-                                </button>
-                                <button type="button" onclick="closeReturnModal()" class="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
-                                    Batal
-                                </button>
-                            </div>
-                        </form>
+                        </div>
+                        <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                            <button type="button" onclick="closeDetailPenolakanModal()" class="w-full inline-flex justify-center rounded-lg border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 sm:ml-3 sm:w-auto sm:text-sm">
+                                Tutup
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <!-- Modal Detail Alasan Penolakan -->
-            <div id="detailPenolakanModal" class="fixed inset-0 z-50 items-center justify-center hidden bg-black bg-opacity-50">
-                <div class="w-full max-w-md p-6 bg-white rounded-lg shadow-lg">
-                    <div class="flex items-center justify-between pb-3 border-b">
-                        <h3 class="text-lg font-semibold text-gray-900">Alasan Penolakan/Pembatalan</h3>
-                        <button onclick="closeDetailPenolakanModal()" class="text-gray-400 hover:text-gray-600">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                            </svg>
-                        </button>
-                    </div>
-                    <div class="mt-4">
-                        <p id="alasanPenolakanText" class="text-sm text-gray-700">
-                            <!-- Alasan akan dimasukkan di sini oleh JavaScript -->
-                        </p>
-                    </div>
-                    <div class="flex justify-end mt-6">
-                        <button onclick="closeDetailPenolakanModal()" class="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-200 rounded-md hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
-                            Tutup
-                        </button>
+            <div id="rejectionModal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+                <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+                    <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity backdrop-blur-sm" onclick="closeRejectionModal()"></div>
+                    <span class="hidden sm:inline-block sm:align-middle sm:h-screen">&#8203;</span>
+
+                    <div class="inline-block align-bottom bg-white rounded-xl text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full border-t-4 border-red-500">
+                        <div class="bg-white px-4 pt-5 pb-4 sm:p-6">
+                            <div class="flex items-start">
+                                <div class="flex-shrink-0">
+                                    <svg class="h-6 w-6 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                    </svg>
+                                </div>
+                                <div class="ml-3 w-full">
+                                    <h3 class="text-lg font-medium text-gray-900">Foto Bukti Ditolak</h3>
+                                    <div class="mt-2">
+                                        <p class="text-sm text-gray-500 mb-2">Admin menolak foto bukti dengan alasan:</p>
+                                        <div class="bg-red-50 text-red-700 p-3 rounded-md text-sm font-medium border border-red-100" id="rejectionReasonText"></div>
+                                        <p class="text-xs text-gray-400 mt-3">Silakan upload ulang foto yang lebih jelas/sesuai.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+                            <button type="button" onclick="closeRejectionModal()" class="w-full inline-flex justify-center rounded-lg border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 sm:ml-3 sm:w-auto sm:text-sm">
+                                Mengerti
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -494,11 +430,15 @@
             }
         }
 
-        activeTab.addEventListener('click', () => switchTab(true));
-        historyTab.addEventListener('click', () => switchTab(false));
+        if(activeTab && historyTab){
+            activeTab.addEventListener('click', () => switchTab(true));
+            historyTab.addEventListener('click', () => switchTab(false));
+        }
     });
 
-    // upload-foto-sebelum
+    // --- LOGIKA MODAL ---
+
+    // 1. Modal Upload (Sebelum/Sesudah)
     function openUploadModal(jenis, tipeItem, idDetail, namaItem) {
         const form = document.getElementById('formUploadBukti');
         const title = document.getElementById('modalTitle');
@@ -509,18 +449,16 @@
         document.getElementById('uploadModal').classList.remove('hidden');
 
         if (jenis === 'sebelum') {
-            // Mode Ambil Barang
             form.action = '<?= site_url("peminjam/peminjaman/upload-bukti-sebelum/") ?>' + tipeItem + '/' + idDetail;
             title.innerText = 'Bukti Pengambilan';
             desc.innerText = 'Upload foto kondisi ' + namaItem + ' saat Anda mengambilnya.';
-            kondisiDiv.classList.add('hidden'); // Sembunyikan input kondisi
+            kondisiDiv.classList.add('hidden');
             kondisiInput.required = false;
         } else {
-            // Mode Kembalikan Barang
             form.action = '<?= site_url("peminjam/peminjaman/upload-bukti-sesudah/") ?>' + tipeItem + '/' + idDetail;
             title.innerText = 'Bukti Pengembalian';
             desc.innerText = 'Upload foto kondisi ' + namaItem + ' saat Anda mengembalikannya.';
-            kondisiDiv.classList.remove('hidden'); // Munculkan input kondisi
+            kondisiDiv.classList.remove('hidden');
             kondisiInput.required = true;
         }
     }
@@ -529,73 +467,46 @@
         document.getElementById('uploadModal').classList.add('hidden');
     }
 
-    // pengembalian + upload foto sesudah
-    function openReturnModal(tipe, idDetail, namaItem) {
-        const form = document.getElementById('formReturn');
-
-        // Set action URL ke method uploadBuktiSesudah di PeminjamanController
-        // Pastikan rute ini sudah ada di Routes.php!
-        form.action = '<?= site_url("peminjam/peminjaman/upload-bukti-sesudah/") ?>' + tipe + '/' + idDetail;
-
-        document.getElementById('returnItemName').innerText = namaItem;
-        document.getElementById('returnModal').classList.remove('hidden');
-    }
-
-    function closeReturnModal() {
-        document.getElementById('returnModal').classList.add('hidden');
-    }
-
-    // penolakan
+    // 2. Modal Detail Penolakan (Umum)
     function openDetailPenolakanModal(buttonElement) {
-        // 1. Ambil alasan dari atribut data-alasan
         const alasan = buttonElement.getAttribute('data-alasan');
-
-        // 2. Ekstrak pesan penolakan yang sebenarnya
-        // Method reject() di controller Anda menambahkan prefix "[DITOLAK: ...]"
-        // Kita akan coba cari dan bersihkan itu untuk tampilan yang lebih baik.
         let displayAlasan = alasan;
+        
+        // Bersihkan format [DITOLAK: ...] jika ada
         const match = alasan.match(/\[DITOLAK:\s*(.*?)\]/);
         if (match && match[1]) {
             displayAlasan = match[1];
         }
 
-        // 3. Tampilkan alasan di dalam modal
         const modalTextElement = document.getElementById('alasanPenolakanText');
-        modalTextElement.textContent = displayAlasan.trim() ? displayAlasan : 'Tidak ada alasan spesifik yang diberikan.';
+        modalTextElement.textContent = displayAlasan.trim() ? displayAlasan : 'Tidak ada alasan spesifik.';
 
-        // 4. Tampilkan modal
-        const modal = document.getElementById('detailPenolakanModal');
-        modal.classList.remove('hidden');
-        modal.classList.add('flex');
+        document.getElementById('detailPenolakanModal').classList.remove('hidden');
     }
 
     function closeDetailPenolakanModal() {
-        const modal = document.getElementById('detailPenolakanModal');
-        modal.classList.add('hidden');
-        modal.classList.remove('flex');
+        document.getElementById('detailPenolakanModal').classList.add('hidden');
     }
 
-    // Opsional: Tutup modal jika user menekan tombol Escape
-    window.addEventListener('keydown', function(event) {
-        if (event.key === 'Escape') {
-            closeDetailPenolakanModal();
-        }
-    });
-
+    // 3. Modal Penolakan Foto
     function openRejectionModal(button) {
-        // Ambil data alasan dari atribut data-reason pada tombol yang diklik
         const reason = button.getAttribute('data-reason');
-
-        // Isi teks ke dalam modal
         document.getElementById('rejectionReasonText').innerText = reason;
-
-        // Tampilkan modal
         document.getElementById('rejectionModal').classList.remove('hidden');
     }
 
     function closeRejectionModal() {
         document.getElementById('rejectionModal').classList.add('hidden');
     }
+
+    // Tutup modal dengan tombol Escape
+    window.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape') {
+            closeUploadModal();
+            closeDetailPenolakanModal();
+            closeRejectionModal();
+        }
+    });
 </script>
 
 <?= $this->endSection(); ?>

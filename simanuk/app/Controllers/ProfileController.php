@@ -21,7 +21,7 @@ class ProfileController extends BaseController
 
       $data = [
          'title' => 'Manajemen Akun Pengguna',
-         'showSidebar' => false, // Flag untuk menyembunyikan sidebar
+         'showSidebar' => true, // Flag untuk menyembunyikan sidebar
          'user' => $user,
          'breadcrumbs' => [
             [
