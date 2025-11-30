@@ -43,7 +43,7 @@
                   <button class="inline-block p-4 border-b-2 rounded-t-lg group transition-all duration-300 text-blue-600 border-blue-600 active"
                      id="tab-sarana-btn" onclick="switchTab('sarana')">
                      <span class="flex items-center gap-2">
-                        📦 Sarana (Barang)
+                        📦 Sarana
                         <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-0.5 rounded-full">
                            <?= $pager_sarana->getTotal('sarana') ?>
                         </span>
@@ -54,7 +54,7 @@
                   <button class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 group transition-all duration-300"
                      id="tab-prasarana-btn" onclick="switchTab('prasarana')">
                      <span class="flex items-center gap-2">
-                        🏢 Prasarana (Ruangan)
+                        🏢 Prasarana
                         <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-0.5 rounded-full">
                            <?= $pager_prasarana->getTotal('prasarana') ?>
                         </span>

@@ -100,7 +100,7 @@
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                <div class="px-6 py-4 border-b border-gray-100 bg-blue-50 flex justify-between items-center">
                   <div>
-                     <h3 class="text-lg font-semibold text-blue-900">Daftar Sarana (Barang)</h3>
+                     <h3 class="text-lg font-semibold text-blue-900">Daftar Sarana</h3>
                      <p class="text-xs text-blue-600 mt-0.5">Pilih barang yang akan dipinjam.</p>
                   </div>
                   <button type="button" id="addSaranaBtn" class="inline-flex items-center px-3 py-1.5 border border-blue-200 text-xs font-medium rounded text-blue-700 bg-white hover:bg-blue-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 shadow-sm transition-colors">
@@ -158,7 +158,7 @@
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                <div class="px-6 py-4 border-b border-gray-100 bg-purple-50 flex justify-between items-center">
                   <div>
-                     <h3 class="text-lg font-semibold text-purple-900">Daftar Prasarana (Ruangan)</h3>
+                     <h3 class="text-lg font-semibold text-purple-900">Daftar Prasarana</h3>
                      <p class="text-xs text-purple-600 mt-0.5">Pilih ruangan/gedung yang diperlukan.</p>
                   </div>
                   <button type="button" id="addPrasaranaBtn" class="inline-flex items-center px-3 py-1.5 border border-purple-200 text-xs font-medium rounded text-purple-700 bg-white hover:bg-purple-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500 shadow-sm transition-colors">

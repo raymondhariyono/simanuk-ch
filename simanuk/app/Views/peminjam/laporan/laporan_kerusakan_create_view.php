@@ -32,8 +32,8 @@
                   <div>
                      <label class="block text-sm font-medium text-gray-700 mb-1.5">Jenis Aset</label>
                      <select id="tipeAset" name="tipe_aset" onchange="toggleSelect()" class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm py-2.5">
-                        <option value="Sarana">Sarana (Barang)</option>
-                        <option value="Prasarana">Prasarana (Ruangan)</option>
+                        <option value="Sarana">Sarana</option>
+                        <option value="Prasarana">Prasarana</option>
                      </select>
                   </div>
 

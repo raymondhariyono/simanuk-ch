@@ -45,7 +45,7 @@
       <div class="border-t border-gray-100 bg-gray-50 p-6">
          <?php if (!empty($h['items_sarana'])) : ?>
             <div class="mb-4">
-               <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Sarana (Barang)</h4>
+               <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Sarana</h4>
                <ul class="bg-white rounded-lg border border-gray-200 divide-y divide-gray-100">
                   <?php foreach ($h['items_sarana'] as $item) : ?>
                      <li class="px-4 py-3 flex justify-between items-center text-sm">
@@ -110,7 +110,7 @@
 
          <?php if (!empty($h['items_prasarana'])) : ?>
             <div>
-               <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Prasarana (Ruangan)</h4>
+               <h4 class="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Prasarana</h4>
                <ul class="bg-white rounded-lg border border-gray-200 divide-y divide-gray-100">
                   <?php foreach ($h['items_prasarana'] as $item) : ?>
                      <li class="px-4 py-3 flex justify-between items-center text-sm">
