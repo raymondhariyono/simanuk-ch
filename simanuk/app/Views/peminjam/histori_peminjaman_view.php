@@ -372,7 +372,7 @@
                                     </div>
 
                                     <div id="kondisiInputContainer" class="hidden">
-                                        <label class="block text-sm font-medium text-gray-700">Kondisi Barang Saat Ini</label>
+                                        <label class="block text-sm font-medium text-gray-700">Kondisi Sarana/Prasarana Saat Ini</label>
                                         <select name="kondisi_akhir" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
                                             <option value="Baik">Baik</option>
                                             <option value="Rusak Ringan">Rusak Ringan</option>
@@ -408,7 +408,8 @@
 
                                 <div class="mt-4 space-y-4">
                                     <div>
-                                        <label class="block text-sm font-medium text-gray-700">Foto Bukti Pengembalian <span class="text-red-500">*</span></label>
+                                        <label class="block text-sm font-medium text-gray-700">Foto Bukti Pengembalian <span class="text-red-500">*</span>
+                                        </label>
                                         <input type="file" name="foto_sesudah" required accept="image/*" class="mt-1 block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none">
                                         <p class="text-xs text-gray-500 mt-1">Upload foto kondisi barang saat dikembalikan.</p>
                                     </div>
@@ -517,7 +518,7 @@
         } else {
             // Mode Kembalikan Barang
             form.action = '<?= site_url("peminjam/peminjaman/upload-bukti-sesudah/") ?>' + tipeItem + '/' + idDetail;
-            title.innerText = 'Bukti Pengembalian Barang';
+            title.innerText = 'Bukti Pengembalian';
             desc.innerText = 'Upload foto kondisi ' + namaItem + ' saat Anda mengembalikannya.';
             kondisiDiv.classList.remove('hidden'); // Munculkan input kondisi
             kondisiInput.required = true;

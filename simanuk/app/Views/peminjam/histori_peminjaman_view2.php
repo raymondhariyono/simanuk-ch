@@ -120,12 +120,24 @@
                <h3 class="text-lg leading-6 font-medium text-gray-900" id="modalTitle">Upload Bukti</h3>
                <div class="mt-2 space-y-4">
                   <p class="text-sm text-gray-500" id="modalDescription"></p>
+
                   <div>
-                     <label class="block text-sm font-medium text-gray-700">Foto Bukti (Wajib)</label>
-                     <input type="file" name="foto_bukti" required accept="image/*" class="px-2 py-2 mt-1 block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none">
+                     <label class="block text-sm font-medium text-gray-700">
+                        Foto Bukti (Wajib) <span class="text-red-500">*</span>
+                     </label>
+
+                     <input
+                        type="file"
+                        name="foto_bukti"
+                        required
+                        accept="image/png, image/jpeg, image/jpg" class="px-2 py-2 mt-1 block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none">
+
+                     <p class="text-xs text-gray-500 mt-1">Format: JPG/JPEG/PNG. Maksimal: 2MB.</p>
+                     <p id="fileErrorMsg" class="text-xs text-red-600 mt-1 hidden font-bold"></p>
                   </div>
+
                   <div id="kondisiInputContainer" class="hidden">
-                     <label class="block text-sm font-medium text-gray-700">Kondisi Barang Saat Ini</label>
+                     <label class="block text-sm font-medium text-gray-700">Kondisi Sarana/Prasarana Saat Ini</label>
                      <select name="kondisi_akhir" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm sm:text-sm">
                         <option value="Baik">Baik</option>
                         <option value="Rusak Ringan">Rusak Ringan</option>

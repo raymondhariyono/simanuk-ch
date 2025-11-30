@@ -228,11 +228,12 @@ class PeminjamanController extends BaseController
       // 1. Validasi File
       if (!$this->validate([
          'foto_bukti' => [
-            'rules' => 'uploaded[foto_bukti]|max_size[foto_bukti,2048]|is_image[foto_bukti]',
+            'rules' => 'uploaded[foto_bukti]|is_image[foto_bukti]|mime_in[foto_bukti,image/jpg,image/jpeg,image/png]|max_size[foto_bukti,2048]',
             'errors' => [
-               'uploaded' => 'Foto wajib diupload.',
-               'max_size' => 'Ukuran foto terlalu besar (Max 2MB).',
-               'is_image' => 'File harus berupa gambar.'
+               'uploaded' => 'Foto bukti wajib diupload.',
+               'is_image' => 'File harus berupa gambar.',
+               'mime_in'  => 'Format foto harus JPG, JPEG, atau PNG.',
+               'max_size' => 'Ukuran foto maksimal 2 MB.'
             ]
          ]
       ])) {
@@ -292,16 +293,25 @@ class PeminjamanController extends BaseController
 
    public function kembalikanItem($tipe, $idDetail)
    {
-      // 1. Validasi
+      // 1. Validasi Server Side (Strict)
       if (!$this->validate([
-         'foto_sesudah'  => 'uploaded[foto_sesudah]|is_image[foto_sesudah]|max_size[foto_sesudah,2048]',
+         'foto_bukti' => [
+            'label' => 'Foto Bukti',
+            'rules' => 'uploaded[foto_bukti]|is_image[foto_bukti]|mime_in[foto_bukti,image/jpg,image/jpeg,image/png]|max_size[foto_bukti,2048]',
+            'errors' => [
+               'uploaded' => 'Foto bukti wajib diupload.',
+               'is_image' => 'File harus berupa gambar.',
+               'mime_in'  => 'Format foto harus JPG, JPEG, atau PNG.',
+               'max_size' => 'Ukuran foto maksimal 2 MB.'
+            ]
+         ],
          'kondisi_akhir' => 'required'
       ])) {
-         return redirect()->back()->withInput()->with('error', 'Foto wajib diupload & valid.');
+         return redirect()->back()->withInput()->with('error', $this->validator->getError('foto_bukti')); // Ambil error spesifik foto
       }
 
       // 2. Upload Foto
-      $file = $this->request->getFile('foto_sesudah');
+      $file = $this->request->getFile('foto_bukti');
       $pathFoto = upload_file($file, 'uploads/peminjaman/bukti_akhir');
 
       if (!$pathFoto) {
