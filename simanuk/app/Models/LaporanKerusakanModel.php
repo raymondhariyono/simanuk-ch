@@ -15,6 +15,7 @@ class LaporanKerusakanModel extends Model
       'id_sarana', // FK nullable
       'id_prasarana', // FK nullable
       'judul_laporan',
+      'jumlah',
       'deskripsi_kerusakan',
       'bukti_foto',
       'status_laporan',

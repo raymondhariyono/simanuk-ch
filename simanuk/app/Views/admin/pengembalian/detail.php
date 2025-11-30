@@ -15,7 +15,7 @@
       <div class="md:col-span-2 space-y-6">
 
          <?php foreach ($itemsSarana as $item) : ?>
-            <div class="bg-white shadow rounded-lg p-6 border-l-4 border-indigo-500">
+            <div class="bg-white shadow rounded-lg p-6">
                <div class="flex justify-between mb-4">
                   <div>
                      <h4 class="text-lg font-bold text-gray-800"><?= esc($item['nama_sarana']) ?></h4>

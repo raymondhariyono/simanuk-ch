@@ -511,7 +511,7 @@
         if (jenis === 'sebelum') {
             // Mode Ambil Barang
             form.action = '<?= site_url("peminjam/peminjaman/upload-bukti-sebelum/") ?>' + tipeItem + '/' + idDetail;
-            title.innerText = 'Bukti Pengambilan Barang';
+            title.innerText = 'Bukti Pengambilan';
             desc.innerText = 'Upload foto kondisi ' + namaItem + ' saat Anda mengambilnya.';
             kondisiDiv.classList.add('hidden'); // Sembunyikan input kondisi
             kondisiInput.required = false;

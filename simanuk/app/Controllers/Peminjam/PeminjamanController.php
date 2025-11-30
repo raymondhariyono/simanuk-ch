@@ -318,10 +318,13 @@ class PeminjamanController extends BaseController
          return redirect()->back()->with('error', 'Gagal mengupload foto ke server.');
       }
 
+      // update kondisi_akhir
+      $kondisi = $this->request->getPost('kondisi_akhir');
+
       // 3. Update Database Detail Sesuai Tipe
       $dataUpdate = [
          'foto_sesudah'  => $pathFoto,
-         'kondisi_akhir' => $this->request->getPost('kondisi_akhir')
+         'kondisi_akhir' => $kondisi,
       ];
 
       // 3. Update Database
@@ -357,22 +360,57 @@ class PeminjamanController extends BaseController
          return redirect()->back()->with('error', 'Gagal mengupload file.');
       }
 
+      // update kondisi_akhir
+      $kondisi = $this->request->getPost('kondisi_akhir');
+
+      // Variabel untuk Auto-Report
+      $itemDetail = null;
+      $userId = auth()->user()->id;
+
       // 3. Update Database Detail (foto_sesudah & kondisi_akhir)
       $idPeminjaman = null;
       if ($tipe == 'Sarana') {
          $detail = $this->detailSaranaModel->find($idDetail);
          $this->detailSaranaModel->update($idDetail, [
             'foto_sesudah' => $pathFoto,
-            'kondisi_akhir' => $this->request->getPost('kondisi_akhir')
+            'kondisi_akhir' => $kondisi,
          ]);
+         $itemDetail = $this->detailSaranaModel->find($idDetail); // Ambil data untuk laporan
          $idPeminjaman = $detail['id_peminjaman'];
       } else {
          $detail = $this->detailPrasaranaModel->find($idDetail);
          $this->detailPrasaranaModel->update($idDetail, [
             'foto_sesudah' => $pathFoto,
-            'kondisi_akhir' => $this->request->getPost('kondisi_akhir')
+            'kondisi_akhir' => $kondisi,
          ]);
+         $itemDetail = $this->detailPrasaranaModel->find($idDetail); // Ambil data untuk laporan
          $idPeminjaman = $detail['id_peminjaman'];
+      }
+
+      // --- LOGIKA OTOMATIS LAPOR KERUSAKAN ---
+      // Jika kondisi bukan 'Baik', buat laporan otomatis
+      if ($kondisi != 'Baik') {
+
+         $laporanModel = new \App\Models\LaporanKerusakanModel();
+
+         // Siapkan Data Laporan
+         $dataLaporan = [
+            'id_peminjam'         => $userId,
+            'tipe_aset'           => ucfirst($tipe), // 'Sarana' atau 'Prasarana'
+            'judul_laporan'       => "Laporan Otomatis Pengembalian ($kondisi)",
+            'deskripsi_kerusakan' => "Barang dikembalikan dengan status $kondisi. Foto bukti terlampir pada detail pengembalian.",
+            'bukti_foto'          => $pathFoto, // Pakai foto yang sama
+            'status_laporan'      => 'Diajukan',
+            // Isi FK yang sesuai
+            'id_sarana'           => ($tipe == 'Sarana') ? $itemDetail['id_sarana'] : null,
+            'id_prasarana'        => ($tipe == 'Prasarana') ? $itemDetail['id_prasarana'] : null,
+            // Isi Jumlah (Penting!)
+            'jumlah'              => ($tipe == 'Sarana') ? $itemDetail['jumlah'] : 1
+         ];
+
+         $laporanModel->save($dataLaporan);
+
+         return redirect()->back()->with('message', 'Barang dikembalikan. Laporan kerusakan telah dibuat otomatis karena kondisi barang tidak baik.');
       }
 
       // 4. Cek Apakah SEMUA barang dalam transaksi ini sudah dikembalikan?
