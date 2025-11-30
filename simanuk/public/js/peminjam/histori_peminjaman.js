@@ -53,7 +53,7 @@ function openUploadModal(jenis, tipeItem, idDetail, namaItem) {
    // Menggunakan SITE_URL global
    if (jenis === 'sebelum') {
       form.action = `${SITE_URL}peminjam/peminjaman/upload-bukti-sebelum/${tipeItem}/${idDetail}`;
-      title.innerText = 'Bukti Pengambilan Barang';
+      title.innerText = 'Bukti Pengambilan';
       desc.innerText = 'Upload foto kondisi ' + namaItem + ' saat Anda mengambilnya.';
       kondisiDiv.classList.add('hidden');
       kondisiInput.required = false;
