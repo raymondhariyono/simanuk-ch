@@ -59,7 +59,7 @@ function openUploadModal(jenis, tipeItem, idDetail, namaItem) {
       kondisiInput.required = false;
    } else {
       form.action = `${SITE_URL}peminjam/peminjaman/upload-bukti-sesudah/${tipeItem}/${idDetail}`;
-      title.innerText = 'Bukti Pengembalian Barang';
+      title.innerText = 'Bukti Pengembalian';
       desc.innerText = 'Upload foto kondisi ' + namaItem + ' saat Anda mengembalikannya.';
       kondisiDiv.classList.remove('hidden');
       kondisiInput.required = true;
@@ -96,4 +96,38 @@ function openRejectionModal(button) {
 
 function closeRejectionModal() {
    document.getElementById('rejectionModal').classList.add('hidden');
+}
+
+function validateFileUpload(input) {
+   const file = input.files[0];
+   const errorMsg = document.getElementById('fileErrorMsg');
+   const submitBtn = document.getElementById('btnSubmitReturn'); // Pastikan tombol submit punya ID ini
+
+   // Reset Error
+   errorMsg.classList.add('hidden');
+   errorMsg.innerText = '';
+   input.classList.remove('border-red-500');
+
+   if (file) {
+      // 1. Validasi Tipe File (MIME Type)
+      const validTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+      if (!validTypes.includes(file.type)) {
+         showError(input, errorMsg, '❌ Hanya file JPG, JPEG, dan PNG yang diperbolehkan.');
+         return;
+      }
+
+      // 2. Validasi Ukuran (2 MB = 2 * 1024 * 1024 bytes)
+      const maxSize = 2 * 1024 * 1024;
+      if (file.size > maxSize) {
+         showError(input, errorMsg, '❌ Ukuran file terlalu besar! Maksimal 2 MB.');
+         return;
+      }
+   }
+}
+
+function showError(input, element, message) {
+   element.innerText = message;
+   element.classList.remove('hidden');
+   input.value = ''; // Reset input agar user harus pilih ulang
+   input.classList.add('border-red-500'); // Merahkan input (opsional styling)
 }

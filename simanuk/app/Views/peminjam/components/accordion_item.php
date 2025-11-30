@@ -52,6 +52,8 @@
                         <div>
                            <span class="font-medium text-gray-900 block"><?= esc($item['nama_sarana']) ?></span>
                            <span class="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded"><?= esc($item['kode_sarana']) ?></span>
+                           <span class="font-small text-gray-600 block">Jumlah Unit Dipinjam: <?= $item['jumlah'] ?></span>
+                           <!-- tambahkan: jumlah yang dipinjam berapa? -->
                         </div>
 
                         <div class="flex items-center gap-2">
@@ -86,11 +88,11 @@
                               <?php endif; ?>
 
                               <?php if (empty($item['foto_sebelum'])): ?>
-                                 <button onclick="openUploadModal('sebelum', 'sarana', '<?= $item['id_detail_sarana'] ?>', '<?= esc($item['nama_sarana']) ?>')" class="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded border border-yellow-300 hover:bg-yellow-200">
-                                    Upload Foto SEBELUM
+                                 <button onclick="openUploadModal('sebelum', 'Sarana', '<?= $item['id_detail_sarana'] ?>', '<?= esc($item['nama_sarana']) ?>')" class="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded border border-yellow-300 hover:bg-yellow-200">
+                                    Upload Foto SEBELUM M
                                  </button>
                               <?php elseif (empty($item['foto_sesudah'])): ?>
-                                 <button onclick="openUploadModal('sesudah', 'sarana', '<?= $item['id_detail_sarana'] ?>', '<?= esc($item['nama_sarana']) ?>')" class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded border border-green-300 hover:bg-green-200">
+                                 <button onclick="openUploadModal('sesudah', 'Sarana', '<?= $item['id_detail_sarana'] ?>', '<?= esc($item['nama_sarana']) ?>')" class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded border border-green-300 hover:bg-green-200">
                                     Kembalikan
                                  </button>
                               <?php else: ?>
@@ -140,9 +142,9 @@
 
                            <?php if (in_array($item['status'], ['Disetujui', 'Dipinjam'])): ?>
                               <?php if (empty($item['foto_sebelum'])): ?>
-                                 <button onclick="openUploadModal('sebelum', 'prasarana', '<?= $item['id_detail_prasarana'] ?>', '<?= esc($item['nama_prasarana']) ?>')" class="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded border border-yellow-300 hover:bg-yellow-200">Upload Foto SEBELUM</button>
+                                 <button onclick="openUploadModal('sebelum', 'Prasarana', '<?= $item['id_detail_prasarana'] ?>', '<?= esc($item['nama_prasarana']) ?>')" class="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded border border-yellow-300 hover:bg-yellow-200">Upload Foto SEBELUM</button>
                               <?php elseif (empty($item['foto_sesudah'])): ?>
-                                 <button onclick="openUploadModal('sesudah', 'prasarana', '<?= $item['id_detail_prasarana'] ?>', '<?= esc($item['nama_prasarana']) ?>')" class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded border border-green-300 hover:bg-green-200">Kembalikan</button>
+                                 <button onclick="openUploadModal('sesudah', 'Prasarana', '<?= $item['id_detail_prasarana'] ?>', '<?= esc($item['nama_prasarana']) ?>')" class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded border border-green-300 hover:bg-green-200">Kembalikan</button>
                               <?php else: ?>
                                  <span class="text-xs text-gray-400 italic">Menunggu Verifikasi</span>
                               <?php endif; ?>

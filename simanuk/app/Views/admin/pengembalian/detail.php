@@ -82,7 +82,7 @@
          <?php endforeach; ?>
 
          <?php foreach ($itemsPrasarana as $item) : ?>
-            <div class="bg-white shadow rounded-lg p-6 border-l-4 border-indigo-500">
+            <div class="bg-white shadow rounded-lg p-6">
                <div class="flex justify-between mb-4">
                   <div>
                      <h4 class="text-lg font-bold text-gray-800"><?= esc($item['nama_prasarana']) ?></h4>
