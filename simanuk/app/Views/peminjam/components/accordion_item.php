@@ -65,9 +65,13 @@
                            </span>
 
                            <?php if ($item['status'] == 'Diajukan'): ?>
-                              <form action="<?= site_url('peminjam/peminjaman/delete-item/sarana/' . $item['id_detail_sarana']) ?>" method="post" onsubmit="return confirm('Batalkan item ini?');">
+                              <form action="<?= site_url('peminjam/peminjaman/delete-item/' . 'Sarana' . '/' . $item['id_detail_sarana']) ?>"
+                                 method="post"
+                                 onsubmit="return confirm('Batalkan peminjaman untuk item ini saja?');">
                                  <?= csrf_field() ?>
-                                 <button type="submit" class="text-xs text-red-600 hover:text-red-800 border border-red-200 bg-red-50 px-2 py-1 rounded">Batal</button>
+                                 <button type="submit" class="inline-flex items-center px-3 py-1.5 bg-red-50 text-red-600 hover:bg-red-200 border border-red-300 rounded-lg text-xs font-medium transition-colors">
+                                    Batal
+                                 </button>
                               </form>
                            <?php endif; ?>
 
@@ -124,9 +128,13 @@
                            </span>
 
                            <?php if ($item['status'] == 'Diajukan'): ?>
-                              <form action="<?= site_url('peminjam/peminjaman/delete-item/prasarana/' . $item['id_detail_prasarana']) ?>" method="post" onsubmit="return confirm('Batalkan item ini?');">
+                              <form action="<?= site_url('peminjam/peminjaman/delete-item/' . 'Prasarana' . '/' . $item['id_detail_prasarana']) ?>"
+                                 method="post"
+                                 onsubmit="return confirm('Batalkan peminjaman untuk item ini saja?');">
                                  <?= csrf_field() ?>
-                                 <button type="submit" class="text-xs text-red-600 hover:text-red-800 border border-red-200 bg-red-50 px-2 py-1 rounded">Batal</button>
+                                 <button type="submit" class="inline-flex items-center px-3 py-1.5 bg-red-50 text-red-600 hover:bg-red-200 border border-red-300 rounded-lg text-xs font-medium transition-colors">
+                                    Batal
+                                 </button>
                               </form>
                            <?php endif; ?>
 
