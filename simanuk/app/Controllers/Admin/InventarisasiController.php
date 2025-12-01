@@ -58,15 +58,6 @@ class InventarisasiController extends BaseController
          // Kirim balik filter agar input tidak reset
          'filters' => $filters,
          'showSidebar' => true, // flag untuk sidebar
-         'breadcrumbs' => [
-            [
-               'name' => 'Beranda',
-               'url' => site_url('admin/dashboard')
-            ],
-            [
-               'name' => 'Kelola Inventarisasi',
-            ]
-         ]
       ];
 
       return view('admin/inventarisasi_view', $data);

@@ -56,10 +56,6 @@ class LaporanKerusakanController extends BaseController
          'laporanSarana' => $laporanSarana,
          'laporanPrasarana' => $laporanPrasarana,
          'showSidebar' => true,
-         'breadcrumbs' => [
-            ['name' => 'Beranda', 'url' => site_url('admin/dashboard')],
-            ['name' => 'Laporan Kerusakan']
-         ]
       ];
 
       return view('admin/laporan/kelola_laporan_kerusakan_view', $data);

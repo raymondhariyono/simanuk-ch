@@ -17,31 +17,25 @@
                   Cari dan pinjam sarana & prasarana yang tersedia.
                </p>
             </div>
-            
+
             <div class="w-full md:w-auto">
-                <a href="<?= site_url('peminjam/peminjaman/new') ?>" 
-                   class="bg-blue-600 text-white py-2 px-4 rounded-lg font-semibold hover:bg-blue-700 w-full md:w-auto text-center whitespace-nowrap flex items-center justify-center shadow-sm transition-colors">
-                   <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
-                      <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
-                   </svg>
-                   Ajukan Peminjaman
-                </a>
+               <a href="<?= site_url('peminjam/peminjaman/new') ?>"
+                  class="bg-blue-600 text-white py-2 px-4 rounded-lg font-semibold hover:bg-blue-700 w-full md:w-auto text-center whitespace-nowrap flex items-center justify-center shadow-sm transition-colors">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+                     <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" />
+                  </svg>
+                  Ajukan Peminjaman
+               </a>
             </div>
          </div>
 
-         <?php if (isset($breadcrumbs)) : ?>
-            <div class="mb-4 overflow-x-auto">
-               <?= render_breadcrumb($breadcrumbs); ?>
-            </div>
-         <?php endif; ?>
-
          <div class="mb-6">
-             <?= $this->include('components/filter_bar', [
-                'actionUrl'    => site_url('peminjam/sarpras'),
-                'kategoriList' => $kategoriList,
-                'lokasiList'   => $lokasiList,
-                'filters'      => $filters
-             ]) ?>
+            <?= $this->include('components/filter_bar', [
+               'actionUrl'    => site_url('peminjam/sarpras'),
+               'kategoriList' => $kategoriList,
+               'lokasiList'   => $lokasiList,
+               'filters'      => $filters
+            ]) ?>
          </div>
 
          <div class="mb-6 border-b border-gray-200 overflow-x-auto no-scrollbar">
@@ -50,7 +44,7 @@
                   <button class="inline-block p-4 border-b-2 rounded-t-lg group transition-all duration-300 text-blue-600 border-blue-600 active whitespace-nowrap"
                      id="tab-sarana-btn" onclick="switchTab('sarana')">
                      <span class="flex items-center gap-2">
-                        📦 Sarana
+                        Sarana
                         <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-0.5 rounded-full">
                            <?= $pager_sarana->getTotal('sarana') ?>
                         </span>
@@ -61,7 +55,7 @@
                   <button class="inline-block p-4 border-b-2 border-transparent rounded-t-lg hover:text-gray-600 hover:border-gray-300 group transition-all duration-300 whitespace-nowrap"
                      id="tab-prasarana-btn" onclick="switchTab('prasarana')">
                      <span class="flex items-center gap-2">
-                        🏢 Prasarana
+                        Prasarana
                         <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2 py-0.5 rounded-full">
                            <?= $pager_prasarana->getTotal('prasarana') ?>
                         </span>
@@ -111,7 +105,9 @@
                                  <?= htmlspecialchars($s['nama_sarana']) ?>
                               </h3>
                               <p class="text-sm text-gray-500 mb-2 flex items-center">
-                                 <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path></svg>
+                                 <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                                 </svg>
                                  <?= htmlspecialchars($s['nama_kategori']) ?>
                               </p>
                               <p class="text-xs text-gray-400 font-mono bg-gray-50 inline-block px-1 rounded">
@@ -128,7 +124,7 @@
                <?php endif; ?>
             </div>
 
-            <div class="flex justify-center mt-8">
+            <div class="flex justify-end mt-8">
                <?= $pager_sarana->links('sarana', 'tailwind_pagination') ?>
             </div>
          </div>
@@ -173,12 +169,16 @@
                                  <?= htmlspecialchars($p['nama_prasarana']) ?>
                               </h3>
                               <p class="text-sm text-gray-500 mb-1 flex items-center">
-                                 <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path></svg>
+                                 <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"></path>
+                                 </svg>
                                  <?= htmlspecialchars($p['nama_kategori']) ?>
                               </p>
                               <p class="text-xs text-gray-500 flex items-center mt-2">
-                                 <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-                                 Kapasitas: <b><?= esc($p['kapasitas_orang']) ?></b> Orang
+                                 <svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                                 </svg>
+                                 Kapasitas: <span class="font-bold"><?= esc($p['kapasitas_orang']) ?></span> Orang
                               </p>
                            </div>
                            <a href="<?= site_url('/peminjam/sarpras/detail/' . esc($p['kode_prasarana'])) ?>"
@@ -191,7 +191,7 @@
                <?php endif; ?>
             </div>
 
-            <div class="flex justify-center mt-8">
+            <div class="flex justify-end mt-8">
                <?= $pager_prasarana->links('prasarana', 'tailwind_pagination') ?>
             </div>
          </div>

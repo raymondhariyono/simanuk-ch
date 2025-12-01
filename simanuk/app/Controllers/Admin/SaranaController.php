@@ -44,10 +44,6 @@ class SaranaController extends BaseController
          'lokasi' => $this->lokasiModel->findAll(),
          'breadcrumbs' => [
             [
-               'name' => 'Beranda',
-               'url' => site_url('admin/dashboard')
-            ],
-            [
                'name' => 'Kelola Inventarisasi',
                'url' => site_url('admin/inventaris')
             ],
@@ -78,10 +74,6 @@ class SaranaController extends BaseController
          'kategori' => $this->kategoriModel->findAll(),
          'lokasi' => $this->lokasiModel->findAll(),
          'breadcrumbs' => [
-            [
-               'name' => 'Beranda',
-               'url' => site_url('admin/dashboard')
-            ],
             [
                'name' => 'Kelola Inventarisasi',
                'url' => site_url('admin/inventaris')

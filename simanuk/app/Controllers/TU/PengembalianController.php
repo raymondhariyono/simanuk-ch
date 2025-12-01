@@ -40,10 +40,6 @@ class PengembalianController extends BaseController
             'title'       => 'Verifikasi Pengembalian',
             'peminjaman'  => $dataPeminjaman,
             'showSidebar' => true,
-            'breadcrumbs' => [
-                ['name' => 'Beranda', 'url' => site_url('tu/dashboard')],
-                ['name' => 'Verifikasi Pengembalian'],
-            ]
         ];
 
         return view('tu/pengembalian/index', $data);
@@ -82,9 +78,8 @@ class PengembalianController extends BaseController
             'itemsPrasarana' => $itemsPrasarana,
             'showSidebar'    => true,
             'breadcrumbs'    => [
-                ['name' => 'Beranda', 'url' => site_url('tu/dashboard')],
                 ['name' => 'Verifikasi Pengembalian', 'url' => site_url('tu/pengembalian')],
-                ['name' => 'Detail'],
+                ['name' => 'Detail Pengembalian'],
             ]
         ];
 

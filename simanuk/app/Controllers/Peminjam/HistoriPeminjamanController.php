@@ -108,10 +108,6 @@ class HistoriPeminjamanController extends BaseController
             'showSidebar' => true,
             // Kirim objek Pager ke view
             'pager' => $this->peminjamanModel->pager,
-            'breadcrumbs' => [
-                ['name' => 'Beranda', 'url' => site_url('peminjam/dashboard')],
-                ['name' => 'Histori Peminjaman'],
-            ]
         ];
 
         return view('peminjam/histori_peminjaman_view2', $data);
@@ -225,10 +221,6 @@ class HistoriPeminjamanController extends BaseController
             'activeLoans'  => $activeLoans,  // Data untuk Tab 1
             'historyLoans' => $historyLoans, // Data untuk Tab 2
             'showSidebar' => true,
-            'breadcrumbs' => [
-                ['name' => 'Beranda', 'url' => site_url('peminjam/dashboard')],
-                ['name' => 'Histori Peminjaman'],
-            ]
         ];
 
         // Memuat file view yang akan kita buat selanjutnya
@@ -272,8 +264,7 @@ class HistoriPeminjamanController extends BaseController
             'itemsSarana' => $itemsSarana,
             'itemsPrasarana' => $itemsPrasarana,
             'breadcrumbs' => [
-                ['name' => 'Beranda', 'url' => site_url('peminjam/dashboard')],
-                ['name' => 'Histori', 'url' => site_url('peminjam/histori-peminjaman')],
+                ['name' => 'Histori Peminjaman', 'url' => site_url('peminjam/histori-peminjaman')],
                 ['name' => 'Detail Peminjaman'],
             ]
         ];

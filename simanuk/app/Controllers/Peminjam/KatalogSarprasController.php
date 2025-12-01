@@ -63,17 +63,7 @@ class KatalogSarprasController extends BaseController
          'lokasiList'   => $this->lokasiModel->findAll(),
          // Kirim balik filter agar input tidak reset
          'filters' => $filters,
-
          'showSidebar' => true, // flag untuk sidebar
-         'breadcrumbs' => [
-            [
-               'name' => 'Beranda',
-               'url' => site_url('admin/dashboard')
-            ],
-            [
-               'name' => 'Sarpras',
-            ]
-         ]
       ];
 
 
@@ -141,8 +131,8 @@ class KatalogSarprasController extends BaseController
             'sarana' => $sarana,
             'fotoSarana' => $fotoSarana,
             'calendar' => $calendarData,
+            'showSidebar' => false,
             'breadcrumbs' => [
-               ['name' => 'Beranda', 'url' => site_url('peminjam/dashboard')],
                ['name' => 'Sarpras', 'url' => site_url('peminjam/sarpras')],
                ['name' => $sarana['nama_sarana']],
             ]
@@ -179,8 +169,8 @@ class KatalogSarprasController extends BaseController
             'prasarana' => $prasarana,
             'fotoPrasarana' => $fotoPrasarana,
             'calendar' => $calendarData,
+            'showSidebar' => false,
             'breadcrumbs' => [
-               ['name' => 'Beranda', 'url' => site_url('peminjam/dashboard')],
                ['name' => 'Sarpras', 'url' => site_url('peminjam/sarpras')],
                ['name' => $prasarana['nama_prasarana']],
             ]

@@ -31,10 +31,6 @@ class ManajemenAkunController extends BaseController
          'title' => 'Manajemen Akun Pengguna',
          'users' => $users,
          'showSidebar' => true,
-         'breadcrumbs' => [
-            ['name' => 'Beranda', 'url' => site_url('admin/dashboard')],
-            ['name' => 'Manajemen Akun']
-         ]
       ];
 
       return view('admin/manajemen_akun_view', $data);
@@ -49,7 +45,7 @@ class ManajemenAkunController extends BaseController
          'title' => 'Tambah Akun Baru',
          'roles' => $this->roleModel->findAll(), // Untuk dropdown role
          'breadcrumbs' => [
-            ['name' => 'Akun', 'url' => site_url('admin/manajemen-akun')],
+            ['name' => 'Manajemen Akun', 'url' => site_url('admin/manajemen-akun')],
             ['name' => 'Tambah Baru']
          ]
       ];
@@ -94,7 +90,7 @@ class ManajemenAkunController extends BaseController
          'title' => 'Edit Akun',
          'user' => $user,
          'roles' => $this->roleModel->findAll(),
-         'breadcrumbs' => [['name' => 'Akun', 'url' => site_url('admin/manajemen-akun')],
+         'breadcrumbs' => [['name' => 'Manajemen Akun', 'url' => site_url('admin/manajemen-akun')],
          ['name' => 'Edit Akun']]
       ];
 

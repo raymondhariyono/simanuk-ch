@@ -43,10 +43,6 @@ class LaporanKerusakanController extends BaseController
             'title' => 'Laporan Kerusakan',
             'riwayat' => $riwayat,
             'showSidebar' => true,
-            'breadcrumbs' => [
-                ['name' => 'Beranda', 'url' => site_url('peminjam/dashboard')],
-                ['name' => 'Laporan Kerusakan'],
-            ]
         ];
 
         return view('peminjam/laporan/laporan_kerusakan_view', $data);
@@ -61,7 +57,6 @@ class LaporanKerusakanController extends BaseController
             'saranaList' => $this->saranaModel->findAll(),
             'prasaranaList' => $this->prasaranaModel->findAll(),
             'breadcrumbs' => [
-                ['name' => 'Beranda', 'url' => site_url('peminjam/dashboard')],
                 ['name' => 'Laporan Kerusakan', 'url' => site_url('peminjam/laporan-kerusakan')],
                 ['name' => 'Buat Baru'],
             ]

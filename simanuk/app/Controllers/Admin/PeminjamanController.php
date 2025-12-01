@@ -86,10 +86,6 @@ class PeminjamanController extends BaseController
          'activeLoans'  => $active,
          'historyLoans' => $history,
          'showSidebar' => true,
-         'breadcrumbs' => [
-            ['name' => 'Beranda', 'url' => site_url('admin/dashboard')],
-            ['name' => 'Transaksi Peminjaman']
-         ]
       ];
 
       return view('admin/peminjaman/index', $data);
@@ -132,8 +128,7 @@ class PeminjamanController extends BaseController
          'itemsPrasarana' => $itemsPrasarana,
          'showSidebar' => true,
          'breadcrumbs' => [
-            ['name' => 'Beranda', 'url' => site_url('admin/dashboard')],
-            ['name' => 'Peminjaman', 'url' => site_url('admin/peminjaman')],
+            ['name' => 'Transaksi Peminjaman', 'url' => site_url('admin/peminjaman')],
             ['name' => 'Detail Verifikasi']
          ]
       ];

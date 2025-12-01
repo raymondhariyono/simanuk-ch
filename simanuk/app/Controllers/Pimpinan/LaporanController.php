@@ -72,10 +72,6 @@ class LaporanController extends BaseController
             'showSidebar' => true,
             'laporan'     => $daftarLaporan,
             'filterBulan' => $filterBulan,
-            'breadcrumbs' => [
-                ['name' => 'Dashboard', 'url' => site_url('pimpinan/dashboard')],
-                ['name' => 'Laporan']
-            ]
         ];
 
         return view('pimpinan/laporan/index', $data);
@@ -155,7 +151,7 @@ class LaporanController extends BaseController
         // 4. Output Langsung Download (Attachment => true)
         // Nama file: Laporan_Sarpras_Bulan_Tahun.pdf
         $filename = "Laporan_Sarpras_" . date('F_Y', strtotime($bulan)) . ".pdf";
-        
+
         $dompdf->stream($filename, ["Attachment" => true]);
         exit();
     }
@@ -202,6 +198,7 @@ class LaporanController extends BaseController
 
         return ['rows' => $rows, 'columns' => $columns];
     }
+
     public function excel()
     {
         $bulan = $this->request->getGet('bulan');
@@ -234,7 +231,7 @@ class LaporanController extends BaseController
 
         // 3. Set Header untuk Download
         $filename = 'Laporan_Sarpras_' . date('F_Y', strtotime($bulan)) . '.xlsx';
-        
+
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header('Content-Disposition: attachment;filename="' . $filename . '"');
         header('Cache-Control: max-age=0');
@@ -245,7 +242,8 @@ class LaporanController extends BaseController
         exit;
     }
 
-    private function writeSheet($sheet, $data, $title) {
+    private function writeSheet($sheet, $data, $title)
+    {
         // Header Judul
         $sheet->setCellValue('A1', $title);
         $sheet->mergeCells('A1:G1'); // Sesuaikan merge dengan perkiraan jumlah kolom
@@ -255,7 +253,7 @@ class LaporanController extends BaseController
         // Header Tabel (Baris ke-3)
         $columns = $data['columns'];
         $sheet->setCellValue('A3', 'No');
-        
+
         $colChar = 'B';
         foreach ($columns as $col) {
             $sheet->setCellValue($colChar . '3', $col);
@@ -284,11 +282,11 @@ class LaporanController extends BaseController
             $sheet->setCellValue('A' . $rowNum, $no++);
             $c = 'B';
             foreach ($row as $key => $val) {
-                 // Skip kolom ID jika ada
-                 if (strpos($key, 'id_') !== false) continue;
-                 
-                 $sheet->setCellValue($c . $rowNum, $val);
-                 $c++;
+                // Skip kolom ID jika ada
+                if (strpos($key, 'id_') !== false) continue;
+
+                $sheet->setCellValue($c . $rowNum, $val);
+                $c++;
             }
             $rowNum++;
         }

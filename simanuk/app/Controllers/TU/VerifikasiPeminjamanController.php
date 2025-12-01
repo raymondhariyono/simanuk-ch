@@ -82,10 +82,6 @@ class VerifikasiPeminjamanController extends BaseController
             'activeLoans'  => $active,
             'historyLoans' => $history,
             'showSidebar' => true,
-            'breadcrumbs' => [
-                ['name' => 'Beranda', 'url' => site_url('tu/dashboard')],
-                ['name' => 'Verifikasi Peminjaman']
-            ]
         ];
 
         return view('tu/peminjaman/index', $data);
@@ -122,9 +118,8 @@ class VerifikasiPeminjamanController extends BaseController
             'itemsPrasarana' => $itemsPrasarana,
             'showSidebar'    => true,
             'breadcrumbs'    => [
-                ['name' => 'Beranda', 'url' => site_url('tu/dashboard')],
-                ['name' => 'Verifikasi', 'url' => site_url('tu/verifikasi-peminjaman')],
-                ['name' => 'Detail']
+                ['name' => 'Verifikasi Peminjaman', 'url' => site_url('tu/verifikasi-peminjaman')],
+                ['name' => 'Detail Peminjaman']
             ]
         ];
 

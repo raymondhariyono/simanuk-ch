@@ -46,10 +46,6 @@ class PengembalianController extends BaseController
          'title' => 'Verifikasi Pengembalian',
          'peminjaman' => $peminjaman,
          'showSidebar' => true,
-         'breadcrumbs' => [
-            ['name' => 'Beranda', 'url' => site_url('admin/dashboard')],
-            ['name' => 'Pengembalian']
-         ]
       ];
 
       return view('admin/pengembalian/index', $data);
@@ -87,9 +83,8 @@ class PengembalianController extends BaseController
          'itemsSarana' => $itemsSarana,
          'itemsPrasarana' => $itemsPrasarana,
          'breadcrumbs' => [
-            ['name' => 'Beranda', 'url' => site_url('admin/dashboard')],
-            ['name' => 'Pengembalian', 'url' => site_url('admin/pengembalian')],
-            ['name' => 'Verifikasi'],
+            ['name' => 'Transaksi Pengembalian', 'url' => site_url('admin/pengembalian')],
+            ['name' => 'Verifikasi Pengembalian'],
          ]
       ];
 

@@ -50,7 +50,6 @@ class PeminjamanController extends BaseController
          'sarana' => $this->saranaModel->where('status_ketersediaan', 'Tersedia')->findAll(),
          'prasarana' => $this->prasaranaModel->whereIn('status_ketersediaan', ['Tersedia', 'Dipinjam'])->findAll(),
          'breadcrumbs' => [
-            ['name' => 'Beranda', 'url' => site_url('peminjam/dashboard')],
             ['name' => 'Peminjaman', 'url' => site_url('peminjam/histori-peminjaman')],
             ['name' => 'Buat Pengajuan Sarana / Prasarana']
          ]

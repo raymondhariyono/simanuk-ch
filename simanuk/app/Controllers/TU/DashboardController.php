@@ -14,7 +14,7 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
-use Dompdf\Options; 
+use Dompdf\Options;
 
 class DashboardController extends BaseController
 {
@@ -124,18 +124,18 @@ class DashboardController extends BaseController
    {
       // 1. Ambil Filter Bulan (Format YYYY-MM dari input type="month")
       $bulan = $this->request->getGet('bulan');
-      
+
       // Jika tidak ada filter, default ke bulan saat ini (YYYY-MM)
       if (!$bulan) {
          $bulan = date('Y-m');
       }
-      
+
       $namaBulan = date('F Y', strtotime($bulan));
       $dataPeminjaman = $this->peminjamanModel
          ->select('peminjaman.*, users.nama_lengkap, users.organisasi')
          ->join('users', 'users.id = peminjaman.id_peminjam')
          // Filter data berdasarkan string bulan (misal: "2025-11") pada kolom tanggal
-         ->like('tgl_pinjam_dimulai', $bulan) 
+         ->like('tgl_pinjam_dimulai', $bulan)
          ->orderBy('tgl_pinjam_dimulai', 'DESC')
          ->findAll();
 
@@ -144,7 +144,7 @@ class DashboardController extends BaseController
          ->select('sarana.*, lokasi.nama_lokasi')
          ->join('lokasi', 'lokasi.id_lokasi = sarana.id_lokasi', 'left')
          ->findAll();
-         
+
       // Ambil data Prasarana (Ruangan/Gedung)
       $prasaranaRaw = $this->prasaranaModel
          ->select('prasarana.*, lokasi.nama_lokasi')
@@ -163,7 +163,7 @@ class DashboardController extends BaseController
             'lokasi'  => $item['nama_lokasi'] ?? '-',
             'kondisi' => $item['kondisi']
          ];
-         
+
          // Masukkan ke Total Aset
          $totalAset[] = $dataItem;
 
@@ -198,9 +198,9 @@ class DashboardController extends BaseController
       $data = [
          'title'          => 'Laporan Bulanan TU',
          'bulan'          => $namaBulan,
-         'dataPeminjaman' => $dataPeminjaman, 
-         'asetRusak'      => $asetRusak,      
-         'totalAset'      => $totalAset       
+         'dataPeminjaman' => $dataPeminjaman,
+         'asetRusak'      => $asetRusak,
+         'totalAset'      => $totalAset
       ];
 
       // Gunakan view yang sudah Anda siapkan sebelumnya
@@ -213,10 +213,10 @@ class DashboardController extends BaseController
 
       $dompdf = new Dompdf($options);
       $dompdf->loadHtml($html);
-      
+
       // Landscape agar tabel total aset muat
-      $dompdf->setPaper('A4', 'landscape'); 
-      
+      $dompdf->setPaper('A4', 'landscape');
+
       $dompdf->render();
 
       $filename = 'Laporan_TU_' . date('F_Y', strtotime($bulan)) . '.pdf';
@@ -224,179 +224,179 @@ class DashboardController extends BaseController
    }
 
    public function downloadExcel()
-    {
-        // 1. Ambil Filter Bulan
-        $bulan = $this->request->getGet('bulan');
-        if (!$bulan) $bulan = date('Y-m');
-        
-        $namaBulan = date('F Y', strtotime($bulan));
+   {
+      // 1. Ambil Filter Bulan
+      $bulan = $this->request->getGet('bulan');
+      if (!$bulan) $bulan = date('Y-m');
 
-        // -----------------------------------------------------------
-        // PERSIAPAN DATA (Sama dengan PDF)
-        // -----------------------------------------------------------
-        
-        // Data 1: Riwayat Peminjaman
-        $dataPeminjaman = $this->peminjamanModel
-            ->select('peminjaman.*, users.nama_lengkap, users.organisasi')
-            ->join('users', 'users.id = peminjaman.id_peminjam')
-            ->like('tgl_pinjam_dimulai', $bulan)
-            ->orderBy('tgl_pinjam_dimulai', 'DESC')
-            ->findAll();
+      $namaBulan = date('F Y', strtotime($bulan));
 
-        // Data 2 & 3: Total Aset & Aset Rusak
-        $saranaRaw = $this->saranaModel
-            ->select('sarana.*, lokasi.nama_lokasi')
-            ->join('lokasi', 'lokasi.id_lokasi = sarana.id_lokasi', 'left')
-            ->findAll();
-            
-        $prasaranaRaw = $this->prasaranaModel
-            ->select('prasarana.*, lokasi.nama_lokasi')
-            ->join('lokasi', 'lokasi.id_lokasi = prasarana.id_lokasi', 'left')
-            ->findAll();
+      // -----------------------------------------------------------
+      // PERSIAPAN DATA (Sama dengan PDF)
+      // -----------------------------------------------------------
 
-        $totalAset = [];
-        $asetRusak = [];
+      // Data 1: Riwayat Peminjaman
+      $dataPeminjaman = $this->peminjamanModel
+         ->select('peminjaman.*, users.nama_lengkap, users.organisasi')
+         ->join('users', 'users.id = peminjaman.id_peminjam')
+         ->like('tgl_pinjam_dimulai', $bulan)
+         ->orderBy('tgl_pinjam_dimulai', 'DESC')
+         ->findAll();
 
-        // Normalisasi Sarana
-        foreach ($saranaRaw as $item) {
-            $row = [
-                'kode'    => $item['kode_sarana'],
-                'nama'    => $item['nama_sarana'],
-                'jenis'   => 'Sarana',
-                'lokasi'  => $item['nama_lokasi'] ?? '-',
-                'kondisi' => $item['kondisi']
-            ];
-            $totalAset[] = $row;
-            if ($item['kondisi'] !== 'Baik') $asetRusak[] = $row;
-        }
+      // Data 2 & 3: Total Aset & Aset Rusak
+      $saranaRaw = $this->saranaModel
+         ->select('sarana.*, lokasi.nama_lokasi')
+         ->join('lokasi', 'lokasi.id_lokasi = sarana.id_lokasi', 'left')
+         ->findAll();
 
-        // Normalisasi Prasarana
-        foreach ($prasaranaRaw as $item) {
-            $row = [
-                'kode'    => $item['kode_prasarana'],
-                'nama'    => $item['nama_prasarana'],
-                'jenis'   => 'Prasarana',
-                'lokasi'  => $item['nama_lokasi'] ?? '-',
-                'kondisi' => $item['kondisi']
-            ];
-            $totalAset[] = $row;
-            if ($item['kondisi'] !== 'Baik') $asetRusak[] = $row;
-        }
+      $prasaranaRaw = $this->prasaranaModel
+         ->select('prasarana.*, lokasi.nama_lokasi')
+         ->join('lokasi', 'lokasi.id_lokasi = prasarana.id_lokasi', 'left')
+         ->findAll();
 
-        // -----------------------------------------------------------
-        // PROSES PEMBUATAN EXCEL
-        // -----------------------------------------------------------
-        $spreadsheet = new Spreadsheet();
+      $totalAset = [];
+      $asetRusak = [];
 
-        // SHEET 1: PEMINJAMAN
-        $sheet1 = $spreadsheet->getActiveSheet();
-        $sheet1->setTitle('Riwayat Peminjaman');
-        
-        // Header Kolom Sheet 1
-        $headers1 = ['No', 'Peminjam', 'Organisasi', 'Kegiatan', 'Tgl Mulai', 'Tgl Selesai', 'Status'];
-        $rows1 = [];
-        $no = 1;
-        foreach ($dataPeminjaman as $d) {
-            $rows1[] = [
-                $no++,
-                $d['nama_lengkap'],
-                $d['organisasi'],
-                $d['kegiatan'],
-                date('d/m/Y', strtotime($d['tgl_pinjam_dimulai'])),
-                date('d/m/Y', strtotime($d['tgl_pinjam_selesai'])),
-                $d['status_peminjaman_global']
-            ];
-        }
-        $this->writeSheet($sheet1, $headers1, $rows1, "DATA PEMINJAMAN - $namaBulan");
+      // Normalisasi Sarana
+      foreach ($saranaRaw as $item) {
+         $row = [
+            'kode'    => $item['kode_sarana'],
+            'nama'    => $item['nama_sarana'],
+            'jenis'   => 'Sarana',
+            'lokasi'  => $item['nama_lokasi'] ?? '-',
+            'kondisi' => $item['kondisi']
+         ];
+         $totalAset[] = $row;
+         if ($item['kondisi'] !== 'Baik') $asetRusak[] = $row;
+      }
 
-        // SHEET 2: ASET RUSAK
-        $sheet2 = $spreadsheet->createSheet();
-        $sheet2->setTitle('Aset Rusak');
-        $headers2 = ['No', 'Kode Aset', 'Nama Aset', 'Jenis', 'Lokasi', 'Kondisi'];
-        $rows2 = [];
-        $no = 1;
-        foreach ($asetRusak as $d) {
-            $rows2[] = [$no++, $d['kode'], $d['nama'], $d['jenis'], $d['lokasi'], $d['kondisi']];
-        }
-        $this->writeSheet($sheet2, $headers2, $rows2, "DAFTAR ASET RUSAK (PERLU PERBAIKAN)");
+      // Normalisasi Prasarana
+      foreach ($prasaranaRaw as $item) {
+         $row = [
+            'kode'    => $item['kode_prasarana'],
+            'nama'    => $item['nama_prasarana'],
+            'jenis'   => 'Prasarana',
+            'lokasi'  => $item['nama_lokasi'] ?? '-',
+            'kondisi' => $item['kondisi']
+         ];
+         $totalAset[] = $row;
+         if ($item['kondisi'] !== 'Baik') $asetRusak[] = $row;
+      }
 
-        // SHEET 3: TOTAL ASET
-        $sheet3 = $spreadsheet->createSheet();
-        $sheet3->setTitle('Total Aset');
-        $headers3 = ['No', 'Kode Aset', 'Nama Aset', 'Jenis', 'Lokasi', 'Kondisi'];
-        $rows3 = [];
-        $no = 1;
-        foreach ($totalAset as $d) {
-            $rows3[] = [$no++, $d['kode'], $d['nama'], $d['jenis'], $d['lokasi'], $d['kondisi']];
-        }
-        $this->writeSheet($sheet3, $headers3, $rows3, "REKAPITULASI SELURUH ASET");
+      // -----------------------------------------------------------
+      // PROSES PEMBUATAN EXCEL
+      // -----------------------------------------------------------
+      $spreadsheet = new Spreadsheet();
 
-        // -----------------------------------------------------------
-        // OUTPUT FILE
-        // -----------------------------------------------------------
-        $filename = 'Laporan_TU_' . date('F_Y', strtotime($bulan)) . '.xlsx';
+      // SHEET 1: PEMINJAMAN
+      $sheet1 = $spreadsheet->getActiveSheet();
+      $sheet1->setTitle('Riwayat Peminjaman');
 
-        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header('Content-Disposition: attachment;filename="' . $filename . '"');
-        header('Cache-Control: max-age=0');
+      // Header Kolom Sheet 1
+      $headers1 = ['No', 'Peminjam', 'Organisasi', 'Kegiatan', 'Tgl Mulai', 'Tgl Selesai', 'Status'];
+      $rows1 = [];
+      $no = 1;
+      foreach ($dataPeminjaman as $d) {
+         $rows1[] = [
+            $no++,
+            $d['nama_lengkap'],
+            $d['organisasi'],
+            $d['kegiatan'],
+            date('d/m/Y', strtotime($d['tgl_pinjam_dimulai'])),
+            date('d/m/Y', strtotime($d['tgl_pinjam_selesai'])),
+            $d['status_peminjaman_global']
+         ];
+      }
+      $this->writeSheet($sheet1, $headers1, $rows1, "DATA PEMINJAMAN - $namaBulan");
 
-        $writer = new Xlsx($spreadsheet);
-        $writer->save('php://output');
-        exit;
-    }
+      // SHEET 2: ASET RUSAK
+      $sheet2 = $spreadsheet->createSheet();
+      $sheet2->setTitle('Aset Rusak');
+      $headers2 = ['No', 'Kode Aset', 'Nama Aset', 'Jenis', 'Lokasi', 'Kondisi'];
+      $rows2 = [];
+      $no = 1;
+      foreach ($asetRusak as $d) {
+         $rows2[] = [$no++, $d['kode'], $d['nama'], $d['jenis'], $d['lokasi'], $d['kondisi']];
+      }
+      $this->writeSheet($sheet2, $headers2, $rows2, "DAFTAR ASET RUSAK (PERLU PERBAIKAN)");
 
-    /**
-     * Helper Private untuk Styling Sheet
-     */
-    private function writeSheet($sheet, $headers, $data, $title)
-    {
-        // 1. Judul di Baris 1
-        $sheet->setCellValue('A1', $title);
-        $sheet->mergeCells('A1:' . chr(64 + count($headers)) . '1'); // Merge A1 sampai kolom terakhir
-        $sheet->getStyle('A1')->getFont()->setBold(true)->setSize(14);
-        $sheet->getStyle('A1')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+      // SHEET 3: TOTAL ASET
+      $sheet3 = $spreadsheet->createSheet();
+      $sheet3->setTitle('Total Aset');
+      $headers3 = ['No', 'Kode Aset', 'Nama Aset', 'Jenis', 'Lokasi', 'Kondisi'];
+      $rows3 = [];
+      $no = 1;
+      foreach ($totalAset as $d) {
+         $rows3[] = [$no++, $d['kode'], $d['nama'], $d['jenis'], $d['lokasi'], $d['kondisi']];
+      }
+      $this->writeSheet($sheet3, $headers3, $rows3, "REKAPITULASI SELURUH ASET");
 
-        // 2. Header Tabel di Baris 3
-        $col = 'A';
-        foreach ($headers as $h) {
-            $sheet->setCellValue($col . '3', $h);
+      // -----------------------------------------------------------
+      // OUTPUT FILE
+      // -----------------------------------------------------------
+      $filename = 'Laporan_TU_' . date('F_Y', strtotime($bulan)) . '.xlsx';
+
+      header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+      header('Content-Disposition: attachment;filename="' . $filename . '"');
+      header('Cache-Control: max-age=0');
+
+      $writer = new Xlsx($spreadsheet);
+      $writer->save('php://output');
+      exit;
+   }
+
+   /**
+    * Helper Private untuk Styling Sheet
+    */
+   private function writeSheet($sheet, $headers, $data, $title)
+   {
+      // 1. Judul di Baris 1
+      $sheet->setCellValue('A1', $title);
+      $sheet->mergeCells('A1:' . chr(64 + count($headers)) . '1'); // Merge A1 sampai kolom terakhir
+      $sheet->getStyle('A1')->getFont()->setBold(true)->setSize(14);
+      $sheet->getStyle('A1')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
+
+      // 2. Header Tabel di Baris 3
+      $col = 'A';
+      foreach ($headers as $h) {
+         $sheet->setCellValue($col . '3', $h);
+         $col++;
+      }
+      $lastCol = chr(ord($col) - 1);
+
+      // Style Header
+      $styleHeader = [
+         'font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF']],
+         'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['rgb' => '4A90E2']],
+         'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
+         'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]]
+      ];
+      $sheet->getStyle("A3:{$lastCol}3")->applyFromArray($styleHeader);
+
+      // 3. Isi Data Mulai Baris 4
+      $rowNum = 4;
+      foreach ($data as $row) {
+         $col = 'A';
+         foreach ($row as $cell) {
+            $sheet->setCellValue($col . $rowNum, $cell);
             $col++;
-        }
-        $lastCol = chr(ord($col) - 1);
-        
-        // Style Header
-        $styleHeader = [
-            'font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF']],
-            'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['rgb' => '4A90E2']],
-            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
-            'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]]
-        ];
-        $sheet->getStyle("A3:{$lastCol}3")->applyFromArray($styleHeader);
+         }
+         $rowNum++;
+      }
 
-        // 3. Isi Data Mulai Baris 4
-        $rowNum = 4;
-        foreach ($data as $row) {
-            $col = 'A';
-            foreach ($row as $cell) {
-                $sheet->setCellValue($col . $rowNum, $cell);
-                $col++;
-            }
-            $rowNum++;
-        }
+      // Style Border Data
+      if ($rowNum > 4) {
+         $lastRow = $rowNum - 1;
+         $styleData = [
+            'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+            'alignment' => ['vertical' => Alignment::VERTICAL_CENTER]
+         ];
+         $sheet->getStyle("A4:{$lastCol}{$lastRow}")->applyFromArray($styleData);
+      }
 
-        // Style Border Data
-        if ($rowNum > 4) {
-            $lastRow = $rowNum - 1;
-            $styleData = [
-                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                'alignment' => ['vertical' => Alignment::VERTICAL_CENTER]
-            ];
-            $sheet->getStyle("A4:{$lastCol}{$lastRow}")->applyFromArray($styleData);
-        }
-
-        // 4. Auto Size Column
-        foreach (range('A', $lastCol) as $colID) {
-            $sheet->getColumnDimension($colID)->setAutoSize(true);
-        }
-    }
+      // 4. Auto Size Column
+      foreach (range('A', $lastCol) as $colID) {
+         $sheet->getColumnDimension($colID)->setAutoSize(true);
+      }
+   }
 }

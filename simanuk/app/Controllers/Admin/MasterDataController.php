@@ -24,10 +24,6 @@ class MasterDataController extends BaseController
          'kategori' => $this->kategoriModel->findAll(),
          'lokasi' => $this->lokasiModel->findAll(),
          'showSidebar' => true,
-         'breadcrumbs' => [
-            ['name' => 'Beranda', 'url' => site_url('admin/dashboard')],
-            ['name' => 'Data Master']
-         ]
       ];
 
       return view('admin/master_data/index', $data);
