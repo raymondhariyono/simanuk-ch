@@ -97,7 +97,7 @@
                               </td>
                               <td class="px-4 py-3">
                                  <button onclick="openProcessModal('<?= $row['id_laporan'] ?>')"
-                                    class="px-3 py-1 text-sm font-medium text-white bg-purple-600 rounded-md hover:bg-purple-700">
+                                    class="px-3 py-1 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700">
                                     Proses
                                  </button>
                               </td>
@@ -167,7 +167,7 @@
                               </td>
                               <td class="px-4 py-3">
                                  <button onclick="openProcessModal('<?= $row['id_laporan'] ?>')"
-                                    class="px-3 py-1 text-sm font-medium text-white bg-purple-600 rounded-md hover:bg-purple-700">
+                                    class="px-3 py-1 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700">
                                     Proses
                                  </button>
                               </td>

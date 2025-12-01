@@ -78,7 +78,7 @@ class PengembalianController extends BaseController
          ->findAll();
 
       $data = [
-         'title' => 'Verifikasi Fisik Barang',
+         'title' => 'Verifikasi Fisik Sarana / Prasarana',
          'peminjaman' => $peminjaman,
          'itemsSarana' => $itemsSarana,
          'itemsPrasarana' => $itemsPrasarana,

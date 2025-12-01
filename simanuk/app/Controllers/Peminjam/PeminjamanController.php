@@ -409,7 +409,7 @@ class PeminjamanController extends BaseController
 
          $laporanModel->save($dataLaporan);
 
-         return redirect()->back()->with('message', 'Barang dikembalikan. Laporan kerusakan telah dibuat otomatis karena kondisi barang tidak baik.');
+         return redirect()->back()->with('message', 'Sarana / Prasarana dikembalikan. Laporan kerusakan telah dibuat otomatis karena kondisi sarana/prasarana tidak baik.');
       }
 
       // 4. Cek Apakah SEMUA barang dalam transaksi ini sudah dikembalikan?
@@ -420,7 +420,7 @@ class PeminjamanController extends BaseController
          // Di sini kita biarkan user menunggu verifikasi admin.
       }
 
-      return redirect()->back()->with('message', 'Sarana berhasil dikembalikan. Menunggu verifikasi admin.');
+      return redirect()->back()->with('message', 'Sarana / Prasarana berhasil dikembalikan. Menunggu verifikasi admin.');
    }
 
    // Helper function private

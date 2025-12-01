@@ -4,7 +4,7 @@
 <div class="container px-6 py-8 mx-auto">
 
    <div class="flex justify-between items-center mb-6">
-      <h2 class="text-2xl font-semibold text-gray-700">Verifikasi Fisik Barang</h2>
+      <h2 class="text-2xl font-semibold text-gray-700">Verifikasi Fisik Sarana / Prasarana</h2>
    </div>
 
    <?php if (isset($breadcrumbs)) : ?>
