@@ -99,7 +99,7 @@
                <?php endforeach; ?>
 
                <div class="mt-4 flex justify-end">
-                  <?= $pager->links('active', 'tailwind_pagination') ?>
+                  <?= $pager->links('history', 'tailwind_pagination') ?>
                </div>
             </div>
          <?php endif; ?>

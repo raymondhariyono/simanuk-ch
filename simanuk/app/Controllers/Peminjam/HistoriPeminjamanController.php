@@ -110,8 +110,6 @@ class HistoriPeminjamanController extends BaseController
             'pager' => $this->peminjamanModel->pager,
         ];
 
-        // dd($data['historyLoans']);
-
         return view('peminjam/histori_peminjaman_view2', $data);
     }
 
@@ -224,8 +222,6 @@ class HistoriPeminjamanController extends BaseController
             'historyLoans' => $historyLoans, // Data untuk Tab 2
             'showSidebar' => true,
         ];
-
-        // dd($data['historyLoans']);
 
         // Memuat file view yang akan kita buat selanjutnya
         return view('peminjam/histori_peminjaman_view', $data);

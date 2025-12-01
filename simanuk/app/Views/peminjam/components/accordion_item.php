@@ -102,6 +102,13 @@
 
                            <?php if ($item['status'] == 'Selesai'): ?>
                               <a href="#" class="text-xs text-blue-600 hover:underline">Lihat Detail</a>
+                           <?php else: ?>
+                              <button type="button"
+                                 onclick="openDetailPenolakanModal(this)"
+                                 data-alasan="<?= esc($h['keterangan']) ?>"
+                                 class="inline-flex items-center px-3 py-1.5 bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 rounded-lg text-xs font-medium transition-colors">
+                                 Lihat Alasan
+                              </button>
                            <?php endif; ?>
                         </div>
                      </li>
@@ -148,6 +155,17 @@
                               <?php else: ?>
                                  <span class="text-xs text-gray-400 italic">Menunggu Verifikasi</span>
                               <?php endif; ?>
+                           <?php endif; ?>
+
+                           <?php if ($item['status'] == 'Selesai'): ?>
+                              <a href="#" class="text-xs text-blue-600 hover:underline">Lihat Detail</a>
+                           <?php else: ?>
+                              <button type="button"
+                                 onclick="openDetailPenolakanModal(this)"
+                                 data-alasan="<?= esc($h['keterangan']) ?>"
+                                 class="inline-flex items-center px-3 py-1.5 bg-white border border-gray-300 text-gray-700 hover:bg-gray-50 rounded-lg text-xs font-medium transition-colors">
+                                 Lihat Alasan
+                              </button>
                            <?php endif; ?>
                         </div>
                      </li>
