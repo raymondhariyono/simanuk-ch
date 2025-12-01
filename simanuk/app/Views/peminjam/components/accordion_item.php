@@ -89,7 +89,7 @@
 
                               <?php if (empty($item['foto_sebelum'])): ?>
                                  <button onclick="openUploadModal('sebelum', 'Sarana', '<?= $item['id_detail_sarana'] ?>', '<?= esc($item['nama_sarana']) ?>')" class="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded border border-yellow-300 hover:bg-yellow-200">
-                                    Upload Foto SEBELUM M
+                                    Upload Foto SEBELUM
                                  </button>
                               <?php elseif (empty($item['foto_sesudah'])): ?>
                                  <button onclick="openUploadModal('sesudah', 'Sarana', '<?= $item['id_detail_sarana'] ?>', '<?= esc($item['nama_sarana']) ?>')" class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded border border-green-300 hover:bg-green-200">
@@ -157,7 +157,7 @@
          <?php endif; ?>
 
          <div class="mt-4 pt-3 border-t border-gray-200 text-right">
-            <a href="<?= site_url('peminjam/peminjaman/detail/' . $h['id_peminjaman']) ?>" class="text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline">
+            <a href="<?= site_url('peminjam/histori-peminjaman/detail/' . esc($h['id_peminjaman'])) ?>" class="text-sm font-medium text-blue-600 hover:text-blue-800 hover:underline">
                Lihat Detail Transaksi &rarr;
             </a>
          </div>

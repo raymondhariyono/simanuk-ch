@@ -24,7 +24,7 @@ class LaporanKerusakanController extends BaseController
     {
         $userId = auth()->user()->id;
         // ambil riwayat berdasarkan waktu dibuatnya laporan
-        $riwayat = $this->laporanModel->where('id_peminjam', $userId)->orderBy('created_at', 'DESC')->findAll();
+        $riwayat = $this->laporanModel->where('id_pelapor', $userId)->orderBy('created_at', 'DESC')->findAll();
 
         // Manual Mapping Nama Aset (Untuk menghindari join kompleks di model)
         foreach ($riwayat as &$r) {
@@ -51,11 +51,19 @@ class LaporanKerusakanController extends BaseController
     // Form Buat Laporan
     public function new()
     {
+        // Ambil parameter dari URL (jika user klik 'Lapor' dari halaman histori)
+        $prefill = [
+            'tipe' => $this->request->getGet('tipe'), // 'sarana' / 'prasarana'
+            'id_aset' => $this->request->getGet('id'),
+            'id_peminjaman' => $this->request->getGet('peminjaman')
+        ];
+
         $data = [
             'title' => 'Buat Laporan Baru',
             // Kirim data untuk dropdown
             'saranaList' => $this->saranaModel->findAll(),
             'prasaranaList' => $this->prasaranaModel->findAll(),
+            'prefill' => $prefill,
             'breadcrumbs' => [
                 ['name' => 'Laporan Kerusakan', 'url' => site_url('peminjam/laporan-kerusakan')],
                 ['name' => 'Buat Baru'],
@@ -80,12 +88,14 @@ class LaporanKerusakanController extends BaseController
         $pathFoto = upload_file($file, 'uploads/laporan_kerusakan');
 
         $data = [
-            'id_peminjam' => auth()->user()->id,
-            'tipe_aset' => $this->request->getPost('tipe_aset'),
-            'judul_laporan' => $this->request->getPost('judul_laporan'),
+            'id_pelapor'          => auth()->user()->id,
+            'id_peminjaman'       => $this->request->getPost('id_peminjaman') ?: null, // <--- UPDATE: Tangkap ID Peminjaman
+            'tipe_aset'           => $this->request->getPost('tipe_aset'),
+            'judul_laporan'       => $this->request->getPost('judul_laporan'),
             'deskripsi_kerusakan' => $this->request->getPost('deskripsi'),
-            'bukti_foto' => $pathFoto,
-            'status_laporan' => 'Diajukan'
+            'bukti_foto'          => $pathFoto,
+            'status_laporan'      => 'Diajukan',
+            'jumlah'              => $this->request->getPost('jumlah') ?? 1,
         ];
 
         // Tentukan ID berdasarkan tipe

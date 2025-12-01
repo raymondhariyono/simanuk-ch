@@ -23,39 +23,44 @@
          <form action="<?= site_url('peminjam/laporan-kerusakan/create') ?>" method="POST" enctype="multipart/form-data" class="space-y-8">
             <?= csrf_field() ?>
 
-            <div class="space-y-6">
-               <h3 class="text-lg font-bold text-gray-900 uppercase tracking-wider border-b border-gray-100 pb-2">
-                  Informasi Aset
-               </h3>
+            <input type="hidden" name="id_peminjaman" value="<?= esc($prefill['id_peminjaman'] ?? '') ?>">
 
-               <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div>
-                     <label class="block text-sm font-medium text-gray-700 mb-1.5">Jenis Aset</label>
-                     <select id="tipeAset" name="tipe_aset" onchange="toggleSelect()" class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm py-2.5">
-                        <option value="Sarana">Sarana</option>
-                        <option value="Prasarana">Prasarana</option>
-                     </select>
-                  </div>
+            <h3 class="text-lg font-bold text-gray-900 uppercase tracking-wider border-b border-gray-100 pb-2">
+               Informasi Aset
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+               <div>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Jenis Aset</label>
+                  <select id="tipeAset" name="tipe_aset" onchange="toggleSelect()" class="w-full border border-gray-300 px-3 py-2 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 transition-colors   ">
+                     <option value="Sarana" <?= ($prefill['tipe'] ?? '') == 'Sarana' ? 'selected' : '' ?>>Sarana</option>
+                     <option value="Prasarana" <?= ($prefill['tipe'] ?? '') == 'Prasarana' ? 'selected' : '' ?>>Prasarana</option>
+                  </select>
+               </div>
 
-                  <div id="selectSarana">
-                     <label class="block text-sm font-medium text-gray-700 mb-1.5">Pilih Barang</label>
-                     <select name="id_sarana" class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm py-2.5">
-                        <option value="">-- Pilih Barang --</option>
-                        <?php foreach ($saranaList as $s) : ?>
-                           <option value="<?= $s['id_sarana'] ?>"><?= esc($s['nama_sarana']) ?> (<?= esc($s['kode_sarana']) ?>)</option>
-                        <?php endforeach; ?>
-                     </select>
-                  </div>
+               <div id="selectSarana" class="<?= ($prefill['tipe'] ?? 'Sarana') == 'Sarana' ? '' : 'hidden' ?>">
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Pilih Sarana</label>
+                  <select name="id_sarana" class="w-full border border-gray-300 px-3 py-2 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 transition-colors">
+                     <option value="">-- Pilih Sarana --</option>
+                     <?php foreach ($saranaList as $s) : ?>
+                        <option value="<?= $s['id_sarana'] ?>"
+                           <?= ($prefill['id_aset'] ?? '') == $s['id_sarana'] ? 'selected' : '' ?>>
+                           <?= esc($s['nama_sarana']) ?> (<?= esc($s['kode_sarana']) ?>)
+                        </option>
+                     <?php endforeach; ?>
+                  </select>
+               </div>
 
-                  <div id="selectPrasarana" class="hidden">
-                     <label class="block text-sm font-medium text-gray-700 mb-1.5">Pilih Prasarana</label>
-                     <select name="id_prasarana" class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm py-2.5">
-                        <option value="">-- Pilih Prasarana --</option>
-                        <?php foreach ($prasaranaList as $p) : ?>
-                           <option value="<?= $p['id_prasarana'] ?>"><?= esc($p['nama_prasarana']) ?> (<?= esc($p['kode_prasarana']) ?>)</option>
-                        <?php endforeach; ?>
-                     </select>
-                  </div>
+               <div id="selectPrasarana" class="<?= ($prefill['tipe'] ?? '') == 'Prasarana' ? '' : 'hidden' ?>">
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Pilih Prasarana</label>
+                  <select name="id_prasarana" class="w-full border border-gray-300 px-3 py-2 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 transition-colors">
+                     <option value="">-- Pilih Prasarana --</option>
+                     <?php foreach ($prasaranaList as $p) : ?>
+                        <option value="<?= $p['id_prasarana'] ?>"
+                           <?= ($prefill['id_aset'] ?? '') == $p['id_prasarana'] ? 'selected' : '' ?>>
+                           <?= esc($p['nama_prasarana']) ?>
+                        </option>
+                     <?php endforeach; ?>
+                  </select>
                </div>
             </div>
 
@@ -67,12 +72,12 @@
                <div class="space-y-5">
                   <div>
                      <label class="block text-sm font-medium text-gray-700 mb-1.5">Judul Laporan</label>
-                     <input type="text" name="judul_laporan" class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-2 py-2.5 placeholder-gray-400" placeholder="Contoh: Kursi Patah di R.101">
+                     <input type="text" name="judul_laporan" class="w-full border border-gray-300 px-3 py-2 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 transition-colors" placeholder="Contoh: Kursi Patah di R.101">
                   </div>
 
                   <div>
                      <label class="block text-sm font-medium text-gray-700 mb-1.5">Deskripsi</label>
-                     <textarea name="deskripsi" rows="4" class="block w-full rounded-lg border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm px-2 py-2.5 placeholder-gray-400" placeholder="Jelaskan kondisi kerusakan..."></textarea>
+                     <textarea name="deskripsi" rows="4" class="w-full border border-gray-300 px-3 py-2 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 transition-colors" placeholder="Jelaskan kondisi kerusakan..."></textarea>
                   </div>
 
                   <div>
