@@ -49,7 +49,7 @@ class LaporanKerusakanController extends BaseController
       }
 
       $data = [
-         'title' => 'Kelola Laporan Kerusakan (TU)',
+         'title' => 'Kelola Laporan Kerusakan',
          'laporanSarana' => $laporanSarana,
          'laporanPrasarana' => $laporanPrasarana,
          'showSidebar' => true,

@@ -128,7 +128,7 @@ class PeminjamanController extends BaseController
          'itemsPrasarana' => $itemsPrasarana,
          'showSidebar' => true,
          'breadcrumbs' => [
-            ['name' => 'Transaksi Peminjaman', 'url' => site_url('admin/peminjaman')],
+            ['name' => 'Kelola Peminjaman', 'url' => site_url('admin/peminjaman')],
             ['name' => 'Detail Verifikasi']
          ]
       ];
