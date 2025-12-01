@@ -1,5 +1,9 @@
 <?= $this->extend('layout/template'); ?>
 
+<?= $this->section('title'); ?>
+<?= esc($title); ?>
+<?= $this->endSection(); ?>
+
 <?= $this->section('content'); ?>
 <div class="container px-6 py-8 mx-auto">
     <div class="flex justify-between items-center mb-6">

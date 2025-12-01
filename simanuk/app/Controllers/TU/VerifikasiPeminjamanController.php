@@ -75,7 +75,7 @@ class VerifikasiPeminjamanController extends BaseController
             ->findAll();
 
         $data = [
-            'title'       => 'Verifikasi Peminjaman Masuk',
+            'title'       => 'Verifikasi Peminjaman',
             'peminjaman'  => $dataPeminjaman,
             // tab-tab
             'pendingLoans' => $pending,

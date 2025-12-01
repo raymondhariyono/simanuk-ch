@@ -107,7 +107,7 @@ class DashboardController extends BaseController
       }
 
       $data = [
-         'title'            => 'Dashboard TU',
+         'title'            => 'Dashboard',
          'user'             => $user,
          'stats'            => $stats,
          'pendingApprovals' => $pendingApprovals,
