@@ -40,15 +40,22 @@ class InventarisasiController extends BaseController
          'lokasi'   => $this->request->getGet('lokasi'),
       ];
 
+      // 2. Tentukan Tab Aktif (PENTING untuk UX saat pagination)
+      // Default ke 'sarana', tapi jika user sedang klik page prasarana, pindah ke tab prasarana
+      $activeTab = 'sarana';
+      if ($this->request->getGet('tab') === 'prasarana' || $this->request->getGet('page_prasarana')) {
+         $activeTab = 'prasarana';
+      }
+
       $sarana = $this->inventarisService->getSaranaFiltered($filters, 8);
       $prasarana = $this->inventarisService->getPrasaranaFiltered($filters, 8);
 
       $data = [
          'title' => 'Katalog Sarpras',
          'actionUrl' => site_url('admin/inventaris'),
-         'sarana' => $sarana, // 8 per page
+         'sarana' => $sarana, 
          'pager_sarana' => $this->inventarisService->getSaranaPager(),
-         'prasarana' => $prasarana, // 8 per page
+         'prasarana' => $prasarana, 
          'pager_prasarana' => $this->inventarisService->getPrasaranaPager(),
 
          // Data untuk Dropdown Filter
@@ -57,6 +64,7 @@ class InventarisasiController extends BaseController
 
          // Kirim balik filter agar input tidak reset
          'filters' => $filters,
+         'activeTab' => $activeTab,
          'showSidebar' => true, // flag untuk sidebar
       ];
 

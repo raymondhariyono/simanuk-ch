@@ -1,4 +1,54 @@
 document.addEventListener('DOMContentLoaded', function () {
+   // --- LOGIKA TABS INVENTARIS ---
+   const tabButtons = document.querySelectorAll('.tab-btn');
+
+   if (tabButtons.length > 0) {
+      function switchTab(targetId) {
+         // 1. Sembunyikan semua konten tab
+         document.querySelectorAll('[role="tabpanel"]').forEach(panel => {
+            panel.classList.add('hidden');
+         });
+
+         // 2. Tampilkan konten yang dipilih
+         const targetPanel = document.getElementById(targetId);
+         if (targetPanel) {
+            targetPanel.classList.remove('hidden');
+         }
+
+         // 3. Update style tombol tab
+         tabButtons.forEach(btn => {
+            const isSelected = btn.getAttribute('data-target') === targetId;
+            btn.setAttribute('aria-selected', isSelected);
+
+            if (isSelected) {
+               btn.classList.add('text-blue-600', 'border-blue-600', 'dark:text-blue-500', 'dark:border-blue-500');
+               btn.classList.remove('border-transparent');
+            } else {
+               btn.classList.remove('text-blue-600', 'border-blue-600', 'dark:text-blue-500', 'dark:border-blue-500');
+               btn.classList.add('border-transparent'); // Agar tidak ada garis bawah
+            }
+         });
+      }
+
+      // Event Listener Click
+      tabButtons.forEach(button => {
+         button.addEventListener('click', function () {
+            const target = this.getAttribute('data-target');
+            switchTab(target);
+         });
+      });
+
+      // Initial State (Cek mana yang aria-selected="true" dari PHP)
+      const activeBtn = document.querySelector('.tab-btn[aria-selected="true"]');
+      if (activeBtn) {
+         switchTab(activeBtn.getAttribute('data-target'));
+      } else {
+         // Fallback ke tab pertama
+         switchTab('sarana-content');
+      }
+   }
+
+
    // --- Script untuk Spesifikasi (Sarana) ---
    const tambahSpesifikasiBtn = document.getElementById('tambah-spesifikasi');
    if (tambahSpesifikasiBtn) {
