@@ -6,7 +6,7 @@
 
 <?= $this->section('content'); ?>
 
-<div class="container px-6 py-8 mx-auto">
+<div class="container px-4 py-6 md:px-6 md:py-8 mx-auto">
    <h2 class="text-2xl font-semibold text-gray-700 mb-6">Manajemen Transaksi Peminjaman</h2>
 
    <?php if (session()->getFlashdata('message')) : ?>
@@ -17,7 +17,6 @@
       <?= render_breadcrumb($breadcrumbs); ?>
    <?php endif; ?>
 
-   <!-- flash data untuk peminjaman yang gagal, lebih dari 24 jam -->
    <?php if (session()->getFlashdata('info')) : ?>
       <div class="flex items-center bg-blue-100 text-blue-800 text-sm font-medium px-4 py-3 rounded-lg shadow-sm mb-4 border border-blue-200" role="alert">
          <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
@@ -29,10 +28,10 @@
       </div>
    <?php endif; ?>
 
-   <div class="mb-4 border-b border-gray-200">
-      <ul class="flex flex-wrap -mb-px text-sm font-medium text-center" id="adminTab" role="tablist">
+   <div class="mb-4 border-b border-gray-200 overflow-x-auto no-scrollbar">
+      <ul class="flex flex-nowrap -mb-px text-sm font-medium text-center min-w-max" id="adminTab" role="tablist">
          <li class="mr-2">
-            <button class="inline-block p-4 border-b-2 text-red-600 border-red-600 rounded-t-lg active"
+            <button class="inline-block p-4 border-b-2 text-red-600 border-red-600 rounded-t-lg active whitespace-nowrap"
                id="pending-tab" type="button" onclick="switchAdminTab('pending')">
                Verifikasi Baru
                <?php if (count($pendingLoans) > 0): ?>
@@ -41,7 +40,7 @@
             </button>
          </li>
          <li class="mr-2">
-            <button class="inline-block p-4 border-b-2 border-transparent hover:text-gray-600"
+            <button class="inline-block p-4 border-b-2 border-transparent hover:text-gray-600 whitespace-nowrap"
                id="active-tab" type="button" onclick="switchAdminTab('active')">
                Sedang Berjalan (Aktif)
                <?php if (count($activeLoans) > 0): ?>
@@ -50,7 +49,7 @@
             </button>
          </li>
          <li class="mr-2">
-            <button class="inline-block p-4 border-b-2 border-transparent hover:text-gray-600"
+            <button class="inline-block p-4 border-b-2 border-transparent hover:text-gray-600 whitespace-nowrap"
                id="history-tab" type="button" onclick="switchAdminTab('history')">
                Riwayat Selesai
             </button>
@@ -63,7 +62,7 @@
       <div id="pending-panel">
          <div class="w-full overflow-hidden rounded-lg shadow-xs bg-white">
             <div class="w-full overflow-x-auto">
-               <table class="w-full whitespace-no-wrap">
+               <table class="w-full whitespace-nowrap">
                   <thead>
                      <tr class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b bg-gray-50">
                         <th class="px-4 py-3">Peminjam</th>
@@ -79,12 +78,12 @@
                         </tr>
                      <?php else: ?>
                         <?php foreach ($pendingLoans as $row): ?>
-                           <tr class="text-gray-700">
+                           <tr class="text-gray-700 hover:bg-gray-50 transition">
                               <td class="px-4 py-3">
                                  <p class="font-semibold text-sm"><?= esc($row['nama_lengkap']) ?></p>
                                  <p class="text-xs text-gray-500"><?= esc($row['organisasi']) ?></p>
                               </td>
-                              <td class="px-4 py-3 text-sm"><?= esc($row['kegiatan']) ?></td>
+                              <td class="px-4 py-3 text-sm truncate max-w-xs" title="<?= esc($row['kegiatan']) ?>"><?= esc($row['kegiatan']) ?></td>
                               <td class="px-4 py-3 text-xs">
                                  <?= date('d M', strtotime($row['tgl_pinjam_dimulai'])) ?> - <?= date('d M', strtotime($row['tgl_pinjam_selesai'])) ?>
                               </td>
@@ -105,7 +104,7 @@
       <div id="active-panel" class="hidden">
          <div class="w-full overflow-hidden rounded-lg shadow-xs bg-white">
             <div class="w-full overflow-x-auto">
-               <table class="w-full whitespace-no-wrap">
+               <table class="w-full whitespace-nowrap">
                   <thead>
                      <tr class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b bg-gray-50">
                         <th class="px-4 py-3">Peminjam</th>
@@ -121,7 +120,7 @@
                         </tr>
                      <?php else: ?>
                         <?php foreach ($activeLoans as $row): ?>
-                           <tr class="text-gray-700">
+                           <tr class="text-gray-700 hover:bg-gray-50 transition">
                               <td class="px-4 py-3">
                                  <p class="font-semibold text-sm"><?= esc($row['nama_lengkap']) ?></p>
                                  <p class="text-xs text-gray-500"><?= esc($row['kegiatan']) ?></p>
@@ -160,7 +159,7 @@
       <div id="history-panel" class="hidden">
          <div class="w-full overflow-hidden rounded-lg shadow-xs bg-white">
             <div class="w-full overflow-x-auto">
-               <table class="w-full whitespace-no-wrap">
+               <table class="w-full whitespace-nowrap">
                   <thead>
                      <tr class="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b bg-gray-50">
                         <th class="px-4 py-3">Peminjam & Kegiatan</th>
@@ -175,10 +174,10 @@
                         </tr>
                      <?php else: ?>
                         <?php foreach ($historyLoans as $row): ?>
-                           <tr class="text-gray-700">
+                           <tr class="text-gray-700 hover:bg-gray-50 transition">
                               <td class="px-4 py-3">
                                  <p class="font-semibold text-sm"><?= esc($row['nama_lengkap']) ?></p>
-                                 <p class="text-xs text-gray-500"><?= esc($row['kegiatan']) ?></p>
+                                 <p class="text-xs text-gray-500 truncate max-w-xs" title="<?= esc($row['kegiatan']) ?>"><?= esc($row['kegiatan']) ?></p>
                               </td>
                               <td class="px-4 py-3 text-sm">
                                  <?= date('d M Y', strtotime($row['tgl_pinjam_selesai'])) ?>
@@ -206,24 +205,21 @@
       // Hide all panels
       ['pending', 'active', 'history'].forEach(t => {
          document.getElementById(t + '-panel').classList.add('hidden');
-         // Reset Button Style
+         // Reset Button Style (Update: tambahkan whitespace-nowrap agar rapi)
          const btn = document.getElementById(t + '-tab');
-         btn.className = "inline-block p-4 border-b-2 border-transparent hover:text-gray-600 text-gray-500";
+         btn.className = "inline-block p-4 border-b-2 border-transparent hover:text-gray-600 text-gray-500 whitespace-nowrap";
       });
 
-      // Show selected
       document.getElementById(tabName + '-panel').classList.remove('hidden');
 
-      // Active Button Style
       const activeBtn = document.getElementById(tabName + '-tab');
-      // Warna beda untuk Pending (Merah) dan lainnya (Biru) opsional, di sini pakai biru standard
-      activeBtn.className = "inline-block p-4 border-b-2 text-blue-600 border-blue-600 rounded-t-lg active";
+      
+      activeBtn.className = "inline-block p-4 border-b-2 text-blue-600 border-blue-600 rounded-t-lg active whitespace-nowrap";
       if (tabName === 'pending') {
-         activeBtn.className = "inline-block p-4 border-b-2 text-red-600 border-red-600 rounded-t-lg active";
+         activeBtn.className = "inline-block p-4 border-b-2 text-red-600 border-red-600 rounded-t-lg active whitespace-nowrap";
       }
    }
 
-   // Default open pending
    document.addEventListener('DOMContentLoaded', function() {
       switchAdminTab('pending');
    });

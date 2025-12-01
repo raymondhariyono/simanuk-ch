@@ -1,6 +1,6 @@
-<aside class="w-64 bg-white h-full flex flex-col border-r border-gray-200">
+<aside id="sidebar" class="bg-white border-b md:border-r border-gray-200 w-full md:w-64 flex-col transition-all duration-300 h-auto md:h-full hidden md:flex shrink-0 z-10">
 
-   <nav class="flex-grow p-4 space-y-2 overflow-y-auto no-scrollbar">
+   <nav class="flex-grow p-4 space-y-2 overflow-y-auto no-scrollbar max-h-[60vh] md:max-h-full">
 
       <?php if (auth()->user()->inGroup('Admin')) : ?>
          <a href="<?= site_url('admin/dashboard') ?>" class="<?= getLinkClasses('admin/dashboard') ?>">
@@ -91,12 +91,6 @@
                <path stroke-linecap="round" stroke-linejoin="round" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" />
             </svg>
             <span>Histori Peminjaman</span>
-         </a>
-         <a href="<?= site_url('peminjam/histori-peminjaman2') ?>" class="<?= getLinkClasses('peminjam/histori-peminjaman2') ?>">
-            <svg class="w-6 h-6 <?= getIconClasses('peminjam/histori-peminjaman') ?>" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
-               <path stroke-linecap="round" stroke-linejoin="round" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" />
-            </svg>
-            <span>Histori Peminjaman 2</span>
          </a>
          <a href="<?= site_url('peminjam/laporan-kerusakan') ?>" class="<?= getLinkClasses('peminjam/laporan-kerusakan') ?>">
             <svg class="w-6 h-6 <?= getIconClasses('peminjam/laporan-kerusakan') ?>" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
