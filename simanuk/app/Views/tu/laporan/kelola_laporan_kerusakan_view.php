@@ -317,7 +317,7 @@
       const modal = document.getElementById('processModal');
       const form = document.getElementById('formProcess');
       // Set action URL untuk form proses
-      form.action = '<?= site_url("admin/laporan-kerusakan/update/") ?>' + id;
+      form.action = '<?= site_url("tu/laporan-kerusakan/update/") ?>' + id;
       modal.classList.remove('hidden');
    }
 
