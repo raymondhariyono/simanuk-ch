@@ -26,3 +26,20 @@ function previewFile() {
       }
    }
 }
+
+function toggleSelect() {
+   const tipe = document.getElementById('tipeAset').value;
+   const divSarana = document.getElementById('selectSarana');
+   const divPrasarana = document.getElementById('selectPrasarana');
+   const divJumlah = document.getElementById('inputJumlah'); // Ambil div jumlah
+
+   if (tipe === 'Sarana') {
+      divSarana.classList.remove('hidden');
+      divPrasarana.classList.add('hidden');
+      divJumlah.classList.remove('hidden'); // Tampilkan Jumlah untuk Sarana
+   } else {
+      divSarana.classList.add('hidden');
+      divPrasarana.classList.remove('hidden');
+      divJumlah.classList.add('hidden'); // Sembunyikan Jumlah untuk Prasarana
+   }
+}
