@@ -46,7 +46,7 @@ class ManajemenAkunController extends BaseController
          'roles' => $this->roleModel->findAll(), // Untuk dropdown role
          'breadcrumbs' => [
             ['name' => 'Manajemen Akun', 'url' => site_url('admin/manajemen-akun')],
-            ['name' => 'Tambah Baru']
+            ['name' => 'Tambah Akun']
          ]
       ];
       return view('admin/akun/create_view', $data);
