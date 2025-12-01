@@ -101,6 +101,15 @@
                     <hr class="my-4 border-gray-100">
 
                     <?php if ($peminjaman['status_peminjaman_global'] == 'Dipinjam' && empty($item['foto_sesudah'])) : ?>
+                        <div class="mt-2">
+                            <a href="<?= site_url('peminjam/laporan-kerusakan/new') ?>?tipe=Sarana&id=<?= $item['id_sarana'] ?>&peminjaman=<?= $peminjaman['id_peminjaman'] ?>"
+                                class="text-xs text-red-600 hover:text-red-800 hover:underline flex items-center gap-1">
+                                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                </svg>
+                                Lapor Kerusakan Barang Ini
+                            </a>
+                        </div>
 
                         <div class="bg-indigo-50 p-4 rounded-md">
                             <h5 class="font-bold text-indigo-800 text-sm mb-2">Form Pengembalian Barang</h5>
@@ -190,6 +199,15 @@
                     <hr class="my-4 border-gray-100">
 
                     <?php if ($peminjaman['status_peminjaman_global'] == 'Dipinjam' && empty($item['foto_sesudah'])) : ?>
+                        <div class="mt-2">
+                            <a href="<?= site_url('peminjam/laporan-kerusakan/new') ?>?tipe=Sarana&id=<?= $item['id_sarana'] ?>&peminjaman=<?= $peminjaman['id_peminjaman'] ?>"
+                                class="text-xs text-red-600 hover:text-red-800 hover:underline flex items-center gap-1">
+                                <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                                </svg>
+                                Lapor Kerusakan Barang Ini
+                            </a>
+                        </div>
 
                         <div class="bg-indigo-50 p-4 rounded-md">
                             <h5 class="font-bold text-indigo-800 text-sm mb-2">Form Pengembalian Barang</h5>
