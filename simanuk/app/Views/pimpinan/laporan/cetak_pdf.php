@@ -4,77 +4,96 @@
     <meta charset="UTF-8">
     <title><?= esc($judul) ?></title>
     <style>
-        /* CSS Khusus untuk Dompdf */
         body { font-family: sans-serif; font-size: 10pt; }
         .header { text-align: center; margin-bottom: 20px; border-bottom: 2px solid black; padding-bottom: 10px; }
         .header h2 { margin: 0; font-size: 16pt; text-transform: uppercase; }
-        .header h3 { margin: 2px 0; font-size: 12pt; font-weight: normal; }
-        .header p { margin: 0; font-size: 9pt; font-style: italic; }
-        
-        .meta { margin-bottom: 15px; font-size: 11pt; }
-        
-        .section-title { 
-            font-size: 11pt; font-weight: bold; margin-top: 25px; margin-bottom: 8px; 
-            background-color: #e5e7eb; padding: 5px;
-        }
-
+        .section-title { font-size: 11pt; font-weight: bold; margin-top: 25px; margin-bottom: 8px; background-color: #e5e7eb; padding: 5px; }
         table { width: 100%; border-collapse: collapse; margin-bottom: 10px; }
         table, th, td { border: 0.5px solid #000; }
         th { background-color: #f3f4f6; padding: 6px; text-align: center; font-size: 9pt; font-weight: bold; }
-        td { padding: 5px; font-size: 9pt; vertical-align: top; }
-        
+        td { padding: 5px; font-size: 9pt; vertical-align: middle; }
         .text-center { text-align: center; }
-        .text-right { text-align: right; }
-
-        .footer { margin-top: 40px; text-align: right; page-break-inside: avoid; }
-        .ttd-area { height: 70px; }
         
-        /* Page Break Helper */
-        .page-break { page-break-after: always; }
+        /* Gambar agar seragam */
+        .img-bukti { 
+            width: 60px; 
+            height: 60px; 
+            object-fit: cover; 
+            border: 1px solid #ddd; 
+            padding: 2px;
+            display: block;
+            margin: 0 auto;
+        }
     </style>
 </head>
 <body>
 
     <div class="header">
         <h2>Universitas Lambung Mangkurat</h2>
-        <h3>Fakultas Teknik</h3>
-        <p>Jl. Jenderal Achmad Yani Km. 36, Banjarbaru, Kalimantan Selatan</p>
+        <p>Laporan Bulanan Sarana Prasarana - Periode: <?= esc($periode) ?></p>
     </div>
 
-    <div class="meta">
-        <strong>Laporan Bulanan Sarana Prasarana</strong><br>
-        Periode: <?= esc($periode) ?>
-    </div>
-
-    <div class="section-title">I. DATA PEMINJAMAN</div>
+    <div class="section-title">I. DATA PEMINJAMAN & BUKTI FISIK</div>
     <table>
         <thead>
             <tr>
                 <th style="width: 5%;">No</th>
-                <?php foreach ($peminjaman['columns'] as $col) : ?>
-                    <th><?= esc($col) ?></th>
-                <?php endforeach; ?>
+                <th style="width: 20%;">Peminjam</th>
+                <th style="width: 20%;">Barang</th>
+                <th style="width: 15%;">Tanggal</th>
+                <th style="width: 15%;">Foto Awal</th>
+                <th style="width: 15%;">Foto Akhir</th>
+                <th>Kondisi</th>
             </tr>
         </thead>
         <tbody>
             <?php if (empty($peminjaman['rows'])): ?>
-                <tr><td colspan="<?= count($peminjaman['columns']) + 1 ?>" class="text-center">Tidak ada data peminjaman bulan ini.</td></tr>
+                <tr><td colspan="7" class="text-center">Tidak ada data peminjaman bulan ini.</td></tr>
             <?php else: ?>
                 <?php $no = 1; foreach ($peminjaman['rows'] as $row) : ?>
                     <tr>
                         <td class="text-center"><?= $no++ ?></td>
-                        <?php foreach ($row as $key => $val) : ?>
-                            <?php if (strpos($key, 'id_') !== false) continue; ?>
-                            <td>
-                                <?php 
-                                if (strtotime($val) && strlen($val) > 10 && !is_numeric($val)) {
-                                    echo date('d/m/y H:i', strtotime($val));
-                                } else {
-                                    echo esc($val);
-                                }
-                                ?>
-                            </td>
-                        <?php endforeach; ?>
+                        <td><?= esc($row['nama_lengkap']) ?></td>
+                        <td><?= esc($row['nama_item']) ?></td>
+                        <td class="text-center">
+                            <?= date('d/m', strtotime($row['tgl_pinjam_dimulai'])) ?><br>s/d<br>
+                            <?= date('d/m', strtotime($row['tgl_pinjam_selesai'])) ?>
+                        </td>
+                        
+                        <td class="text-center">
+                            <?php 
+                            // Pastikan path tidak double slash jika di database sudah ada '/'
+                            $cleanPath = ltrim($row['foto_sebelum'], '/'); 
+                            $pathSebelum = FCPATH . $cleanPath;
+                            
+                            if (!empty($row['foto_sebelum']) && file_exists($pathSebelum)): 
+                                $type = pathinfo($pathSebelum, PATHINFO_EXTENSION);
+                                $data = file_get_contents($pathSebelum);
+                                $base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
+                            ?>
+                                <img src="<?= $base64 ?>" class="img-bukti">
+                            <?php else: ?>
+                                <span style="color:gray;">-</span>
+                            <?php endif; ?>
+                        </td>
+
+                        <td class="text-center">
+                            <?php 
+                            $cleanPath = ltrim($row['foto_sesudah'], '/');
+                            $pathSesudah = FCPATH . $cleanPath;
+                            
+                            if (!empty($row['foto_sesudah']) && file_exists($pathSesudah)): 
+                                $type = pathinfo($pathSesudah, PATHINFO_EXTENSION);
+                                $data = file_get_contents($pathSesudah);
+                                $base64 = 'data:image/' . $type . ';base64,' . base64_encode($data);
+                            ?>
+                                <img src="<?= $base64 ?>" class="img-bukti">
+                            <?php else: ?>
+                                <span style="color:gray;">-</span>
+                            <?php endif; ?>
+                        </td>
+
+                        <td class="text-center"><?= esc($row['kondisi_akhir'] ?? 'Baik') ?></td>
                     </tr>
                 <?php endforeach; ?>
             <?php endif; ?>
@@ -93,22 +112,14 @@
         </thead>
         <tbody>
             <?php if (empty($kerusakan['rows'])): ?>
-                <tr><td colspan="<?= count($kerusakan['columns']) + 1 ?>" class="text-center">Tidak ada laporan kerusakan bulan ini.</td></tr>
+                <tr><td colspan="<?= count($kerusakan['columns']) + 1 ?>" class="text-center">Tidak ada laporan kerusakan.</td></tr>
             <?php else: ?>
                 <?php $no = 1; foreach ($kerusakan['rows'] as $row) : ?>
                     <tr>
                         <td class="text-center"><?= $no++ ?></td>
                         <?php foreach ($row as $key => $val) : ?>
                             <?php if (strpos($key, 'id_') !== false) continue; ?>
-                            <td>
-                                <?php 
-                                if (strtotime($val) && strlen($val) > 10 && !is_numeric($val)) {
-                                    echo date('d/m/y', strtotime($val));
-                                } else {
-                                    echo esc($val);
-                                }
-                                ?>
-                            </td>
+                            <td><?= esc($val) ?></td>
                         <?php endforeach; ?>
                     </tr>
                 <?php endforeach; ?>
@@ -116,7 +127,7 @@
         </tbody>
     </table>
 
-    <div class="section-title">III. REKAPITULASI INVENTARIS</div>
+    <div class="section-title">III. REKAPITULASI INVENTARIS (POSISI STOK)</div>
     <table>
         <thead>
             <tr>
@@ -142,5 +153,6 @@
             <?php endif; ?>
         </tbody>
     </table>
+
 </body>
 </html>
