@@ -38,6 +38,15 @@
       </ul>
    </div>
 
+   <div class="flex justify-end items-center mb-4">
+      <a href="<?= site_url('admin/laporan-kerusakan/new') ?>" class="bg-red-600 hover:bg-red-700 text-white text-sm font-bold py-2 px-4 rounded flex items-center gap-2 shadow-sm">
+         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+         </svg>
+         Buat Laporan Internal
+      </a>
+   </div>
+
    <div id="damageTabContent">
 
       <div class="" id="sarana-panel" role="tabpanel">
@@ -62,10 +71,21 @@
                         <?php foreach ($laporanSarana as $row) : ?>
                            <tr class="text-gray-700 hover:bg-gray-50">
                               <td class="px-4 py-3">
-                                 <p class="font-semibold text-sm"><?= esc($row['nama_lengkap']) ?></p>
-                                 <p class="text-xs text-gray-500"><?= esc($row['organisasi']) ?></p>
+                                 <?php if (empty($row['id_peminjaman'])): ?>
+                                    <span class="bg-purple-100 text-purple-800 text-xs font-bold px-2 py-1 rounded border border-purple-200">
+                                       INTERNAL (Cek Rutin)
+                                    </span>
+                                    <p class="text-xs text-gray-500 mt-1">Pelapor: <?= esc($row['nama_lengkap']) ?> (Admin)</p>
+                                 <?php else: ?>
+                                    <p class="font-semibold text-sm"><?= esc($row['nama_lengkap']) ?></p>
+                                    <p class="text-xs text-gray-500"><?= esc($row['organisasi']) ?></p>
+                                 <?php endif; ?>
+
                                  <div class="mt-2 text-xs font-bold bg-gray-100 inline-block px-2 py-1 rounded">
                                     <?= esc($row['nama_aset']) ?>
+                                    <?php if ($row['jumlah'] > 1): ?>
+                                       (x<?= $row['jumlah'] ?>)
+                                    <?php endif; ?>
                                  </div>
                               </td>
                               <td class="px-4 py-3 text-sm w-1/3">
@@ -132,12 +152,24 @@
                         <?php foreach ($laporanPrasarana as $row) : ?>
                            <tr class="text-gray-700 hover:bg-gray-50">
                               <td class="px-4 py-3">
-                                 <p class="font-semibold text-sm"><?= esc($row['nama_lengkap']) ?></p>
-                                 <p class="text-xs text-gray-500"><?= esc($row['organisasi']) ?></p>
+                                 <?php if (empty($row['id_peminjaman'])): ?>
+                                    <span class="bg-purple-100 text-purple-800 text-xs font-bold px-2 py-1 rounded border border-purple-200">
+                                       INTERNAL (Cek Rutin)
+                                    </span>
+                                    <p class="text-xs text-gray-500 mt-1">Pelapor: <?= esc($row['nama_lengkap']) ?> (Admin)</p>
+                                 <?php else: ?>
+                                    <p class="font-semibold text-sm"><?= esc($row['nama_lengkap']) ?></p>
+                                    <p class="text-xs text-gray-500"><?= esc($row['organisasi']) ?></p>
+                                 <?php endif; ?>
+
                                  <div class="mt-2 text-xs font-bold bg-gray-100 inline-block px-2 py-1 rounded">
                                     <?= esc($row['nama_aset']) ?>
+                                    <?php if ($row['jumlah'] > 1): ?>
+                                       (x<?= $row['jumlah'] ?>)
+                                    <?php endif; ?>
                                  </div>
                               </td>
+
                               <td class="px-4 py-3 text-sm w-1/3">
                                  <p class="font-bold"><?= esc($row['judul_laporan']) ?></p>
                                  <p class="text-xs mt-1"><?= esc($row['deskripsi_kerusakan']) ?></p>
