@@ -204,7 +204,7 @@
                <div class="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
                   <h3 class="text-lg leading-6 font-medium text-gray-900" id="modal-title">Foto Bukti Ditolak</h3>
                   <div class="mt-2">
-                     <p class="text-sm text-gray-500">Admin telah menolak foto bukti yang Anda lampirkan:</p>
+                     <p class="text-sm text-gray-500">Admin/TU telah menolak foto bukti yang Anda lampirkan:</p>
                      <div class="mt-3 p-3 bg-red-50 rounded-md text-red-800 text-sm font-medium" id="rejectionReasonText"></div>
                   </div>
                </div>

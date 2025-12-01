@@ -141,7 +141,7 @@
                               </td>
                               <td class="px-4 py-3">
                                  <?php if ($row['status_peminjaman_global'] == 'Dipinjam'): ?>
-                                    <a href="<?= site_url('admin/pengembalian/detail/' . $row['id_peminjaman']) ?>" class="px-3 py-1 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700">
+                                    <a href="<?= site_url('tu/pengembalian/detail/' . $row['id_peminjaman']) ?>" class="px-3 py-1 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700">
                                        Proses Kembali
                                     </a>
                                  <?php else: ?>

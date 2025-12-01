@@ -22,7 +22,7 @@
                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 9.776c.112-.017.227-.026.344-.026h15.812c.117 0 .232.009.344.026m-16.5 0a2.25 2.25 0 00-1.883 2.542l.857 6a2.25 2.25 0 002.227 1.932H19.05a2.25 2.25 0 002.227-1.932l.857-6a2.25 2.25 0 00-1.883-2.542m-16.5 0l9-9 9 9" />
             </svg>
             <span>Kelola Peminjaman</span>
-            <?= view_cell('App\Cells\NotificationCell::renderBadge') ?>
+            <?= view_cell('App\Cells\NotificationCell::renderBadgePeminjaman') ?>
          </a>
 
          <a href="<?= site_url('admin/pengembalian') ?>" class="<?= getLinkClasses('admin/pengembalian') ?>">
@@ -30,6 +30,7 @@
                <path stroke-linecap="round" stroke-linejoin="round" d="M9 15L3 9m0 0l6-6M3 9h12a6 6 0 010 12h-3" />
             </svg>
             <span>Kelola Pengembalian</span>
+            <?= view_cell('App\Cells\NotificationCell::badgePengembalian') ?>
          </a>
 
          <a href="<?= site_url('admin/laporan-kerusakan') ?>" class="<?= getLinkClasses('admin/laporan-kerusakan') ?>">
@@ -37,6 +38,7 @@
                <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
             </svg>
             <span>Kelola Laporan Kerusakan</span>
+            <?= view_cell('App\Cells\NotificationCell::badgeLaporan') ?>
          </a>
 
          <a href="<?= site_url('admin/manajemen-akun') ?>" class="<?= getLinkClasses('admin/manajemen-akun') ?>">
@@ -64,19 +66,21 @@
                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z" />
             </svg>
             <span>Verifikasi Peminjaman</span>
-            <?= view_cell('App\Cells\NotificationCell::renderBadge') ?>
+            <?= view_cell('App\Cells\NotificationCell::renderBadgePeminjaman') ?>
          </a>
          <a href="<?= site_url('tu/verifikasi-pengembalian') ?>" class="<?= getLinkClasses('tu/verifikasi-pengembalian') ?>">
             <svg class="w-6 h-6 <?= getIconClasses('tu/verifikasi-pengembalian') ?>" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                <path stroke-linecap="round" stroke-linejoin="round" d="M10.125 2.25h-4.5c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125v-9M10.125 2.25h.375m0 0l3.004 3.004m-3.004-3.004v3.75m0 0h3.75m-3.75 0h.375m0 0l3.004 3.004M16.125 21.75l1.623-2.435a1.125 1.125 0 011.609-.31l1.13 1.13a1.125 1.125 0 001.761-.31l1.623-2.435m-5.132 4.075L16.125 21.75m-2.625-4.125l1.623-2.435a1.125 1.125 0 011.609-.31l1.13 1.13a1.125 1.125 0 001.761-.31l1.623-2.435m-5.132 4.075L13.5 17.625" />
             </svg>
             <span>Verifikasi Pengembalian</span>
+            <?= view_cell('App\Cells\NotificationCell::badgePengembalian') ?>
          </a>
          <a href="<?= site_url('tu/kelola-laporan-kerusakan') ?>" class="<?= getLinkClasses('tu/kelola-laporan-kerusakan') ?>">
             <svg class="w-6 h-6 <?= getIconClasses('tu/kelola-laporan-kerusakan') ?>" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor">
                <path stroke-linecap="round" stroke-linejoin="round" d="M11.42 15.17L17.25 21A2.652 2.652 0 0021 17.25l-5.877-5.877M11.42 15.17l2.496-3.03c.317-.384.73-.664 1.182-.827l3.218-.804a4.06 4.06 0 004.06-4.06l-6.25 6.25L11.42 15.17zM6.75 12.87l-3.696 3.696A4.06 4.06 0 011.5 12.25l6.25-6.25a4.06 4.06 0 014.06 4.06l-.804 3.218a5.25 5.25 0 01-.827 1.182l-3.03 2.496z" />
             </svg>
             <span>Kelola Laporan Kerusakan</span>
+            <?= view_cell('App\Cells\NotificationCell::badgeLaporan') ?>
          </a>
 
       <?php elseif (auth()->user()->inGroup('Peminjam')) : ?>

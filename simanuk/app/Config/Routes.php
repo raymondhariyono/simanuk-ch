@@ -151,6 +151,9 @@ $routes->group('tu', ['filter' => ['session', 'role:TU']], static function ($rou
    $routes->get('verifikasi-pengembalian', 'TU\PengembalianController::index');
 
    $routes->get('verifikasi-peminjaman', 'TU\PeminjamanController::index');
+   // tolak foto SEBELUM dan SESUDAH
+   $routes->post('peminjaman/tolak-foto/(:segment)/(:segment)/(:num)', 'TU\VerifikasiPeminjamanController::tolakFoto/$1/$2/$3');
+
    $routes->get('kelola-laporan-kerusakan', 'TU\LaporanKerusakanController::index');
 
    // --- LAPORAN KERUSAKAN ---
@@ -159,7 +162,7 @@ $routes->group('tu', ['filter' => ['session', 'role:TU']], static function ($rou
 
    $routes->get('generate-laporan', 'TU\LaporanController::index');
    $routes->get('pengembalian/detail/(:num)', 'TU\PengembalianController::detail/$1');
-   $routes->post('pengembalian/proses/(:num)', 'TU\PengembalianController::prosesKembali/$1');
+   $routes->post('pengembalian/selesai/(:num)', 'TU\PengembalianController::prosesSelesai/$1');
    $routes->get('download-laporan', 'TU\DashboardController::downloadLaporan');
    $routes->get('laporan/excel', 'TU\DashboardController::downloadExcel');
 });

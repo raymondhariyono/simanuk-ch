@@ -78,12 +78,52 @@ class PengembalianController extends BaseController
             'itemsPrasarana' => $itemsPrasarana,
             'showSidebar'    => true,
             'breadcrumbs'    => [
-                ['name' => 'Verifikasi Pengembalian', 'url' => site_url('tu/pengembalian')],
+                ['name' => 'Verifikasi Pengembalian', 'url' => site_url('tu/verifikasi-pengembalian')],
                 ['name' => 'Detail Pengembalian'],
             ]
         ];
 
         return view('tu/pengembalian/detail', $data);
+    }
+
+    /**
+     * Fitur untuk menolak foto bukti (Sebelum/Sesudah)
+     * @param string $tipe 'sarana' atau 'prasarana'
+     * @param string $jenisFoto 'sebelum' atau 'sesudah'
+     * @param int $idDetail
+     */
+    public function tolakFoto($tipe, $jenisFoto, $idDetail)
+    {
+        $alasan = $this->request->getPost('alasan');
+        if (empty($alasan)) {
+            return redirect()->back()->with('error', 'Harap isi alasan penolakan foto.');
+        }
+
+        // Tentukan Model & Kolom
+        $model = ($tipe == 'sarana') ? $this->detailSaranaModel : $this->detailPrasaranaModel;
+        $kolomFoto = ($jenisFoto == 'sebelum') ? 'foto_sebelum' : 'foto_sesudah';
+
+        // 1. Ambil Data Lama untuk Hapus File Fisik
+        $item = $model->find($idDetail);
+        $pathLama = $item[$kolomFoto];
+
+        if ($pathLama && is_file(FCPATH . $pathLama)) {
+            unlink(FCPATH . $pathLama);
+        }
+
+        // 2. Update Database: Kosongkan Foto & Isi Catatan
+        $updateData = [
+            $kolomFoto => null, // Reset foto jadi null
+            'catatan_penolakan' => "Foto $jenisFoto DITOLAK: " . $alasan
+        ];
+
+        // Khusus jika menolak foto 'sebelum', status global mungkin perlu dikembalikan
+        // Tapi agar simple, kita cukup reset fotonya saja. 
+        // Logika di View User akan mendeteksi 'foto_sebelum' kosong -> Munculkan tombol upload.
+
+        $model->update($idDetail, $updateData);
+
+        return redirect()->back()->with('message', 'Foto berhasil ditolak. User diminta upload ulang.');
     }
 
     public function prosesKembali($id)
@@ -163,10 +203,72 @@ class PengembalianController extends BaseController
                 return redirect()->back()->with('error', 'Gagal memproses pengembalian. Transaksi dibatalkan.');
             }
 
-            return redirect()->to(site_url('tu/pengembalian'))->with('message', 'Pengembalian berhasil diverifikasi. Stok dan status telah diperbarui.');
+            return redirect()->to(site_url('tu/verifikasi-pengembalian'))->with('message', 'Pengembalian berhasil diverifikasi. Stok dan status telah diperbarui.');
         } catch (\Exception $e) {
             $db->transRollback();
             return redirect()->back()->with('error', 'Terjadi kesalahan sistem: ' . $e->getMessage());
+        }
+    }
+
+    /**
+     * PROSES UTAMA: Selesai & Restock
+     */
+    public function prosesSelesai($id)
+    {
+        $peminjaman = $this->peminjamanModel->find($id);
+
+        if (!$peminjaman || $peminjaman['status_peminjaman_global'] != PeminjamanModel::STATUS_DIPINJAM) {
+            return redirect()->back()->with('error', 'Data tidak valid atau sudah diproses.');
+        }
+
+        $db = \Config\Database::connect();
+        $db->transStart();
+
+        try {
+            // 1. RESTOCK SARANA (Barang)
+            $itemsSarana = $this->detailSaranaModel->where('id_peminjaman', $id)->findAll();
+            // $itemsPrasarana = $this->detailPrasaranaModel->where('id_peminjaman', $id)->findAll();
+
+            foreach ($itemsSarana as $item) {
+                $sarana = $this->saranaModel->find($item['id_sarana']);
+
+                // Rumus: Stok Lama + Jumlah Dikembalikan
+                $stokBaru = $sarana['jumlah'] + $item['jumlah'];
+
+                // Update Stok & Status Availability
+                $updateData = ['jumlah' => $stokBaru];
+                // jika stok > 0, maka tersedia
+                if ($stokBaru > 0) {
+                    $updateData['status_ketersediaan'] = 'Tersedia';
+                }
+
+                $this->saranaModel->update($item['id_sarana'], $updateData);
+            }
+
+            // foreach ($itemsPrasarana as $item) {
+            //    // Untuk ruangan, cukup set status jadi Tersedia kembali
+            //    $this->prasaranaModel->update($item['id_prasarana'], [
+            //       'status_ketersediaan' => 'Tersedia'
+            //    ]);
+            // }
+
+            // 3. UPDATE STATUS GLOBAL -> SELESAI
+            $this->peminjamanModel->update($id, [
+                'status_peminjaman_global' => PeminjamanModel::STATUS_SELESAI,
+                // Opsional: Catat tanggal pengembalian aktual admin
+                'updated_at' => date('Y-m-d H:i:s')
+            ]);
+
+            $db->transComplete();
+
+            if ($db->transStatus() === false) {
+                return redirect()->back()->with('error', 'Gagal memproses pengembalian.');
+            }
+
+            return redirect()->to(site_url('admin/pengembalian'))->with('message', 'Pengembalian berhasil diverifikasi. Stok telah dikembalikan.');
+        } catch (\Exception $e) {
+            $db->transRollback();
+            return redirect()->back()->with('error', $e->getMessage());
         }
     }
 }

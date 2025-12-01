@@ -36,9 +36,28 @@
                         <a href="<?= base_url($item['foto_sebelum']) ?>" target="_blank">
                            <img src="<?= base_url($item['foto_sebelum']) ?>" class="h-32 mx-auto object-cover rounded border border-gray-300 hover:opacity-75 transition">
                         </a>
+
+                        <button onclick="openRejectModal('<?= $item['id_detail_sarana'] ?>', 'sarana', 'sebelum')"
+                           class="mt-2 text-xs text-red-600 hover:text-red-800 underline">
+                           ❌ Tolak Foto Ini
+                        </button>
                      <?php else: ?>
                         <div class="h-32 flex items-center justify-center text-gray-400 text-xs border border-dashed border-gray-300">Tidak ada foto</div>
                      <?php endif; ?>
+                  </div>
+
+                  <div id="rejectPhotoModal" class="hidden fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
+                     <div class="bg-white p-6 rounded-lg w-96">
+                        <h3 class="text-lg font-bold mb-2">Tolak Foto Bukti</h3>
+                        <form id="formRejectPhoto" method="post">
+                           <?= csrf_field() ?>
+                           <textarea name="alasan" class="w-full border p-2 text-sm rounded" placeholder="Alasan penolakan (contoh: Foto buram)" required></textarea>
+                           <div class="flex justify-end gap-2 mt-4">
+                              <button type="button" onclick="document.getElementById('rejectPhotoModal').classList.add('hidden')" class="px-3 py-1 bg-gray-200 rounded text-sm">Batal</button>
+                              <button type="submit" class="px-3 py-1 bg-red-600 text-white rounded text-sm">Tolak Foto</button>
+                           </div>
+                        </form>
+                     </div>
                   </div>
 
                   <div class="text-center">
@@ -47,6 +66,11 @@
                         <a href="<?= base_url($item['foto_sesudah']) ?>" target="_blank">
                            <img src="<?= base_url($item['foto_sesudah']) ?>" class="h-32 mx-auto object-cover rounded border border-gray-300 hover:opacity-75 transition">
                         </a>
+
+                        <button onclick="openRejectModal('<?= $item['id_detail_sarana'] ?>', 'sarana', 'sesudah')"
+                           class="mt-2 text-xs text-red-600 hover:text-red-800 underline">
+                           ❌ Tolak Foto Ini
+                        </button>
                      <?php else: ?>
                         <div class="h-32 flex items-center justify-center text-red-400 text-xs border border-dashed border-red-300 bg-red-50">
                            User <span class="font-bold">"<?= $peminjaman['nama_lengkap'] ?>"</span> Belum Upload
@@ -56,7 +80,7 @@
                </div>
             </div>
          <?php endforeach; ?>
-         
+
          <?php foreach ($itemsPrasarana as $item) : ?>
             <div class="bg-white shadow rounded-lg p-6">
                <div class="flex justify-between mb-4">
@@ -78,6 +102,11 @@
                         <a href="<?= base_url($item['foto_sebelum']) ?>" target="_blank">
                            <img src="<?= base_url($item['foto_sebelum']) ?>" class="h-32 mx-auto object-cover rounded border border-gray-300 hover:opacity-75 transition">
                         </a>
+
+                        <button onclick="openRejectModal('<?= $item['id_detail_prasarana'] ?>', 'prasarana', 'sebelum')"
+                           class="mt-2 text-xs text-red-600 hover:text-red-800 underline">
+                           ❌ Tolak Foto Ini
+                        </button>
                      <?php else: ?>
                         <div class="h-32 flex items-center justify-center text-gray-400 text-xs border border-dashed border-gray-300">Tidak ada foto</div>
                      <?php endif; ?>
@@ -89,6 +118,11 @@
                         <a href="<?= base_url($item['foto_sesudah']) ?>" target="_blank">
                            <img src="<?= base_url($item['foto_sesudah']) ?>" class="h-32 mx-auto object-cover rounded border border-gray-300 hover:opacity-75 transition">
                         </a>
+
+                        <button onclick="openRejectModal('<?= $item['id_detail_prasarana'] ?>', 'prasarana', 'sebelum')"
+                           class="mt-2 text-xs text-red-600 hover:text-red-800 underline">
+                           ❌ Tolak Foto Ini
+                        </button>
                      <?php else: ?>
                         <div class="h-32 flex items-center justify-center text-red-400 text-xs border border-dashed border-red-300 bg-red-50">
                            User <span class="font-bold">"<?= $peminjaman['nama_lengkap'] ?>"</span> Belum Upload
@@ -103,13 +137,13 @@
 
       <div class="space-y-6">
          <div class="bg-white shadow rounded-lg p-6">
-            <h3 class="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">Aksi Admin</h3>
+            <h3 class="text-lg font-semibold text-gray-800 mb-4 border-b pb-2">Aksi TU</h3>
 
             <p class="text-sm text-gray-600 mb-4">
                Pastikan Anda telah memeriksa kondisi sarana/prasarana sesuai dengan foto bukti yang dilampirkan.
             </p>
 
-            <form action="<?= site_url('admin/pengembalian/selesai/' . $peminjaman['id_peminjaman']) ?>" method="post" onsubmit="return confirm('Pastikan semua sarana/prasarana sudah diterima kembali. Stok akan dikembalikan ke sistem.')">
+            <form action="<?= site_url('tu/pengembalian/selesai/' . $peminjaman['id_peminjaman']) ?>" method="post" onsubmit="return confirm('Pastikan semua sarana/prasrana sudah diterima kembali. Stok akan dikembalikan ke sistem.')">
                <?= csrf_field() ?>
 
                <?php
@@ -131,10 +165,19 @@
             </form>
 
             <div class="mt-4 pt-4 border-t">
-               <a href="<?= site_url('admin/pengembalian') ?>" class="block text-center text-sm text-gray-500 hover:text-gray-700">Kembali ke Daftar</a>
+               <a href="<?= site_url('tu/pengembalian') ?>" class="block text-center text-sm text-gray-500 hover:text-gray-700">Kembali ke Daftar</a>
             </div>
          </div>
       </div>
    </div>
 </div>
+
+<script>
+   function openRejectModal(idDetail, tipe, jenisFoto) {
+      const form = document.getElementById('formRejectPhoto');
+      form.action = '<?= site_url("tu/peminjaman/tolak-foto/") ?>' + tipe + '/' + jenisFoto + '/' + idDetail;
+      document.getElementById('rejectPhotoModal').classList.remove('hidden');
+   }
+</script>
+
 <?= $this->endSection(); ?>

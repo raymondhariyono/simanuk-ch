@@ -62,12 +62,43 @@
                         <?php foreach ($laporanSarana as $row) : ?>
                            <tr class="text-gray-700 hover:bg-gray-50">
                               <td class="px-4 py-3">
-                                 <p class="font-semibold text-sm"><?= esc($row['nama_lengkap']) ?></p>
-                                 <p class="text-xs text-gray-500"><?= esc($row['organisasi']) ?></p>
+                                 <?php if (!empty($row['id_peminjaman'])): ?>
+
+                                    <p class="font-semibold text-sm"><?= esc($row['nama_lengkap']) ?></p>
+                                    <p class="text-xs text-gray-500"><?= esc($row['organisasi']) ?></p>
+                                    <span class="text-[10px] bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded border border-blue-100 mt-1 inline-block">
+                                       Transaksi #<?= $row['id_peminjaman'] ?>
+                                    </span>
+
+                                 <?php else: ?>
+
+                                    <?php if (strtolower($row['nama_role']) === 'admin'): ?>
+
+                                       <span class="bg-purple-100 text-purple-800 text-xs font-bold px-2 py-1 rounded border border-purple-200">
+                                          INTERNAL (Cek Rutin)
+                                       </span>
+                                       <p class="text-xs text-gray-500 mt-1">Oleh: <?= esc($row['nama_lengkap']) ?></p>
+
+                                    <?php else: ?>
+
+                                       <p class="font-semibold text-sm"><?= esc($row['nama_lengkap']) ?></p>
+                                       <p class="text-xs text-gray-500"><?= esc($row['organisasi']) ?></p>
+                                       <span class="text-[10px] bg-orange-50 text-orange-600 px-1.5 py-0.5 rounded border border-orange-100 mt-1 inline-block">
+                                          Laporan Umum (Non-Transaksi)
+                                       </span>
+
+                                    <?php endif; ?>
+
+                                 <?php endif; ?>
+
                                  <div class="mt-2 text-xs font-bold bg-gray-100 inline-block px-2 py-1 rounded">
                                     <?= esc($row['nama_aset']) ?>
+                                    <?php if (isset($row['jumlah']) && $row['jumlah'] > 1): ?>
+                                       (x<?= $row['jumlah'] ?>)
+                                    <?php endif; ?>
                                  </div>
                               </td>
+
                               <td class="px-4 py-3 text-sm w-1/3">
                                  <p class="font-bold"><?= esc($row['judul_laporan']) ?></p>
                                  <p class="text-xs mt-1"><?= esc($row['deskripsi_kerusakan']) ?></p>
@@ -132,12 +163,43 @@
                         <?php foreach ($laporanPrasarana as $row) : ?>
                            <tr class="text-gray-700 hover:bg-gray-50">
                               <td class="px-4 py-3">
-                                 <p class="font-semibold text-sm"><?= esc($row['nama_lengkap']) ?></p>
-                                 <p class="text-xs text-gray-500"><?= esc($row['organisasi']) ?></p>
+                                 <?php if (!empty($row['id_peminjaman'])): ?>
+
+                                    <p class="font-semibold text-sm"><?= esc($row['nama_lengkap']) ?></p>
+                                    <p class="text-xs text-gray-500"><?= esc($row['organisasi']) ?></p>
+                                    <span class="text-[10px] bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded border border-blue-100 mt-1 inline-block">
+                                       Transaksi #<?= $row['id_peminjaman'] ?>
+                                    </span>
+
+                                 <?php else: ?>
+
+                                    <?php if (strtolower($row['nama_role']) === 'admin'): ?>
+
+                                       <span class="bg-purple-100 text-purple-800 text-xs font-bold px-2 py-1 rounded border border-purple-200">
+                                          INTERNAL (Cek Rutin)
+                                       </span>
+                                       <p class="text-xs text-gray-500 mt-1">Oleh: <?= esc($row['nama_lengkap']) ?></p>
+
+                                    <?php else: ?>
+
+                                       <p class="font-semibold text-sm"><?= esc($row['nama_lengkap']) ?></p>
+                                       <p class="text-xs text-gray-500"><?= esc($row['organisasi']) ?></p>
+                                       <span class="text-[10px] bg-orange-50 text-orange-600 px-1.5 py-0.5 rounded border border-orange-100 mt-1 inline-block">
+                                          Laporan Umum (Non-Transaksi)
+                                       </span>
+
+                                    <?php endif; ?>
+
+                                 <?php endif; ?>
+
                                  <div class="mt-2 text-xs font-bold bg-gray-100 inline-block px-2 py-1 rounded">
                                     <?= esc($row['nama_aset']) ?>
+                                    <?php if (isset($row['jumlah']) && $row['jumlah'] > 1): ?>
+                                       (x<?= $row['jumlah'] ?>)
+                                    <?php endif; ?>
                                  </div>
                               </td>
+
                               <td class="px-4 py-3 text-sm w-1/3">
                                  <p class="font-bold"><?= esc($row['judul_laporan']) ?></p>
                                  <p class="text-xs mt-1"><?= esc($row['deskripsi_kerusakan']) ?></p>
@@ -255,7 +317,7 @@
       const modal = document.getElementById('processModal');
       const form = document.getElementById('formProcess');
       // Set action URL untuk form proses
-      form.action = '<?= site_url("tu/laporan-kerusakan/update/") ?>' + id;
+      form.action = '<?= site_url("admin/laporan-kerusakan/update/") ?>' + id;
       modal.classList.remove('hidden');
    }
 

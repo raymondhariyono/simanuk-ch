@@ -99,7 +99,7 @@
                               <?php endif; ?>
                            <?php endif; ?>
 
-                           
+
 
                            <?php if ($item['status'] == 'Ditolak'): ?>
                               <button type="button"
@@ -147,6 +147,10 @@
                            <?php endif; ?>
 
                            <?php if (in_array($item['status'], ['Disetujui', 'Dipinjam'])): ?>
+                              <?php if (!empty($item['catatan_penolakan']) && empty($item['foto_sebelum'])): ?>
+                                 <button type="button" data-reason="<?= esc($item['catatan_penolakan']) ?>" onclick="openRejectionModal(this)" class="text-red-600 text-xs underline">Lihat Revisi</button>
+                              <?php endif; ?>
+
                               <?php if (empty($item['foto_sebelum'])): ?>
                                  <button onclick="openUploadModal('sebelum', 'Prasarana', '<?= $item['id_detail_prasarana'] ?>', '<?= esc($item['nama_prasarana']) ?>')" class="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded border border-yellow-300 hover:bg-yellow-200">Upload Foto SEBELUM</button>
                               <?php elseif (empty($item['foto_sesudah'])): ?>
@@ -156,7 +160,7 @@
                               <?php endif; ?>
                            <?php endif; ?>
 
-                           
+
 
                            <?php if ($item['status'] == 'Ditolak'): ?>
                               <button type="button"

@@ -50,7 +50,7 @@
                             </svg>
                         </div>
                     </div>
-                    <a href="<?= site_url('tu/pengembalian') ?>" class="text-xs text-blue-600 mt-4 inline-block hover:underline">Cek pengembalian &rarr;</a>
+                    <a href="<?= site_url('tu/-verifikasi/pengembalian') ?>" class="text-xs text-blue-600 mt-4 inline-block hover:underline">Cek pengembalian &rarr;</a>
                 </div>
 
                 <div class="bg-white rounded-xl p-6 border border-red-100 shadow-sm group hover:shadow-md transition">
@@ -188,7 +188,7 @@
                                 </div>
                             </a>
 
-                            <a href="<?= site_url('tu/pengembalian') ?>" class="flex items-center p-3 rounded-lg bg-gray-50 hover:bg-indigo-50 hover:text-indigo-600 transition group border border-transparent hover:border-indigo-100">
+                            <a href="<?= site_url('tu/verifikasi-pengembalian') ?>" class="flex items-center p-3 rounded-lg bg-gray-50 hover:bg-indigo-50 hover:text-indigo-600 transition group border border-transparent hover:border-indigo-100">
                                 <div class="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-500 group-hover:text-indigo-500 transition">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path></svg>
                                 </div>
