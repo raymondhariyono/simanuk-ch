@@ -53,16 +53,15 @@
                            <span class="font-medium text-gray-900 block"><?= esc($item['nama_sarana']) ?></span>
                            <span class="text-xs text-gray-500 bg-gray-100 px-2 py-0.5 rounded"><?= esc($item['kode_sarana']) ?></span>
                            <span class="font-small text-gray-600 block">Jumlah Unit Dipinjam: <?= $item['jumlah'] ?></span>
-                           <!-- tambahkan: jumlah yang dipinjam berapa? -->
                         </div>
 
                         <div class="flex items-center gap-2">
                            <span class="text-xs font-bold px-2 py-1 rounded-full 
-                                        <?= match ($item['status']) {
-                                             'Selesai' => 'bg-green-100 text-green-800',
-                                             'Ditolak' => 'bg-red-100 text-red-800',
-                                             default => 'bg-gray-100 text-gray-600'
-                                          } ?>">
+                                       <?= match ($item['status']) {
+                                          'Selesai' => 'bg-green-100 text-green-800',
+                                          'Ditolak' => 'bg-red-100 text-red-800',
+                                          default => 'bg-gray-100 text-gray-600'
+                                       } ?>">
                               <?= esc($item['status']) ?>
                            </span>
 
@@ -100,9 +99,9 @@
                               <?php endif; ?>
                            <?php endif; ?>
 
-                           <?php if ($item['status'] == 'Selesai'): ?>
-                              <a href="#" class="text-xs text-blue-600 hover:underline">Lihat Detail</a>
-                           <?php else: ?>
+                           
+
+                           <?php if ($item['status'] == 'Ditolak'): ?>
                               <button type="button"
                                  onclick="openDetailPenolakanModal(this)"
                                  data-alasan="<?= esc($h['keterangan']) ?>"
@@ -157,9 +156,9 @@
                               <?php endif; ?>
                            <?php endif; ?>
 
-                           <?php if ($item['status'] == 'Selesai'): ?>
-                              <a href="#" class="text-xs text-blue-600 hover:underline">Lihat Detail</a>
-                           <?php else: ?>
+                           
+
+                           <?php if ($item['status'] == 'Ditolak'): ?>
                               <button type="button"
                                  onclick="openDetailPenolakanModal(this)"
                                  data-alasan="<?= esc($h['keterangan']) ?>"

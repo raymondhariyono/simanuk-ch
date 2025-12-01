@@ -31,6 +31,19 @@
       </div>
    <?php endif; ?>
 
+   <?php if (session()->has('error')) : ?>
+      <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded shadow-sm relative" role="alert">
+         <strong class="font-bold">Gagal Upload!</strong>
+         <span class="block sm:inline"><?= session('error') ?></span>
+         <span class="absolute top-0 bottom-0 right-0 px-4 py-3" onclick="this.parentElement.remove();">
+            <svg class="fill-current h-6 w-6 text-red-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20">
+               <title>Close</title>
+               <path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z" />
+            </svg>
+         </span>
+      </div>
+   <?php endif; ?>
+
    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6 rounded-r-lg shadow-sm">
       <div class="flex">
          <div class="flex-shrink-0">
@@ -130,7 +143,9 @@
                         type="file"
                         name="foto_bukti"
                         required
-                        accept="image/png, image/jpeg, image/jpg" class="px-2 py-2 mt-1 block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none">
+                        accept="image/png, image/jpeg, image/jpg"
+                        onchange="validateFileUpload(this)"
+                        class="px-2 py-2 mt-1 block w-full text-sm text-gray-900 border border-gray-300 rounded-lg cursor-pointer bg-gray-50 focus:outline-none">
 
                      <p class="text-xs text-gray-500 mt-1">Format: JPG/JPEG/PNG. Maksimal: 2MB.</p>
                      <p id="fileErrorMsg" class="text-xs text-red-600 mt-1 hidden font-bold"></p>

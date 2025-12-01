@@ -28,7 +28,6 @@ class HistoriPeminjamanController extends BaseController
         $perPage = 5;
 
         // --- A. DATA PEMINJAMAN AKTIF (Grup: 'active') ---
-        // Ganti findAll() dengan paginate($perPage, 'nama_grup')
         $activeTransactions = $this->peminjamanModel
             ->where('id_peminjam', $userId)
             ->whereIn('status_peminjaman_global', ['Diajukan', 'Disetujui', 'Dipinjam'])
@@ -106,7 +105,6 @@ class HistoriPeminjamanController extends BaseController
             'activeLoans' => $activeTransactions,
             'historyLoans' => $historyTransactions,
             'showSidebar' => true,
-            // Kirim objek Pager ke view
             'pager' => $this->peminjamanModel->pager,
         ];
 
