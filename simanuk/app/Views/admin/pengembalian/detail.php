@@ -102,6 +102,11 @@
                         <a href="<?= base_url($item['foto_sebelum']) ?>" target="_blank">
                            <img src="<?= base_url($item['foto_sebelum']) ?>" class="h-32 mx-auto object-cover rounded border border-gray-300 hover:opacity-75 transition">
                         </a>
+
+                        <button onclick="openRejectModal('<?= $item['id_detail_prasarana'] ?>', 'prasarana', 'sebelum')"
+                           class="mt-2 text-xs text-red-600 hover:text-red-800 underline">
+                           ❌ Tolak Foto Ini
+                        </button>
                      <?php else: ?>
                         <div class="h-32 flex items-center justify-center text-gray-400 text-xs border border-dashed border-gray-300">Tidak ada foto</div>
                      <?php endif; ?>
@@ -113,6 +118,11 @@
                         <a href="<?= base_url($item['foto_sesudah']) ?>" target="_blank">
                            <img src="<?= base_url($item['foto_sesudah']) ?>" class="h-32 mx-auto object-cover rounded border border-gray-300 hover:opacity-75 transition">
                         </a>
+
+                        <button onclick="openRejectModal('<?= $item['id_detail_prasarana'] ?>', 'prasarana', 'sebelum')"
+                           class="mt-2 text-xs text-red-600 hover:text-red-800 underline">
+                           ❌ Tolak Foto Ini
+                        </button>
                      <?php else: ?>
                         <div class="h-32 flex items-center justify-center text-red-400 text-xs border border-dashed border-red-300 bg-red-50">
                            User <span class="font-bold">"<?= $peminjaman['nama_lengkap'] ?>"</span> Belum Upload
