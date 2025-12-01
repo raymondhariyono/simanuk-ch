@@ -28,7 +28,7 @@ class LaporanKerusakanController extends BaseController
       // Ambil semua laporan + Join ke User untuk info pelapor
       $laporan = $this->laporanModel
          ->select('laporan_kerusakan.*, users.nama_lengkap, users.organisasi')
-         ->join('users', 'users.id = laporan_kerusakan.id_peminjam')
+         ->join('users', 'users.id = laporan_kerusakan.id_pelapor')
          ->orderBy('created_at', 'DESC')
          ->findAll();
 
@@ -104,5 +104,71 @@ class LaporanKerusakanController extends BaseController
       }
 
       return redirect()->back()->with('message', "Laporan diperbarui. Status aset disesuaikan menjadi '$statusAset'.");
+   }
+
+   /**
+    * Form Laporan Internal (Admin melaporkan kerusakan tanpa peminjaman)
+    */
+   public function new()
+   {
+      $data = [
+         'title' => 'Buat Laporan Internal',
+         // Gunakan Service Inventaris atau Model langsung
+         'saranaList' => $this->saranaModel->findAll(),
+         'prasaranaList' => $this->prasaranaModel->findAll(),
+         'showSidebar' => true,
+         'breadcrumbs' => [
+            ['name' => 'Beranda', 'url' => site_url('admin/dashboard')],
+            ['name' => 'Laporan Kerusakan', 'url' => site_url('admin/laporan-kerusakan')],
+            ['name' => 'Lapor Internal']
+         ]
+      ];
+      return view('admin/laporan/create_internal_view', $data);
+   }
+
+   /**
+    * Proses Simpan Laporan Internal
+    */
+   public function create()
+   {
+      if (!$this->validate([
+         'tipe_aset' => 'required',
+         'judul_laporan' => 'required|min_length[5]',
+         'bukti_foto' => 'uploaded[bukti_foto]|is_image[bukti_foto]|max_size[bukti_foto,4096]', // Max 4MB
+      ])) {
+         return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+      }
+
+      // Upload Foto (Gunakan Helper yang sudah ada)
+      $pathFoto = upload_file($this->request->getFile('bukti_foto'), 'uploads/laporan_kerusakan');
+
+      $data = [
+         'id_pelapor'          => auth()->user()->id, // ID Admin yang login
+         'id_peminjaman'       => null,               // NULL karena laporan internal
+         'tipe_aset'           => $this->request->getPost('tipe_aset'),
+         'judul_laporan'       => $this->request->getPost('judul_laporan'),
+         'deskripsi_kerusakan' => $this->request->getPost('deskripsi'),
+         'bukti_foto'          => $pathFoto,
+         'status_laporan'      => 'Diajukan', // Default Diajukan, nanti admin 'Proses' sendiri
+         'jumlah'              => $this->request->getPost('jumlah') ?? 1,
+      ];
+
+      // Mapping ID Aset
+      if ($data['tipe_aset'] == 'Sarana') {
+         $data['id_sarana'] = $this->request->getPost('id_sarana');
+         $data['id_prasarana'] = null;
+      } else {
+         $data['id_sarana'] = null;
+         $data['id_prasarana'] = $this->request->getPost('id_prasarana');
+      }
+
+      // Validasi ID Aset Wajib Diisi
+      if (empty($data['id_sarana']) && empty($data['id_prasarana'])) {
+         return redirect()->back()->withInput()->with('error', 'Silakan pilih aset yang rusak.');
+      }
+
+      $this->laporanModel->save($data);
+
+      return redirect()->to(site_url('admin/laporan-kerusakan'))->with('message', 'Laporan internal berhasil dibuat.');
    }
 }

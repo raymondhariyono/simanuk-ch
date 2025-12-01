@@ -67,6 +67,9 @@ $routes->group('admin', ['filter' => ['session', 'role:Admin']], static function
    $routes->get('laporan-kerusakan', 'Admin\LaporanKerusakanController::index');
    $routes->post('laporan-kerusakan/update/(:num)', 'Admin\LaporanKerusakanController::updateStatus/$1');
 
+   $routes->get('laporan-kerusakan/new', 'Admin\LaporanKerusakanController::new');
+   $routes->post('laporan-kerusakan/create', 'Admin\LaporanKerusakanController::create');
+
    // --- MANAJEMEN AKUN PENGGUNA ---
    $routes->get('manajemen-akun', 'Admin\ManajemenAkunController::index');
    $routes->get('manajemen-akun/new', 'Admin\ManajemenAkunController::new');
