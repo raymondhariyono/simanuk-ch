@@ -27,8 +27,9 @@ class LaporanKerusakanController extends BaseController
    {
       // Ambil semua laporan + Join ke User untuk info pelapor
       $laporan = $this->laporanModel
-         ->select('laporan_kerusakan.*, users.nama_lengkap, users.organisasi')
-         ->join('users', 'users.id = laporan_kerusakan.id_pelapor')
+         ->select('laporan_kerusakan.*, users.nama_lengkap, users.organisasi, roles.nama_role') // <--- Tambah nama_role
+         ->join('users', 'users.id = laporan_kerusakan.id_pelapor') // Join ke user
+         ->join('roles', 'roles.id_role = users.id_role')             // Join ke role
          ->orderBy('created_at', 'DESC')
          ->findAll();
 

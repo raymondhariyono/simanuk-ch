@@ -28,17 +28,19 @@
             <h3 class="text-lg font-bold text-gray-900 uppercase tracking-wider border-b border-gray-100 pb-2">
                Informasi Aset
             </h3>
+
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+
                <div>
                   <label class="block text-sm font-medium text-gray-700 mb-1">Jenis Aset</label>
-                  <select id="tipeAset" name="tipe_aset" onchange="toggleSelect()" class="w-full border border-gray-300 px-3 py-2 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 transition-colors   ">
-                     <option value="Sarana" <?= ($prefill['tipe'] ?? '') == 'Sarana' ? 'selected' : '' ?>>Sarana</option>
-                     <option value="Prasarana" <?= ($prefill['tipe'] ?? '') == 'Prasarana' ? 'selected' : '' ?>>Prasarana</option>
+                  <select id="tipeAset" name="tipe_aset" onchange="toggleSelect()" class="w-full border border-gray-300 px-3 py-2 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 transition-colors">
+                     <option value="Sarana" <?= ($prefill['tipe'] ?? '') == 'Sarana' ? 'selected' : '' ?>>Sarana (Barang)</option>
+                     <option value="Prasarana" <?= ($prefill['tipe'] ?? '') == 'Prasarana' ? 'selected' : '' ?>>Prasarana (Ruangan)</option>
                   </select>
                </div>
 
                <div id="selectSarana" class="<?= ($prefill['tipe'] ?? 'Sarana') == 'Sarana' ? '' : 'hidden' ?>">
-                  <label class="block text-sm font-medium text-gray-700 mb-1">Pilih Sarana</label>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Pilih Barang</label>
                   <select name="id_sarana" class="w-full border border-gray-300 px-3 py-2 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 transition-colors">
                      <option value="">-- Pilih Sarana --</option>
                      <?php foreach ($saranaList as $s) : ?>
@@ -51,7 +53,7 @@
                </div>
 
                <div id="selectPrasarana" class="<?= ($prefill['tipe'] ?? '') == 'Prasarana' ? '' : 'hidden' ?>">
-                  <label class="block text-sm font-medium text-gray-700 mb-1">Pilih Prasarana</label>
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Pilih Ruangan</label>
                   <select name="id_prasarana" class="w-full border border-gray-300 px-3 py-2 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 transition-colors">
                      <option value="">-- Pilih Prasarana --</option>
                      <?php foreach ($prasaranaList as $p) : ?>
@@ -62,41 +64,27 @@
                      <?php endforeach; ?>
                   </select>
                </div>
-            </div>
 
-            <div class="space-y-6 pt-4">
-               <h3 class="text-lg font-bold text-gray-900 uppercase tracking-wider border-b border-gray-100 pb-2">
-                  Detail Masalah
-               </h3>
-
-               <div class="space-y-5">
-                  <div>
-                     <label class="block text-sm font-medium text-gray-700 mb-1.5">Judul Laporan</label>
-                     <input type="text" name="judul_laporan" class="w-full border border-gray-300 px-3 py-2 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 transition-colors" placeholder="Contoh: Kursi Patah di R.101">
-                  </div>
-
-                  <div>
-                     <label class="block text-sm font-medium text-gray-700 mb-1.5">Deskripsi</label>
-                     <textarea name="deskripsi" rows="4" class="w-full border border-gray-300 px-3 py-2 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 transition-colors" placeholder="Jelaskan kondisi kerusakan..."></textarea>
-                  </div>
-
-                  <div>
-                     <label class="block text-sm font-medium text-gray-700 mb-2">Bukti Foto</label>
-                     <div class="flex items-center justify-center w-full">
-                        <label for="fileInput" class="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors">
-                           <div class="flex flex-col items-center justify-center pt-5 pb-6">
-                              <svg class="w-8 h-8 mb-3 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
-                              </svg>
-                              <p class="mb-2 text-sm text-gray-500"><span class="font-semibold">Klik untuk upload</span> atau drag and drop</p>
-                              <p class="text-xs text-gray-500">PNG, JPG (Max. 5MB)</p>
-                           </div>
-                           <input id="fileInput" name="bukti_foto" type="file" class="hidden" required accept="image/*" onchange="previewFile()" />
-                        </label>
-                     </div>
-                     <p id="fileName" class="text-xs text-gray-600 mt-2 text-center font-medium hidden"></p>
-                  </div>
+               <div id="inputJumlah" class="<?= ($prefill['tipe'] ?? 'Sarana') == 'Sarana' ? '' : 'hidden' ?>">
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Jumlah Rusak</label>
+                  <input type="number" name="jumlah" value="1" min="1" class="w-full border border-gray-300 px-3 py-2 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 transition-colors">
                </div>
+
+               <div class="col-span-2">
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Judul Laporan</label>
+                  <input type="text" name="judul_laporan" class="w-full border border-gray-300 px-3 py-2 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 transition-colors" required>
+               </div>
+
+               <div class="col-span-2">
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Deskripsi Kerusakan</label>
+                  <textarea name="deskripsi" rows="3" class="w-full border border-gray-300 px-3 py-2 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 transition-colors"></textarea>
+               </div>
+
+               <div class="col-span-2">
+                  <label class="block text-sm font-medium text-gray-700 mb-1">Bukti Foto</label>
+                  <input type="file" name="bukti_foto" required accept="image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+               </div>
+
             </div>
 
             <div class="pt-6 flex items-center justify-end space-x-3">
