@@ -12,21 +12,26 @@ Profil Saya
         <p class="text-gray-600 text-sm mt-1">Kelola informasi akun dan kata sandi Anda.</p>
     </div>
 
-    <?php if (session('message')) : ?>
+    <!-- Pesan Sukses atau Error -->
+    <?php if (session()->getFlashdata('message')) : ?>
         <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
             <?= session()->getFlashdata('message') ?>
         </div>
     <?php endif; ?>
-
-    <?php if (session('errors')) : ?>
+    <?php if (session()->getFlashdata('error')) : ?>
         <div class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-            <ul class="list-disc pl-5">
-                <?php foreach (session('errors') as $error) : ?>
-                    <li><?= esc($error) ?></li>
-                <?php endforeach ?>
-            </ul>
+            <?php $errors = session()->getFlashdata('error'); ?>
+            <?php if (is_array($errors)) : ?>
+                <ul class="list-disc ml-5">
+                    <?php foreach ($errors as $error) : ?>
+                        <li><?= esc($error) ?></li>
+                    <?php endforeach ?>
+                </ul>
+            <?php else : ?>
+                <?= esc($errors) ?>
+            <?php endif; ?>
         </div>
-    <?php endif ?>
+    <?php endif; ?>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
@@ -85,7 +90,7 @@ Profil Saya
 
                         <div>
                             <label for="kontak" class="block text-sm font-medium text-gray-600 mb-2">No. Kontak / WA</label>
-                            <input type="text" id="kontak" name="kontak" value="<?= esc($user->kontak); ?>"
+                            <input type="number" id="kontak" name="kontak" value="<?= esc($user->kontak); ?>"
                                 class="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400 focus:border-blue-400">
                         </div>
 
