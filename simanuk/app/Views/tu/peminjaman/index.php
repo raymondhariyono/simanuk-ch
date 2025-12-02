@@ -89,7 +89,7 @@
                                  <?= date('d M', strtotime($row['tgl_pinjam_dimulai'])) ?> - <?= date('d M', strtotime($row['tgl_pinjam_selesai'])) ?>
                               </td>
                               <td class="px-4 py-3">
-                                 <a href="<?= site_url('admin/peminjaman/detail/' . $row['id_peminjaman']) ?>" class="px-3 py-1 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700">
+                                 <a href="<?= site_url('tu/verifikasi-peminjaman/detail/' . $row['id_peminjaman']) ?>" class="px-3 py-1 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700">
                                     Verifikasi
                                  </a>
                               </td>

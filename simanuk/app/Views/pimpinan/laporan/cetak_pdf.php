@@ -56,7 +56,7 @@
                         <td><?= esc($row['nama_lengkap']) ?></td>
                         <td><?= esc($row['nama_item']) ?></td>
                         <td class="text-center">
-                            <?= date('d/m', strtotime($row['tgl_pinjam_dimulai'])) ?><br>s/d<br>
+                            <?= date('d/m', strtotime($row['tgl_pinjam_dimulai'])) ?><br> - <br>
                             <?= date('d/m', strtotime($row['tgl_pinjam_selesai'])) ?>
                         </td>
                         
