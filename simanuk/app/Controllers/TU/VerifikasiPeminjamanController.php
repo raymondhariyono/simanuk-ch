@@ -96,7 +96,7 @@ class VerifikasiPeminjamanController extends BaseController
             ->first();
 
         if (!$peminjaman) {
-            return redirect()->to(site_url('tu/verifikasi-peminjaman'))->with('error', 'Data tidak ditemukan.');
+            return redirect()->to(site_url('tu/peminjaman'))->with('error', 'Data tidak ditemukan.');
         }
 
         $itemsSarana = $this->detailSaranaModel
@@ -118,7 +118,7 @@ class VerifikasiPeminjamanController extends BaseController
             'itemsPrasarana' => $itemsPrasarana,
             'showSidebar'    => true,
             'breadcrumbs'    => [
-                ['name' => 'Verifikasi Peminjaman', 'url' => site_url('tu/verifikasi-peminjaman')],
+                ['name' => 'Verifikasi Peminjaman', 'url' => site_url('tu/peminjaman')],
                 ['name' => 'Detail Peminjaman']
             ]
         ];
@@ -157,7 +157,7 @@ class VerifikasiPeminjamanController extends BaseController
                 return redirect()->back()->with('error', 'Gagal memproses data.');
             }
 
-            return redirect()->to(site_url('tu/verifikasi-peminjaman'))->with('message', 'Peminjaman berhasil disetujui.');
+            return redirect()->to(site_url('tu/peminjaman'))->with('message', 'Peminjaman berhasil disetujui.');
         } catch (\Exception $e) {
             $db->transRollback();
             return redirect()->back()->with('error', $e->getMessage());
@@ -180,7 +180,7 @@ class VerifikasiPeminjamanController extends BaseController
             'id_tu_approver'           => auth()->user()->id
         ]);
 
-        return redirect()->to(site_url('tu/verifikasi-peminjaman'))->with('message', 'Peminjaman ditolak.');
+        return redirect()->to(site_url('tu/peminjaman'))->with('message', 'Peminjaman ditolak.');
     }
 
     /**

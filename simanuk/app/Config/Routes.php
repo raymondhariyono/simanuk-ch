@@ -61,7 +61,7 @@ $routes->group('admin', ['filter' => ['session', 'role:Admin']], static function
    // --- KELOLA PENGEMBALIAN ---
    $routes->get('pengembalian', 'Admin\PengembalianController::index');
    $routes->get('pengembalian/detail/(:num)', 'Admin\PengembalianController::detail/$1');
-   $routes->post('pengembalian/selesai/(:num)', 'Admin\PengembalianController::prosesSelesai/$1');
+   $routes->post('pengembalian/selesai/(:num)', 'Admin\PengembalianController::prosesKembali/$1');
 
    // --- LAPORAN KERUSAKAN ---
    $routes->get('laporan-kerusakan', 'Admin\LaporanKerusakanController::index');
@@ -144,13 +144,13 @@ $routes->group('tu', ['filter' => ['session', 'role:TU']], static function ($rou
 
    // ** KELOLA AKUN PENGGUNA **
 
-   $routes->get('verifikasi-peminjaman', 'TU\VerifikasiPeminjamanController::index');
-   $routes->get('verifikasi-peminjaman/detail/(:num)', 'TU\VerifikasiPeminjamanController::detail/$1');
-   $routes->post('verifikasi-peminjaman/approve/(:num)', 'TU\VerifikasiPeminjamanController::approve/$1');
-   $routes->post('verifikasi-peminjaman/reject/(:num)', 'TU\VerifikasiPeminjamanController::reject/$1');
+   $routes->get('peminjaman', 'TU\VerifikasiPeminjamanController::index');
+   $routes->get('peminjaman/detail/(:num)', 'TU\VerifikasiPeminjamanController::detail/$1');
+   $routes->post('peminjaman/approve/(:num)', 'TU\VerifikasiPeminjamanController::approve/$1');
+   $routes->post('peminjaman/reject/(:num)', 'TU\VerifikasiPeminjamanController::reject/$1');
    $routes->get('verifikasi-pengembalian', 'TU\PengembalianController::index');
 
-   $routes->get('verifikasi-peminjaman', 'TU\PeminjamanController::index');
+   $routes->get('peminjaman', 'TU\PeminjamanController::index');
    // tolak foto SEBELUM dan SESUDAH
    $routes->post('peminjaman/tolak-foto/(:segment)/(:segment)/(:num)', 'TU\VerifikasiPeminjamanController::tolakFoto/$1/$2/$3');
 
@@ -162,7 +162,7 @@ $routes->group('tu', ['filter' => ['session', 'role:TU']], static function ($rou
 
    $routes->get('generate-laporan', 'TU\LaporanController::index');
    $routes->get('pengembalian/detail/(:num)', 'TU\PengembalianController::detail/$1');
-   $routes->post('pengembalian/selesai/(:num)', 'TU\PengembalianController::prosesSelesai/$1');
+   $routes->post('pengembalian/selesai/(:num)', 'TU\PengembalianController::prosesKembali/$1');
    $routes->get('download-laporan', 'TU\DashboardController::downloadLaporan');
    $routes->get('laporan/excel', 'TU\DashboardController::downloadExcel');
    $routes->get('laporan/pdf', 'TU\DashboardController::downloadLaporan');

@@ -155,6 +155,51 @@
                <div class="mt-2 space-y-4">
                   <p class="text-sm text-gray-500" id="modalDescription"></p>
 
+
+
+                  <input type="hidden" id="inputMaxQty" value="">
+
+                  <div id="kondisiInputContainer" class="hidden">
+                     <label class="block text-sm font-medium text-gray-700">Kondisi Sarana/Prasarana Saat Ini <span class="text-red-500">*</span> </label>
+                     <select name="kondisi" id="selectKondisi" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm sm:text-sm">
+                        <option value="Baik">Baik</option>
+                        <option value="Rusak Ringan">Rusak Ringan</option>
+                        <option value="Rusak Berat">Rusak Berat</option>
+                     </select>
+
+                     <div id="divJumlahRusak" class="hidden mt-3 p-3 bg-red-50 rounded border border-red-200">
+                        <label class="block text-sm font-medium text-red-700 mb-1">
+                           Jumlah yang Rusak <span class="text-red-500">*</span>
+                        </label>
+                        <div class="text-xs font-medium text-gray-600">
+                           <span class="block mb-2">
+                              Jika terdapat sarana yang rusak, peminjaman akan dibagi menjadi peminjaman yang <b>baik</b> dan <b>rusak</b>
+                           </span>
+                           <span class="block mb-2">
+                              Peminjam diharapkan untuk upload kembali foto bukti sarana yang <b>baik</b>
+                           </span>
+                           <span class="block mb-2">
+                              Foto bukti yang diupload adalah foto bukti sarana yang <b>rusak</b>
+                           </span>
+                        </div>
+                        <div class="flex items-center">
+                           <input
+                              type="number"
+                              name="jumlah_rusak"
+                              id="inputJumlahRusak"
+                              min="1"
+                              class="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-l-md focus:ring-red-500 focus:border-red-500"
+                              placeholder="Masukkan jumlah">
+                           <span class="inline-flex items-center px-3 py-2 rounded-r-md border border-l-0 border-gray-300 bg-gray-100 text-gray-500 text-sm">
+                              Unit
+                           </span>
+                        </div>
+                        <p class="text-xs text-red-600 mt-1" id="textSisaBaik">
+                           Sisa <span id="spanSisaBaik" class="font-bold">0</span> unit akan dianggap Baik.
+                        </p>
+                     </div>
+                  </div>
+
                   <div>
                      <label class="block text-sm font-medium text-gray-700">
                         Foto Bukti (Wajib) <span class="text-red-500">*</span>
@@ -172,14 +217,6 @@
                      <p id="fileErrorMsg" class="text-xs text-red-600 mt-1 hidden font-bold"></p>
                   </div>
 
-                  <div id="kondisiInputContainer" class="hidden">
-                     <label class="block text-sm font-medium text-gray-700">Kondisi Sarana/Prasarana Saat Ini</label>
-                     <select name="kondisi" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm sm:text-sm">
-                        <option value="Baik">Baik</option>
-                        <option value="Rusak Ringan">Rusak Ringan</option>
-                        <option value="Rusak Berat">Rusak Berat</option>
-                     </select>
-                  </div>
                </div>
             </div>
             <div class="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">

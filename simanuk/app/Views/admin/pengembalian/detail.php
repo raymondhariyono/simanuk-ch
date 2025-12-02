@@ -149,24 +149,36 @@
                Pastikan Anda telah memeriksa kondisi sarana/prasarana sesuai dengan foto bukti yang dilampirkan.
             </p>
 
-            <form action="<?= site_url('admin/pengembalian/selesai/' . $peminjaman['id_peminjaman']) ?>" method="post" onsubmit="return confirm('Pastikan semua sarana/prasrana sudah diterima kembali. Stok akan dikembalikan ke sistem.')">
+            <form action="<?= site_url('admin/pengembalian/selesai/' . $peminjaman['id_peminjaman']) ?>" method="post" onsubmit="return confirm('Pastikan kondisi barang sudah sesuai.')">
                <?= csrf_field() ?>
 
-               <?php
-               $allReturned = true;
-               foreach ($itemsSarana as $i) {
-                  if (empty($i['foto_sesudah'])) $allReturned = false;
-               }
-               ?>
+               <div class="mb-6 bg-blue-50 p-4 rounded-lg border border-blue-200">
+                  <h4 class="text-sm font-bold text-blue-800 mb-3 uppercase">🔍 Konfirmasi Kondisi Akhir Barang</h4>
 
-               <?php if (!$allReturned): ?>
-                  <div class="bg-yellow-50 border-l-4 border-yellow-400 p-3 mb-4">
-                     <p class="text-xs text-yellow-700">⚠️ Peringatan: Ada item yang belum memiliki bukti foto pengembalian dari user.</p>
-                  </div>
-               <?php endif; ?>
+                  <?php foreach ($itemsSarana as $item) : ?>
+                     <div class="flex items-center justify-between py-2 border-b border-blue-200 last:border-0">
+                        <label class="text-sm font-medium text-gray-700 w-1/2">
+                           <?= esc($item['nama_sarana']) ?> <span class="text-gray-500">(<?= $item['jumlah'] ?> Unit)</span>
+                        </label>
+
+                        <div class="w-1/2">
+                           <select name="kondisi_akhir_sarana[<?= $item['id_detail_sarana'] ?>]"
+                              class="block w-full py-1.5 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                              <option value="Baik" <?= ($item['kondisi_akhir'] == 'Baik') ? 'selected' : '' ?>>✅ Baik</option>
+                              <option value="Rusak Ringan" <?= ($item['kondisi_akhir'] == 'Rusak Ringan') ? 'selected' : '' ?>>⚠️ Rusak Ringan</option>
+                              <option value="Rusak Berat" <?= ($item['kondisi_akhir'] == 'Rusak Berat') ? 'selected' : '' ?>>⛔ Rusak Berat</option>
+                           </select>
+                        </div>
+                     </div>
+                  <?php endforeach; ?>
+
+                  <?php foreach ($itemsPrasarana as $item) : ?>
+                     <input type="hidden" name="kondisi_akhir_prasarana[<?= $item['id_detail_prasarana'] ?>]" value="Baik">
+                  <?php endforeach; ?>
+               </div>
 
                <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-                  ✅ Terima & Selesai
+                  ✅ Verifikasi & Selesai
                </button>
             </form>
 

@@ -99,40 +99,51 @@ class LaporanKerusakanController extends BaseController
             $sarana = $this->saranaModel->find($laporan['id_sarana']);
             $stokSekarang = $sarana['jumlah'];
 
-            // A. Transisi: DIAJUKAN -> DIPROSES (Barang masuk bengkel/gudang rusak)
-            // Kurangi stok tersedia
+            // A. Transisi: DIAJUKAN -> DIPROSES
             if ($statusLama == 'Diajukan' && $statusBaru == 'Diproses') {
-               $stokSekarang -= $jumlahRusak;
+
+               // --- SAFETY NET ---
+               // Cek apakah laporan ini berasal dari Peminjaman (Otomatis)?
+               $isDariPeminjaman = !empty($laporan['id_peminjaman']);
+
+               if ($isDariPeminjaman) {
+                  // KASUS 1: DARI PEMINJAMAN
+                  // JANGAN KURANGI STOK.
+                  // Karena stok sudah ditahan (tidak dikembalikan) di PengembalianController.
+               } else {
+                  // KASUS 2: LAPORAN MANUAL (Internal)
+                  // Kurangi stok karena barang diambil dari gudang untuk diperbaiki.
+                  $stokSekarang -= $jumlahRusak;
+               }
             }
 
-            // B. Transisi: DIPROSES -> SELESAI (Barang selesai diperbaiki)
-            // Kembalikan ke stok tersedia
+            // B. Transisi: DIPROSES -> SELESAI (Barang Sembuh)
             elseif ($statusLama == 'Diproses' && $statusBaru == 'Selesai') {
+               // Kembalikan ke stok tersedia
                $stokSekarang += $jumlahRusak;
             }
 
-            // C. Transisi: DIPROSES -> DITOLAK (Barang dikembalikan ke stok tanpa perbaikan)
+            // C. Transisi: DIPROSES -> DITOLAK (Batal Perbaiki/Barang Kembali)
             elseif ($statusLama == 'Diproses' && $statusBaru == 'Ditolak') {
+               // Kembalikan ke stok
                $stokSekarang += $jumlahRusak;
             }
 
             // Pastikan stok tidak minus
             if ($stokSekarang < 0) $stokSekarang = 0;
 
-            // Tentukan Status Ketersediaan Baru
-            $statusKetersediaan = ($stokSekarang > 0) ? 'Tersedia' : 'Tidak Tersedia';
-
             // Update Master Sarana
             $this->saranaModel->update($laporan['id_sarana'], [
                'jumlah' => $stokSekarang,
-               'status_ketersediaan' => $statusKetersediaan
+               'status_ketersediaan' => ($stokSekarang > 0) ? 'Tersedia' : 'Tidak Tersedia'
             ]);
          }
-         // 3. LOGIKA PRASARANA (Tetap Status Based karena jumlahnya 1)
+
+         // 3. LOGIKA PRASARANA
          else {
             $statusAset = null;
             if ($statusBaru == 'Diproses') {
-               $statusAset = 'Perawatan'; // Gunakan 'Perawatan' agar lebih spesifik
+               $statusAset = 'Perawatan';
             } elseif ($statusBaru == 'Selesai' || $statusBaru == 'Ditolak') {
                $statusAset = 'Tersedia';
             }
@@ -148,7 +159,7 @@ class LaporanKerusakanController extends BaseController
             return redirect()->back()->with('error', 'Gagal mengupdate status.');
          }
 
-         return redirect()->back()->with('message', 'Status laporan diperbarui. Stok/Status aset telah disesuaikan.');
+         return redirect()->back()->with('message', 'Status laporan diperbarui.');
       } catch (\Exception $e) {
          $db->transRollback();
          return redirect()->back()->with('error', $e->getMessage());
