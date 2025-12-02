@@ -42,6 +42,8 @@ class ProfileController extends BaseController
       $user = auth()->user();
       $input = $this->request->getPost();
 
+      // dd($input);
+
       // Validasi Input
       $rules = [
          'username' => [
@@ -85,7 +87,7 @@ class ProfileController extends BaseController
       unset($input['email']);
 
       if ($this->userModel->update($user->id, $input)) {
-         return redirect()->to('profile')->with('msg', 'Profil berhasil diperbarui.');
+         return redirect()->to('profile')->with('message', 'Profil berhasil diperbarui.');
       }
 
       return redirect()->back()->withInput()->with('error', 'Gagal memperbarui profil.');
@@ -103,7 +105,7 @@ class ProfileController extends BaseController
       ];
 
       if (!$this->validate($rules)) {
-         return redirect()->back()->withInput()->with('error', $this->validator->getErrors());
+         return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
       }
 
       $oldPassword = $this->request->getPost('password_lama');
@@ -130,7 +132,7 @@ class ProfileController extends BaseController
       // Panggil save(). Karena kita sudah memperbaiki Model di Langkah 1, 
       // ini akan lari ke parent::save() yang menghandle update dengan benar.
       if ($this->userModel->save($user)) {
-         return redirect()->to('profile')->with('msg', 'Kata sandi berhasil diubah.');
+         return redirect()->to('profile')->with('message', 'Kata sandi berhasil diubah.');
       }
    }
 }
