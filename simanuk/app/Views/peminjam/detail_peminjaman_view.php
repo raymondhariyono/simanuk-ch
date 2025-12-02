@@ -75,6 +75,9 @@
                                         <a href="<?= base_url($item['foto_sebelum']) ?>" target="_blank">
                                             <img src="<?= base_url($item['foto_sebelum']) ?>" class="h-24 mx-auto object-cover rounded border hover:opacity-75">
                                         </a>
+                                        <p class="text-xs font-bold mt-1 <?= $item['kondisi_awal'] == 'Baik' ? 'text-green-600' : 'text-red-600' ?>">
+                                            <?= esc($item['kondisi_awal']) ?>
+                                        </p>
                                     <?php else: ?>
                                         <span class="text-xs text-gray-400">-</span>
                                     <?php endif; ?>
@@ -147,6 +150,9 @@
                                         <a href="<?= base_url($item['foto_sebelum']) ?>" target="_blank">
                                             <img src="<?= base_url($item['foto_sebelum']) ?>" class="h-24 mx-auto object-cover rounded border hover:opacity-75">
                                         </a>
+                                        <p class="text-xs font-bold mt-1 <?= $item['kondisi_awal'] == 'Baik' ? 'text-green-600' : 'text-red-600' ?>">
+                                            <?= esc($item['kondisi_awal']) ?>
+                                        </p>
                                     <?php else: ?>
                                         <span class="text-xs text-gray-400">-</span>
                                     <?php endif; ?>

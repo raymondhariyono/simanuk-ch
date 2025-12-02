@@ -23,8 +23,11 @@
                   </div>
                   <div class="text-right">
                      <span class="block text-xs text-gray-500">Kondisi Dilaporkan User:</span>
-                     <span class="font-bold <?= $item['kondisi_akhir'] == 'Baik' ? 'text-green-600' : 'text-red-600' ?>">
-                        <?= esc($item['kondisi_akhir'] ?? 'Belum Lapor') ?>
+                     <span class="font-medium <?= $item['kondisi_awal'] == 'Baik' ? 'text-green-600' : 'text-red-600' ?>">
+                        Awal: <?= esc($item['kondisi_awal'] ?? 'Belum Lapor') ?>
+                     </span>
+                     <span class="font-medium <?= $item['kondisi_akhir'] == 'Baik' ? 'text-green-600' : 'text-red-600' ?>">
+                        Akhir: <?= esc($item['kondisi_akhir'] ?? 'Belum Lapor') ?>
                      </span>
                   </div>
                </div>
@@ -89,8 +92,11 @@
                   </div>
                   <div class="text-right">
                      <span class="block text-xs text-gray-500">Kondisi Dilaporkan User:</span>
-                     <span class="font-bold <?= $item['kondisi_akhir'] == 'Baik' ? 'text-green-600' : 'text-red-600' ?>">
-                        <?= esc($item['kondisi_akhir'] ?? 'Belum Lapor') ?>
+                     <span class="font-medium <?= $item['kondisi_awal'] == 'Baik' ? 'text-green-600' : 'text-red-600' ?>">
+                        Awal: <?= esc($item['kondisi_awal'] ?? 'Belum Lapor') ?>
+                     </span>
+                     <span class="font-medium <?= $item['kondisi_akhir'] == 'Baik' ? 'text-green-600' : 'text-red-600' ?>">
+                        Akhir: <?= esc($item['kondisi_akhir'] ?? 'Belum Lapor') ?>
                      </span>
                   </div>
                </div>
