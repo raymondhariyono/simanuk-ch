@@ -32,7 +32,7 @@ class LaporanKerusakanController extends BaseController
          ->join('roles', 'roles.id_role = users.id_role')             // Join ke role
          ->orderBy('created_at', 'DESC')
          ->findAll();
-
+      
       // Pisahkan data untuk Tab Sarana & Prasarana
       $laporanSarana = [];
       $laporanPrasarana = [];
@@ -58,6 +58,8 @@ class LaporanKerusakanController extends BaseController
          'laporanPrasarana' => $laporanPrasarana,
          'showSidebar' => true,
       ];
+
+      // dd($data['laporanSarana']);
 
       return view('admin/laporan/kelola_laporan_kerusakan_view', $data);
    }

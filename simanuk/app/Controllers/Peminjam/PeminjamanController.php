@@ -394,7 +394,7 @@ class PeminjamanController extends BaseController
 
          // Siapkan Data Laporan
          $dataLaporan = [
-            'id_peminjam'         => $userId,
+            'id_pelapor'         => $userId,
             'tipe_aset'           => ucfirst($tipe), // 'Sarana' atau 'Prasarana'
             'judul_laporan'       => "Laporan Otomatis Pengembalian ($kondisi)",
             'deskripsi_kerusakan' => "Barang dikembalikan dengan status $kondisi. Foto bukti terlampir pada detail pengembalian.",
