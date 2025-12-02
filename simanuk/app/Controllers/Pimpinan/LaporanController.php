@@ -29,9 +29,6 @@ class LaporanController extends BaseController
         $this->laporanModel = new LaporanKerusakanModel();
     }
 
-    /**
-     * Halaman Utama (Web View): List Jenis Laporan per Bulan
-     */
     public function index()
     {
         $filterBulan = $this->request->getGet('bulan');
@@ -45,7 +42,6 @@ class LaporanController extends BaseController
         $jmlSarana = $this->saranaModel->where("DATE_FORMAT(created_at, '%Y-%m') <=", $filterBulan)->countAllResults();
         $jmlPrasarana = $this->prasaranaModel->where("DATE_FORMAT(created_at, '%Y-%m') <=", $filterBulan)->countAllResults();
 
-        // Daftar Laporan untuk Web View
         $daftarLaporan = [
             [
                 'judul'      => "Laporan Peminjaman ($namaBulan)",
@@ -77,9 +73,6 @@ class LaporanController extends BaseController
         return view('pimpinan/laporan/index', $data);
     }
 
-    /**
-     * Halaman Detail (Web View): Untuk melihat detail di browser tanpa download
-     */
     public function detail()
     {
         $tipe  = $this->request->getGet('tipe');
@@ -107,10 +100,6 @@ class LaporanController extends BaseController
         return view('pimpinan/laporan/detail', $data);
     }
 
-    /**
-     * LOGIKA DOWNLOAD PDF (REVISI)
-     * Menggabungkan semua laporan menjadi satu file PDF yang langsung terdownload
-     */
     public function cetak()
     {
         $bulan = $this->request->getGet('bulan');
@@ -118,7 +107,6 @@ class LaporanController extends BaseController
 
         $namaBulan = date('F Y', strtotime($bulan));
 
-        // 1. Ambil Semua Data
         $dataPeminjaman = $this->getDataLaporan('peminjaman', $bulan);
         $dataKerusakan  = $this->getDataLaporan('kerusakan', $bulan);
         $dataInventaris = $this->getDataLaporan('inventaris', $bulan);
@@ -131,64 +119,89 @@ class LaporanController extends BaseController
             'inventaris' => $dataInventaris
         ];
 
-        // 2. Render View ke HTML String
         $html = view('pimpinan/laporan/cetak_pdf', $data);
 
-        // 3. Konfigurasi Dompdf
         $options = new Options();
-        $options->set('isRemoteEnabled', true); // Agar bisa load gambar/css external jika ada
+        $options->set('isRemoteEnabled', true);
         $options->set('defaultFont', 'Times-Roman');
 
         $dompdf = new Dompdf($options);
         $dompdf->loadHtml($html);
-
-        // Setup ukuran kertas (A4, Landscape agar tabel muat)
         $dompdf->setPaper('A4', 'landscape');
-
-        // Render PDF
         $dompdf->render();
 
-        // 4. Output Langsung Download (Attachment => true)
-        // Nama file: Laporan_Sarpras_Bulan_Tahun.pdf
         $filename = "Laporan_Sarpras_" . date('F_Y', strtotime($bulan)) . ".pdf";
-
         $dompdf->stream($filename, ["Attachment" => true]);
         exit();
     }
 
-    /**
-     * Helper Private Query Data (Tidak Berubah)
-     */
     private function getDataLaporan($tipe, $bulan)
     {
         $rows = [];
         $columns = [];
+        $db = \Config\Database::connect();
 
         switch ($tipe) {
             case 'inventaris':
-                $rows = $this->saranaModel
-                    ->select('sarana.kode_sarana, sarana.nama_sarana, kategori.nama_kategori, lokasi.nama_lokasi, sarana.kondisi, sarana.jumlah, sarana.status_ketersediaan')
+                $subQueryRusak = "(SELECT COALESCE(SUM(lk.jumlah), 0) 
+                                   FROM laporan_kerusakan lk 
+                                   WHERE lk.id_sarana = sarana.id_sarana 
+                                   AND lk.tipe_aset = 'Sarana' 
+                                   AND lk.status_laporan IN ('Diajukan', 'Diproses'))";
+
+                $dataSarana = $this->saranaModel
+                    ->select('sarana.kode_sarana, sarana.nama_sarana, kategori.nama_kategori, lokasi.nama_lokasi')
+                    ->select('sarana.jumlah as total_stok')
+                    ->select("$subQueryRusak as stok_rusak")
                     ->join('kategori', 'kategori.id_kategori = sarana.id_kategori')
                     ->join('lokasi', 'lokasi.id_lokasi = sarana.id_lokasi')
                     ->where("DATE_FORMAT(sarana.created_at, '%Y-%m') <=", $bulan)
                     ->findAll();
-                $columns = ['Kode', 'Nama Aset', 'Kategori', 'Lokasi', 'Kondisi', 'Jumlah', 'Status'];
+
+                foreach ($dataSarana as $item) {
+                    $total = $item['total_stok'];
+                    $rusak = $item['stok_rusak'];
+                    $baik  = $total - $rusak;
+                    $statusStok = "{$total} Unit ({$baik} Baik / {$rusak} Rusak)";
+
+                    $rows[] = [
+                        'kode'      => $item['kode_sarana'],
+                        'nama'      => $item['nama_sarana'],
+                        'kategori'  => $item['nama_kategori'],
+                        'lokasi'    => $item['nama_lokasi'],
+                        'stok_info' => $statusStok
+                    ];
+                }
+                
+                $columns = ['Kode', 'Nama Aset', 'Kategori', 'Lokasi', 'Kondisi / Stok'];
                 break;
 
             case 'peminjaman':
-                $rows = $this->peminjamanModel
-                    ->select('users.nama_lengkap, users.organisasi, peminjaman.kegiatan, peminjaman.tgl_pinjam_dimulai, peminjaman.tgl_pinjam_selesai, peminjaman.status_peminjaman_global')
+                // A. Ambil Data Sarana
+                $builderSarana = $db->table('detail_peminjaman_sarana')
+                    ->select('users.nama_lengkap, sarana.nama_sarana as nama_item, detail_peminjaman_sarana.foto_sebelum, detail_peminjaman_sarana.foto_sesudah, peminjaman.tgl_pinjam_dimulai, peminjaman.tgl_pinjam_selesai, detail_peminjaman_sarana.kondisi_akhir')
+                    ->join('peminjaman', 'peminjaman.id_peminjaman = detail_peminjaman_sarana.id_peminjaman') 
+                    ->join('users', 'users.id = peminjaman.id_peminjam') 
+                    ->join('sarana', 'sarana.id_sarana = detail_peminjaman_sarana.id_sarana')
+                    ->like('peminjaman.tgl_pinjam_dimulai', $bulan);
+
+                // B. Ambil Data Prasarana
+                $builderPrasarana = $db->table('detail_peminjaman_prasarana')
+                    ->select('users.nama_lengkap, prasarana.nama_prasarana as nama_item, detail_peminjaman_prasarana.foto_sebelum, detail_peminjaman_prasarana.foto_sesudah, peminjaman.tgl_pinjam_dimulai, peminjaman.tgl_pinjam_selesai, detail_peminjaman_prasarana.kondisi_akhir')
+                    ->join('peminjaman', 'peminjaman.id_peminjaman = detail_peminjaman_prasarana.id_peminjaman')
                     ->join('users', 'users.id = peminjaman.id_peminjam')
-                    ->like('peminjaman.tgl_pinjam_dimulai', $bulan)
-                    ->orderBy('peminjaman.tgl_pinjam_dimulai', 'ASC')
-                    ->findAll();
-                $columns = ['Peminjam', 'Organisasi', 'Kegiatan', 'Mulai', 'Selesai', 'Status'];
+                    ->join('prasarana', 'prasarana.id_prasarana = detail_peminjaman_prasarana.id_prasarana')
+                    ->like('peminjaman.tgl_pinjam_dimulai', $bulan);
+
+                $rows = $builderSarana->union($builderPrasarana)->get()->getResultArray();
+                $columns = ['Peminjam', 'Barang', 'Tgl Pinjam', 'Foto Awal', 'Foto Akhir', 'Kondisi'];
                 break;
 
             case 'kerusakan':
+                // PERBAIKAN: Gunakan id_pelapor sesuai migrasi terakhir
                 $rows = $this->laporanModel
                     ->select('users.nama_lengkap, laporan_kerusakan.judul_laporan, laporan_kerusakan.tipe_aset, laporan_kerusakan.status_laporan, laporan_kerusakan.created_at, laporan_kerusakan.tindak_lanjut')
-                    ->join('users', 'users.id = laporan_kerusakan.id_peminjam')
+                    ->join('users', 'users.id = laporan_kerusakan.id_pelapor') // <--- Ganti id_user menjadi id_pelapor
                     ->like('laporan_kerusakan.created_at', $bulan)
                     ->orderBy('laporan_kerusakan.created_at', 'ASC')
                     ->findAll();
@@ -198,7 +211,6 @@ class LaporanController extends BaseController
 
         return ['rows' => $rows, 'columns' => $columns];
     }
-
     public function excel()
     {
         $bulan = $this->request->getGet('bulan');
@@ -206,7 +218,7 @@ class LaporanController extends BaseController
 
         $namaBulan = date('F Y', strtotime($bulan));
 
-        // 1. Ambil Semua Data (Menggunakan fungsi yang sudah ada)
+        // 1. Ambil Semua Data
         $dataPeminjaman = $this->getDataLaporan('peminjaman', $bulan);
         $dataKerusakan  = $this->getDataLaporan('kerusakan', $bulan);
         $dataInventaris = $this->getDataLaporan('inventaris', $bulan);
@@ -246,11 +258,11 @@ class LaporanController extends BaseController
     {
         // Header Judul
         $sheet->setCellValue('A1', $title);
-        $sheet->mergeCells('A1:G1'); // Sesuaikan merge dengan perkiraan jumlah kolom
+        $sheet->mergeCells('A1:G1');
         $sheet->getStyle('A1')->getFont()->setBold(true)->setSize(14);
         $sheet->getStyle('A1')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
-        // Header Tabel (Baris ke-3)
+        // Header Tabel
         $columns = $data['columns'];
         $sheet->setCellValue('A3', 'No');
 
@@ -260,8 +272,8 @@ class LaporanController extends BaseController
             $colChar++;
         }
 
-        // Styling Header Tabel
-        $lastCol = chr(ord($colChar) - 1); // Huruf kolom terakhir
+        // Styling Header
+        $lastCol = chr(ord($colChar) - 1);
         $headerStyle = [
             'font' => ['bold' => true],
             'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
@@ -273,7 +285,7 @@ class LaporanController extends BaseController
         ];
         $sheet->getStyle("A3:{$lastCol}3")->applyFromArray($headerStyle);
 
-        // Isi Data (Mulai Baris ke-4)
+        // Isi Data
         $rows = $data['rows'];
         $rowNum = 4;
         $no = 1;
@@ -282,7 +294,7 @@ class LaporanController extends BaseController
             $sheet->setCellValue('A' . $rowNum, $no++);
             $c = 'B';
             foreach ($row as $key => $val) {
-                // Skip kolom ID jika ada
+                // Skip kolom ID
                 if (strpos($key, 'id_') !== false) continue;
 
                 $sheet->setCellValue($c . $rowNum, $val);
@@ -299,7 +311,7 @@ class LaporanController extends BaseController
             ]);
         }
 
-        // Auto Size Kolom
+        // Auto Size
         foreach (range('A', $lastCol) as $col) {
             $sheet->getColumnDimension($col)->setAutoSize(true);
         }
