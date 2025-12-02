@@ -126,6 +126,9 @@ $isBlocking = ($today > $toleranceDate) && ($h['status_peminjaman_global'] == 'D
                                     Upload Foto SEBELUM
                                  </button>
                               <?php elseif (empty($item['foto_sesudah'])): ?>
+                                 <button onclick="openUploadModal('sesudah', 'Sarana', '<?= $item['id_detail_sarana'] ?>', '<?= esc($item['nama_sarana']) ?>', <?= $item['jumlah'] ?>)" class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded border border-green-300 hover:bg-green-200">
+                                    KembalikanN
+                                 </button>
                                  <button onclick="openUploadModal('sesudah', 'Sarana', '<?= $item['id_detail_sarana'] ?>', '<?= esc($item['nama_sarana']) ?>')" class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded border border-green-300 hover:bg-green-200">
                                     Kembalikan
                                  </button>

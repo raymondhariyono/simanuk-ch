@@ -3,6 +3,7 @@
 namespace App\Controllers\Peminjam;
 
 use App\Controllers\BaseController;
+use App\Models\LaporanKerusakanModel;
 use App\Models\Peminjaman\PeminjamanModel;
 use App\Models\Peminjaman\DetailPeminjamanSaranaModel;
 use App\Models\Peminjaman\DetailPeminjamanPrasaranaModel;
@@ -20,6 +21,7 @@ class PeminjamanController extends BaseController
 
    protected $saranaModel;
    protected $prasaranaModel;
+   protected $laporanModel;
 
    protected $peminjamanService;
 
@@ -30,6 +32,8 @@ class PeminjamanController extends BaseController
       $this->detailPrasaranaModel = new DetailPeminjamanPrasaranaModel();
       $this->saranaModel = new SaranaModel();
       $this->prasaranaModel = new PrasaranaModel();
+
+      $this->laporanModel = new LaporanKerusakanModel();
 
       // inject service
       $this->peminjamanService = new PeminjamanService();
@@ -370,7 +374,12 @@ class PeminjamanController extends BaseController
                'max_size' => 'Ukuran foto maksimal 2 MB.'
             ]
          ],
-         'kondisi' => 'required'
+         'kondisi' => [
+            'rules' => 'required',
+            'errors' => [
+               'required' => 'Kondisi awal sarana/prasarana harus diisi'
+            ]
+         ]
       ])) {
          return redirect()->back()->withInput()->with('error', 'Data tidak valid.');
       }
@@ -386,55 +395,97 @@ class PeminjamanController extends BaseController
 
       // update kondisi_akhir
       $kondisi = $this->request->getPost('kondisi');
+      $jumlahRusak = (int) $this->request->getPost('jumlah_rusak');
 
       // Variabel untuk Auto-Report
-      $itemDetail = null;
       $userId = auth()->user()->id;
+      $idPeminjaman = null;
+      $detailFinal = null; // Ini akan menyimpan data item yang RUSAK (untuk laporan)
 
       // 3. Update Database Detail (foto_sesudah & kondisi_akhir)
-      $idPeminjaman = null;
+      // $idPeminjaman = null;
       if ($tipe == 'Sarana') {
          $detail = $this->detailSaranaModel->find($idDetail);
-         $this->detailSaranaModel->update($idDetail, [
-            'foto_sesudah' => $pathFoto,
-            'kondisi_akhir' => $kondisi,
-         ]);
-         $itemDetail = $this->detailSaranaModel->find($idDetail); // Ambil data untuk laporan
+         $qtyAwal = (int) $detail['jumlah'];
          $idPeminjaman = $detail['id_peminjaman'];
+
+         // Cek apakah perlu split? 
+         // Syarat: Kondisi Rusak, Jumlah Valid, dan Jumlah Rusak < Jumlah Awal
+         if ($kondisi != 'Baik' && $jumlahRusak > 0 && $jumlahRusak < $qtyAwal) {
+
+            // 1. UPDATE Baris Lama (Menjadi Barang Baik/Sisa)
+            $sisaBaik = $qtyAwal - $jumlahRusak;
+            $this->detailSaranaModel->update($idDetail, [
+               'jumlah'        => $sisaBaik,
+               'kondisi_akhir' => 'Baik',
+               // Foto sesudah opsional untuk yang baik, atau biarkan null
+            ]);
+
+            // 2. INSERT Baris Baru (Khusus Barang Rusak)
+            $newDetailData = $detail; // Copy data lama
+            unset($newDetailData['id_detail_sarana']); // Hapus ID lama agar auto-increment
+
+            $newDetailData['jumlah']        = $jumlahRusak;
+            $newDetailData['kondisi_akhir'] = $kondisi;
+            $newDetailData['foto_sesudah']  = $pathFoto;
+
+            // Simpan baris baru
+            $this->detailSaranaModel->insert($newDetailData);
+
+            // Ambil ID baris baru tersebut untuk referensi laporan (opsional)
+            // Tapi untuk laporan, kita butuh data arraynya
+            $detailFinal = $newDetailData;
+            // Pastikan ID sarana terbawa
+            $detailFinal['id_sarana'] = $detail['id_sarana'];
+         } else {
+            // SKENARIO NORMAL (Semua Baik ATAU Semua Rusak)
+            $this->detailSaranaModel->update($idDetail, [
+               'foto_sesudah'  => $pathFoto,
+               'kondisi_akhir' => $kondisi,
+            ]);
+
+            // Data untuk laporan adalah data yang baru diupdate
+            $detailFinal = $this->detailSaranaModel->find($idDetail);
+         }
       } else {
+         // --- LOGIKA PRASARANA (Tidak ada split karena Qty biasanya 1) ---
          $detail = $this->detailPrasaranaModel->find($idDetail);
          $this->detailPrasaranaModel->update($idDetail, [
-            'foto_sesudah' => $pathFoto,
+            'foto_sesudah'  => $pathFoto,
             'kondisi_akhir' => $kondisi,
          ]);
-         $itemDetail = $this->detailPrasaranaModel->find($idDetail); // Ambil data untuk laporan
          $idPeminjaman = $detail['id_peminjaman'];
+         $detailFinal = $this->detailPrasaranaModel->find($idDetail);
+         // Prasarana jumlah default 1 jika tidak ada kolom jumlah
+         $detailFinal['jumlah'] = 1;
       }
 
       // --- LOGIKA OTOMATIS LAPOR KERUSAKAN ---
       // Jika kondisi bukan 'Baik', buat laporan otomatis
       if ($kondisi != 'Baik') {
 
-         $laporanModel = new \App\Models\LaporanKerusakanModel();
+         $laporanModel = $this->laporanModel;
 
          // Siapkan Data Laporan
          $dataLaporan = [
-            'id_pelapor'         => $userId,
-            'tipe_aset'           => ucfirst($tipe), // 'Sarana' atau 'Prasarana'
-            'judul_laporan'       => "Laporan Otomatis Pengembalian ($kondisi)",
-            'deskripsi_kerusakan' => "Barang dikembalikan dengan status $kondisi. Foto bukti terlampir pada detail pengembalian.",
-            'bukti_foto'          => $pathFoto, // Pakai foto yang sama
+            'id_pelapor'          => $userId,
+            'id_peminjaman'       => $idPeminjaman,
+            'tipe_aset'           => ucfirst($tipe),
+            // Judul dinamis: "Laporan Otomatis (5 Unit Rusak Berat)"
+            'judul_laporan'       => "Laporan Otomatis Pengembalian ({$detailFinal['jumlah']} Unit $kondisi)",
+            'deskripsi_kerusakan' => "Barang dikembalikan dengan status $kondisi sejumlah {$detailFinal['jumlah']} unit. Foto bukti terlampir pada detail pengembalian.",
+            'bukti_foto'          => $pathFoto,
             'status_laporan'      => 'Diajukan',
-            // Isi FK yang sesuai
-            'id_sarana'           => ($tipe == 'Sarana') ? $itemDetail['id_sarana'] : null,
-            'id_prasarana'        => ($tipe == 'Prasarana') ? $itemDetail['id_prasarana'] : null,
-            // Isi Jumlah (Penting!)
-            'jumlah'              => ($tipe == 'Sarana') ? $itemDetail['jumlah'] : 1
+            'id_sarana'           => ($tipe == 'Sarana') ? $detailFinal['id_sarana'] : null,
+            'id_prasarana'        => ($tipe == 'Prasarana') ? $detailFinal['id_prasarana'] : null,
+            'jumlah'              => $detailFinal['jumlah'] // Ini sekarang akurat (misal: 5)
          ];
+
+         // dd($dataLaporan);
 
          $laporanModel->save($dataLaporan);
 
-         return redirect()->back()->with('message', 'Sarana / Prasarana dikembalikan. Laporan kerusakan telah dibuat otomatis karena kondisi sarana/prasarana tidak baik.');
+         return redirect()->back()->with('message', "Pengembalian untuk sarana yang rusak diproses. Laporan kerusakan otomatis dibuat untuk {$detailFinal['jumlah']} unit yang rusak. Harap upload foto untuk sarana dengan kondisi baik");
       }
 
       // 4. Cek Apakah SEMUA barang dalam transaksi ini sudah dikembalikan?

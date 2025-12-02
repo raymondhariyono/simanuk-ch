@@ -49,7 +49,7 @@
                   <table class="w-full text-left border-collapse">
                      <thead>
                         <tr class="bg-gray-50 border-b">
-                           <th class="p-3 text-sm font-medium text-gray-600">Nama Barang</th>
+                           <th class="p-3 text-sm font-medium text-gray-600">Nama Sarana</th>
                            <th class="p-3 text-sm font-medium text-gray-600">Kode</th>
                            <th class="p-3 text-sm font-medium text-gray-600 text-center">Jumlah</th>
                         </tr>
@@ -155,7 +155,7 @@
 
             <?php if ($peminjaman['status_peminjaman_global'] == 'Diajukan') : ?>
                <div class="space-y-3">
-                  <form action="<?= site_url('admin/peminjaman/approve/' . $peminjaman['id_peminjaman']) ?>" method="post" onsubmit="return confirm('Setujui peminjaman ini? Stok barang akan berkurang otomatis.')">
+                  <form action="<?= site_url('admin/peminjaman/approve/' . $peminjaman['id_peminjaman']) ?>" method="post" onsubmit="return confirm('Setujui peminjaman ini? Stok sarana akan berkurang otomatis.')">
                      <?= csrf_field() ?>
                      <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
                         ✅ Setujui Peminjaman
