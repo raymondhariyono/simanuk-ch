@@ -469,6 +469,7 @@ class PeminjamanController extends BaseController
          // Siapkan Data Laporan
          $dataLaporan = [
             'id_pelapor'          => $userId,
+            'id_peminjaman'       => $idPeminjaman,
             'tipe_aset'           => ucfirst($tipe),
             // Judul dinamis: "Laporan Otomatis (5 Unit Rusak Berat)"
             'judul_laporan'       => "Laporan Otomatis Pengembalian ({$detailFinal['jumlah']} Unit $kondisi)",
@@ -479,6 +480,8 @@ class PeminjamanController extends BaseController
             'id_prasarana'        => ($tipe == 'Prasarana') ? $detailFinal['id_prasarana'] : null,
             'jumlah'              => $detailFinal['jumlah'] // Ini sekarang akurat (misal: 5)
          ];
+
+         // dd($dataLaporan);
 
          $laporanModel->save($dataLaporan);
 
