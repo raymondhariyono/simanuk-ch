@@ -228,6 +228,74 @@ class DashboardController extends BaseController
         return ['rows' => $rows, 'columns' => $columns];
     }
 
+    private function writeSheet($sheet, $headers, $data, $title)
+    {
+        // 1. Set Judul di A1 dan Merge Cells
+        $sheet->setCellValue('A1', $title);
+        $sheet->mergeCells('A1:' . chr(64 + count($headers)) . '1'); // Merge dari A1 sampai kolom terakhir
+        $sheet->getStyle('A1')->getFont()->setBold(true)->setSize(14);
+        $sheet->getStyle('A1')->getAlignment()->setHorizontal(\PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER);
+
+        // 2. Set Header Tabel di Baris 3
+        $col = 'A';
+        foreach ($headers as $h) {
+            $sheet->setCellValue($col . '3', $h);
+            $col++;
+        }
+        $lastCol = chr(ord($col) - 1); // Huruf kolom terakhir
+
+        // 3. Style Header (Warna Biru, Text Putih, Bold, Border)
+        $styleHeader = [
+            'font' => [
+                'bold' => true, 
+                'color' => ['rgb' => 'FFFFFF']
+            ],
+            'fill' => [
+                'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID, 
+                'startColor' => ['rgb' => '4A90E2'] // Biru
+            ],
+            'alignment' => [
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER
+            ],
+            'borders' => [
+                'allBorders' => ['borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN]
+            ]
+        ];
+        $sheet->getStyle("A3:{$lastCol}3")->applyFromArray($styleHeader);
+
+        // 4. Isi Data Mulai Baris 4
+        $rowNum = 4;
+        foreach ($data as $row) {
+            $col = 'A';
+            foreach ($row as $cell) {
+                $sheet->setCellValue($col . $rowNum, $cell);
+                $col++;
+            }
+            $rowNum++;
+        }
+
+        // 5. Style Border untuk Seluruh Data
+        if ($rowNum > 4) {
+            $lastRow = $rowNum - 1;
+            $styleData = [
+                'borders' => [
+                    'allBorders' => ['borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN]
+                ],
+                'alignment' => [
+                    'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+                    'wrapText' => true // Agar teks panjang turun ke bawah
+                ]
+            ];
+            $sheet->getStyle("A4:{$lastCol}{$lastRow}")->applyFromArray($styleData);
+        }
+
+        // 6. Auto Size Kolom
+        foreach (range('A', $lastCol) as $colID) {
+            $sheet->getColumnDimension($colID)->setAutoSize(true);
+        }
+    }
+
     public function downloadExcel()
     {
         // 1. Ambil Filter Bulan
@@ -236,7 +304,7 @@ class DashboardController extends BaseController
 
         $namaBulan = date('F Y', strtotime($bulan));
 
-        // Data 1: Riwayat Peminjaman
+        // DATA 1: Riwayat Peminjaman
         $dataPeminjaman = $this->peminjamanModel
             ->select('peminjaman.*, users.nama_lengkap, users.organisasi')
             ->join('users', 'users.id = peminjaman.id_peminjam')
@@ -244,7 +312,37 @@ class DashboardController extends BaseController
             ->orderBy('tgl_pinjam_dimulai', 'DESC')
             ->findAll();
 
-        // Data 2 & 3: Total Aset & Aset Rusak
+        // DATA 2: Laporan Kerusakan 
+        $dataLaporan = $this->laporanModel
+            ->select('laporan_kerusakan.*, users.nama_lengkap, users.organisasi, roles.nama_role')
+            ->join('users', 'users.id = laporan_kerusakan.id_pelapor')
+            ->join('roles', 'roles.id_role = users.id_role')
+            ->like('laporan_kerusakan.created_at', $bulan)
+            ->orderBy('laporan_kerusakan.created_at', 'DESC')
+            ->findAll();
+
+        // Proses mapping nama aset untuk laporan kerusakan
+        $laporanFixed = [];
+        foreach ($dataLaporan as $row) {
+            $namaAset = '-';
+            $kodeAset = '-';
+            
+            if ($row['tipe_aset'] == 'Sarana') {
+                $aset = $this->saranaModel->find($row['id_sarana']);
+                $namaAset = $aset['nama_sarana'] ?? 'Item Terhapus';
+                $kodeAset = $aset['kode_sarana'] ?? '-';
+            } else {
+                $aset = $this->prasaranaModel->find($row['id_prasarana']);
+                $namaAset = $aset['nama_prasarana'] ?? 'Prasarana Terhapus';
+                $kodeAset = $aset['kode_prasarana'] ?? '-';
+            }
+
+            $row['nama_aset_real'] = $namaAset;
+            $row['kode_aset_real'] = $kodeAset;
+            $laporanFixed[] = $row;
+        }
+
+        // DATA 3: Total Aset (Master Data)
         $saranaRaw = $this->saranaModel
             ->select('sarana.*, lokasi.nama_lokasi')
             ->join('lokasi', 'lokasi.id_lokasi = sarana.id_lokasi', 'left')
@@ -256,42 +354,34 @@ class DashboardController extends BaseController
             ->findAll();
 
         $totalAset = [];
-        $asetRusak = [];
-
-        // Normalisasi Sarana
+        // Gabungkan Sarana & Prasarana
         foreach ($saranaRaw as $item) {
-            $row = [
+            $totalAset[] = [
                 'kode'    => $item['kode_sarana'],
                 'nama'    => $item['nama_sarana'],
                 'jenis'   => 'Sarana',
                 'lokasi'  => $item['nama_lokasi'] ?? '-',
-                'kondisi' => $item['kondisi']
+                'kondisi' => $item['kondisi'],
+                'jumlah'  => $item['jumlah']
             ];
-            $totalAset[] = $row;
-            if ($item['kondisi'] !== 'Baik') $asetRusak[] = $row;
         }
-
-        // Normalisasi Prasarana
         foreach ($prasaranaRaw as $item) {
-            $row = [
+            $totalAset[] = [
                 'kode'    => $item['kode_prasarana'],
                 'nama'    => $item['nama_prasarana'],
                 'jenis'   => 'Prasarana',
                 'lokasi'  => $item['nama_lokasi'] ?? '-',
-                'kondisi' => $item['kondisi']
+                'kondisi' => $item['kondisi'],
+                'jumlah'  => 1
             ];
-            $totalAset[] = $row;
-            if ($item['kondisi'] !== 'Baik') $asetRusak[] = $row;
         }
 
         // PROSES PEMBUATAN EXCEL
         $spreadsheet = new Spreadsheet();
 
-        // SHEET 1: PEMINJAMAN
+        // --- SHEET 1: PEMINJAMAN ---
         $sheet1 = $spreadsheet->getActiveSheet();
         $sheet1->setTitle('Riwayat Peminjaman');
-
-        // Header Kolom Sheet 1
         $headers1 = ['No', 'Peminjam', 'Organisasi', 'Kegiatan', 'Tgl Mulai', 'Tgl Selesai', 'Status'];
         $rows1 = [];
         $no = 1;
@@ -308,25 +398,39 @@ class DashboardController extends BaseController
         }
         $this->writeSheet($sheet1, $headers1, $rows1, "DATA PEMINJAMAN - $namaBulan");
 
-        // SHEET 2: ASET RUSAK
         $sheet2 = $spreadsheet->createSheet();
-        $sheet2->setTitle('Aset Rusak');
-        $headers2 = ['No', 'Kode Aset', 'Nama Aset', 'Jenis', 'Lokasi', 'Kondisi'];
+        $sheet2->setTitle('Laporan Kerusakan');
+        $headers2 = [
+            'No', 'Tanggal Lapor', 'Pelapor', 'Role', 
+            'Tipe Aset', 'Kode Aset', 'Nama Aset', 
+            'Judul Laporan', 'Deskripsi', 'Status', 'Tindak Lanjut'
+        ];
         $rows2 = [];
         $no = 1;
-        foreach ($asetRusak as $d) {
-            $rows2[] = [$no++, $d['kode'], $d['nama'], $d['jenis'], $d['lokasi'], $d['kondisi']];
+        foreach ($laporanFixed as $d) {
+            $rows2[] = [
+                $no++,
+                date('d/m/Y H:i', strtotime($d['created_at'])),
+                $d['nama_lengkap'],
+                $d['nama_role'],
+                $d['tipe_aset'],
+                $d['kode_aset_real'],
+                $d['nama_aset_real'],
+                $d['judul_laporan'],
+                $d['deskripsi_kerusakan'],
+                $d['status_laporan'],
+                $d['tindak_lanjut']
+            ];
         }
-        $this->writeSheet($sheet2, $headers2, $rows2, "DAFTAR ASET RUSAK (PERLU PERBAIKAN)");
+        $this->writeSheet($sheet2, $headers2, $rows2, "DATA KERUSAKAN ASET - $namaBulan");
 
-        // SHEET 3: TOTAL ASET
         $sheet3 = $spreadsheet->createSheet();
         $sheet3->setTitle('Total Aset');
-        $headers3 = ['No', 'Kode Aset', 'Nama Aset', 'Jenis', 'Lokasi', 'Kondisi'];
+        $headers3 = ['No', 'Kode Aset', 'Nama Aset', 'Jenis', 'Lokasi', 'Jumlah', 'Kondisi Global'];
         $rows3 = [];
         $no = 1;
         foreach ($totalAset as $d) {
-            $rows3[] = [$no++, $d['kode'], $d['nama'], $d['jenis'], $d['lokasi'], $d['kondisi']];
+            $rows3[] = [$no++, $d['kode'], $d['nama'], $d['jenis'], $d['lokasi'], $d['jumlah'], $d['kondisi']];
         }
         $this->writeSheet($sheet3, $headers3, $rows3, "REKAPITULASI SELURUH ASET");
 
@@ -340,51 +444,5 @@ class DashboardController extends BaseController
         $writer = new Xlsx($spreadsheet);
         $writer->save('php://output');
         exit;
-    }
-
-    private function writeSheet($sheet, $headers, $data, $title)
-    {
-        $sheet->setCellValue('A1', $title);
-        $sheet->mergeCells('A1:' . chr(64 + count($headers)) . '1');
-        $sheet->getStyle('A1')->getFont()->setBold(true)->setSize(14);
-        $sheet->getStyle('A1')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
-
-        $col = 'A';
-        foreach ($headers as $h) {
-            $sheet->setCellValue($col . '3', $h);
-            $col++;
-        }
-        $lastCol = chr(ord($col) - 1);
-
-        // Style Header
-        $styleHeader = [
-            'font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF']],
-            'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['rgb' => '4A90E2']],
-            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
-            'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]]
-        ];
-        $sheet->getStyle("A3:{$lastCol}3")->applyFromArray($styleHeader);
-
-        $rowNum = 4;
-        foreach ($data as $row) {
-            $col = 'A';
-            foreach ($row as $cell) {
-                $sheet->setCellValue($col . $rowNum, $cell);
-                $col++;
-            }
-            $rowNum++;
-        }
-
-        if ($rowNum > 4) {
-            $lastRow = $rowNum - 1;
-            $styleData = [
-                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
-                'alignment' => ['vertical' => Alignment::VERTICAL_CENTER]
-            ];
-            $sheet->getStyle("A4:{$lastCol}{$lastRow}")->applyFromArray($styleData);
-        }
-        foreach (range('A', $lastCol) as $colID) {
-            $sheet->getColumnDimension($colID)->setAutoSize(true);
-        }
     }
 }

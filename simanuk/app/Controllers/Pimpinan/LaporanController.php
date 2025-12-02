@@ -13,6 +13,7 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Border;
+use PhpOffice\PhpSpreadsheet\Style\Fill;
 
 class LaporanController extends BaseController
 {
@@ -135,128 +136,6 @@ class LaporanController extends BaseController
         exit();
     }
 
-    private function getDataLaporan($tipe, $bulan)
-    {
-        $rows = [];
-        $columns = [];
-        $db = \Config\Database::connect();
-
-        switch ($tipe) {
-            case 'inventaris':
-                // 1. Ambil Sarana + Foto
-                $subQueryRusakSarana = "(SELECT COALESCE(SUM(lk.jumlah), 0) FROM laporan_kerusakan lk WHERE lk.id_sarana = sarana.id_sarana AND lk.tipe_aset = 'Sarana' AND lk.status_laporan IN ('Diajukan', 'Diproses'))";
-                $subQueryFotoSarana = "(SELECT url_foto FROM foto_aset WHERE foto_aset.id_sarana = sarana.id_sarana ORDER BY id_foto DESC LIMIT 1)";
-
-                $dataSarana = $this->saranaModel
-                    ->select('sarana.kode_sarana, sarana.nama_sarana, kategori.nama_kategori, lokasi.nama_lokasi')
-                    ->select('sarana.jumlah as total_stok')
-                    ->select("$subQueryRusakSarana as stok_rusak")
-                    ->select("$subQueryFotoSarana as foto_aset")
-                    ->join('kategori', 'kategori.id_kategori = sarana.id_kategori', 'left')
-                    ->join('lokasi', 'lokasi.id_lokasi = sarana.id_lokasi', 'left')
-                    ->where("DATE_FORMAT(sarana.created_at, '%Y-%m') <=", $bulan)
-                    ->findAll();
-
-                // 2. Ambil Prasarana + Foto
-                $subQueryRusakPrasarana = "(SELECT COUNT(*) FROM laporan_kerusakan lk WHERE lk.id_prasarana = prasarana.id_prasarana AND lk.tipe_aset = 'Prasarana' AND lk.status_laporan IN ('Diajukan', 'Diproses'))";
-                $subQueryFotoPrasarana = "(SELECT url_foto FROM foto_aset WHERE foto_aset.id_prasarana = prasarana.id_prasarana ORDER BY id_foto DESC LIMIT 1)";
-
-                $dataPrasarana = $this->prasaranaModel
-                    ->select('prasarana.kode_prasarana, prasarana.nama_prasarana, kategori.nama_kategori, lokasi.nama_lokasi')
-                    ->select('1 as total_stok')
-                    ->select("$subQueryRusakPrasarana as stok_rusak")
-                    ->select("$subQueryFotoPrasarana as foto_aset")
-                    ->join('kategori', 'kategori.id_kategori = prasarana.id_kategori', 'left')
-                    ->join('lokasi', 'lokasi.id_lokasi = prasarana.id_lokasi', 'left')
-                    ->where("DATE_FORMAT(prasarana.created_at, '%Y-%m') <=", $bulan)
-                    ->findAll();
-
-                // Gabungkan Data dan Mapping Manual
-                $allData = array_merge($dataSarana, $dataPrasarana);
-
-                foreach ($allData as $item) {
-                    $total = $item['total_stok'];
-                    $rusak = $item['stok_rusak'];
-                    $baik  = $total - $rusak;
-                    $statusStok = "{$total} Unit ({$baik} Baik / {$rusak} Rusak)";
-
-                    $rows[] = [
-                        'foto_aset' => $item['foto_aset'], // Tampilkan foto di awal
-                        'kode'      => isset($item['kode_sarana']) ? $item['kode_sarana'] : $item['kode_prasarana'],
-                        'nama'      => isset($item['nama_sarana']) ? $item['nama_sarana'] : $item['nama_prasarana'],
-                        'kategori'  => $item['nama_kategori'],
-                        'lokasi'    => $item['nama_lokasi'],
-                        'stok_info' => $statusStok
-                    ];
-                }
-
-                $columns = ['Foto', 'Kode', 'Nama Aset', 'Kategori', 'Lokasi', 'Kondisi / Stok'];
-                break;
-
-            case 'peminjaman':
-                // A. Query Sarana
-                $builderSarana = $db->table('detail_peminjaman_sarana')
-                    ->select('users.nama_lengkap, sarana.nama_sarana as nama_item, detail_peminjaman_sarana.foto_sebelum, detail_peminjaman_sarana.foto_sesudah, peminjaman.tgl_pinjam_dimulai, peminjaman.tgl_pinjam_selesai, detail_peminjaman_sarana.kondisi_akhir')
-                    ->join('peminjaman', 'peminjaman.id_peminjaman = detail_peminjaman_sarana.id_peminjaman')
-                    ->join('users', 'users.id = peminjaman.id_peminjam')
-                    ->join('sarana', 'sarana.id_sarana = detail_peminjaman_sarana.id_sarana')
-                    ->like('peminjaman.tgl_pinjam_dimulai', $bulan);
-
-                // B. Query Prasarana
-                $builderPrasarana = $db->table('detail_peminjaman_prasarana')
-                    ->select('users.nama_lengkap, prasarana.nama_prasarana as nama_item, detail_peminjaman_prasarana.foto_sebelum, detail_peminjaman_prasarana.foto_sesudah, peminjaman.tgl_pinjam_dimulai, peminjaman.tgl_pinjam_selesai, detail_peminjaman_prasarana.kondisi_akhir')
-                    ->join('peminjaman', 'peminjaman.id_peminjaman = detail_peminjaman_prasarana.id_peminjaman')
-                    ->join('users', 'users.id = peminjaman.id_peminjam')
-                    // PERBAIKAN DI SINI: Join ke prasarana menggunakan id_prasarana, bukan id_sarana
-                    ->join('prasarana', 'prasarana.id_prasarana = detail_peminjaman_prasarana.id_prasarana')
-                    ->like('peminjaman.tgl_pinjam_dimulai', $bulan);
-                
-                $rawRows = $builderSarana->union($builderPrasarana)->get()->getResultArray();
-                
-                // MAPPING MANUAL agar urutan kolom PASTI BENAR sesuai Header
-                foreach ($rawRows as $r) {
-                    $rows[] = [
-                        'peminjam'    => $r['nama_lengkap'],
-                        'barang'      => $r['nama_item'],
-                        'foto_awal'   => $r['foto_sebelum'], // Mengandung kata 'foto' agar dideteksi View
-                        'foto_akhir'  => $r['foto_sesudah'], // Mengandung kata 'foto' agar dideteksi View
-                        'tgl_pinjam'  => $r['tgl_pinjam_dimulai'],
-                        'tgl_selesai' => $r['tgl_pinjam_selesai'],
-                        'kondisi'     => $r['kondisi_akhir']
-                    ];
-                }
-
-                $columns = ['Peminjam', 'Barang', 'Foto Awal', 'Foto Akhir', 'Tgl Pinjam', 'Tgl Selesai', 'Kondisi'];
-                break;
-
-            case 'kerusakan':
-                $rawRows = $this->laporanModel
-                    ->select('laporan_kerusakan.bukti_foto, users.nama_lengkap, laporan_kerusakan.judul_laporan, laporan_kerusakan.tipe_aset, laporan_kerusakan.status_laporan, laporan_kerusakan.created_at, laporan_kerusakan.tindak_lanjut')
-                    ->join('users', 'users.id = laporan_kerusakan.id_pelapor')
-                    ->like('laporan_kerusakan.created_at', $bulan)
-                    ->orderBy('laporan_kerusakan.created_at', 'ASC')
-                    ->findAll();
-                
-                // MAPPING MANUAL
-                foreach ($rawRows as $r) {
-                    $rows[] = [
-                        'bukti_foto' => $r['bukti_foto'], // Foto pertama
-                        'pelapor'    => $r['nama_lengkap'],
-                        'masalah'    => $r['judul_laporan'],
-                        'tipe'       => $r['tipe_aset'],
-                        'status'     => $r['status_laporan'],
-                        'tanggal'    => $r['created_at'],
-                        'tindak'     => $r['tindak_lanjut']
-                    ];
-                }
-
-                $columns = ['Bukti Foto', 'Pelapor', 'Masalah', 'Tipe Aset', 'Status', 'Tanggal', 'Tindak Lanjut'];
-                break;
-        }
-
-        return ['rows' => $rows, 'columns' => $columns];
-    }
-
     public function excel()
     {
         $bulan = $this->request->getGet('bulan');
@@ -264,26 +143,50 @@ class LaporanController extends BaseController
 
         $namaBulan = date('F Y', strtotime($bulan));
 
-        $dataPeminjaman = $this->getDataLaporan('peminjaman', $bulan);
-        $dataKerusakan  = $this->getDataLaporan('kerusakan', $bulan);
-        $dataInventaris = $this->getDataLaporan('inventaris', $bulan);
+        $rawPeminjaman = $this->getDataLaporan('peminjaman', $bulan);
+        $rawKerusakan  = $this->getDataLaporan('kerusakan', $bulan);
+        $rawInventaris = $this->getDataLaporan('inventaris', $bulan);
 
+        $dataPeminjaman = [];
+        foreach ($rawPeminjaman['rows'] as $row) {
+            $tglGabung = date('d/m/Y', strtotime($row['tgl_pinjam_dimulai'])) . ' - ' . date('d/m/Y', strtotime($row['tgl_pinjam_selesai']));
+            
+            $dataPeminjaman[] = [
+                'peminjam'   => $row['nama_lengkap'],
+                'barang'     => $row['nama_item'],
+                'tanggal'    => $tglGabung,
+                'kondisi'    => $row['kondisi_akhir'] ?? 'Baik'
+            ];
+        }
+        $colsPeminjaman = ['Peminjam', 'Barang', 'Tanggal Pinjam', 'Kondisi Akhir'];
+
+        $dataKerusakan = [];
+        foreach ($rawKerusakan['rows'] as $row) {
+            $dataKerusakan[] = [
+                'pelapor'       => $row['nama_lengkap'],
+                'judul'         => $row['judul_laporan'],
+                'tipe'          => $row['tipe_aset'],
+                'status'        => $row['status_laporan'],
+                'tanggal'       => date('d/m/Y H:i', strtotime($row['created_at'])),
+                'tindak_lanjut' => $row['tindak_lanjut']
+            ];
+        }
+        $colsKerusakan = $rawKerusakan['columns']; 
+        $dataInventaris = $rawInventaris['rows'];
+        $colsInventaris = $rawInventaris['columns'];
         $spreadsheet = new Spreadsheet();
 
-        // SHEET 1: PEMINJAMAN
         $sheet = $spreadsheet->getActiveSheet();
         $sheet->setTitle('Peminjaman');
-        $this->writeSheet($sheet, $dataPeminjaman, 'DATA PEMINJAMAN - ' . $namaBulan);
+        $this->writeSheet($sheet, $colsPeminjaman, $dataPeminjaman, 'DATA PEMINJAMAN - ' . $namaBulan);
 
-        // SHEET 2: KERUSAKAN
         $sheet2 = $spreadsheet->createSheet();
         $sheet2->setTitle('Kerusakan');
-        $this->writeSheet($sheet2, $dataKerusakan, 'DATA KERUSAKAN - ' . $namaBulan);
+        $this->writeSheet($sheet2, $colsKerusakan, $dataKerusakan, 'DATA KERUSAKAN - ' . $namaBulan);
 
-        // SHEET 3: INVENTARIS
         $sheet3 = $spreadsheet->createSheet();
         $sheet3->setTitle('Inventaris');
-        $this->writeSheet($sheet3, $dataInventaris, 'REKAPITULASI INVENTARIS - ' . $namaBulan);
+        $this->writeSheet($sheet3, $colsInventaris, $dataInventaris, 'REKAPITULASI INVENTARIS - ' . $namaBulan);
 
         $filename = 'Laporan_Sarpras_' . date('F_Y', strtotime($bulan)) . '.xlsx';
 
@@ -296,16 +199,18 @@ class LaporanController extends BaseController
         exit;
     }
 
-    private function writeSheet($sheet, $data, $title)
+    private function writeSheet($sheet, $columns, $data, $title)
     {
         $sheet->setCellValue('A1', $title);
-        $sheet->mergeCells('A1:G1');
+        $lastColChar = chr(65 + count($columns)); 
+
+        $sheet->mergeCells('A1:' . $lastColChar . '1');
+        
         $sheet->getStyle('A1')->getFont()->setBold(true)->setSize(14);
         $sheet->getStyle('A1')->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
 
-        $columns = $data['columns'];
+        // 2. Header Tabel
         $sheet->setCellValue('A3', 'No');
-
         $colChar = 'B';
         foreach ($columns as $col) {
             $sheet->setCellValue($colChar . '3', $col);
@@ -314,40 +219,113 @@ class LaporanController extends BaseController
 
         $lastCol = chr(ord($colChar) - 1);
         $headerStyle = [
-            'font' => ['bold' => true],
-            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
+            'font' => ['bold' => true, 'color' => ['rgb' => 'FFFFFF']],
+            'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER, 'vertical' => Alignment::VERTICAL_CENTER],
             'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
             'fill' => [
-                'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
-                'startColor' => ['argb' => 'FFEFEFEF']
+                'fillType' => Fill::FILL_SOLID,
+                'startColor' => ['rgb' => '4A90E2'] // Warna Biru
             ]
         ];
         $sheet->getStyle("A3:{$lastCol}3")->applyFromArray($headerStyle);
-
-        $rows = $data['rows'];
         $rowNum = 4;
         $no = 1;
 
-        foreach ($rows as $row) {
+        foreach ($data as $row) {
             $sheet->setCellValue('A' . $rowNum, $no++);
             $c = 'B';
-            foreach ($row as $key => $val) {
-                if (strpos($key, 'id_') !== false) continue;
+            foreach ($row as $val) {
                 $sheet->setCellValue($c . $rowNum, $val);
                 $c++;
             }
             $rowNum++;
         }
-
         if ($rowNum > 4) {
             $lastRow = $rowNum - 1;
             $sheet->getStyle("A4:{$lastCol}{$lastRow}")->applyFromArray([
-                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]]
+                'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
+                'alignment' => ['vertical' => Alignment::VERTICAL_CENTER, 'wrapText' => true]
             ]);
         }
 
         foreach (range('A', $lastCol) as $col) {
             $sheet->getColumnDimension($col)->setAutoSize(true);
         }
+    }
+
+    private function getDataLaporan($tipe, $bulan)
+    {
+        $rows = [];
+        $columns = [];
+        $db = \Config\Database::connect();
+
+        switch ($tipe) {
+            case 'inventaris':
+                $subQueryRusak = "(SELECT COALESCE(SUM(lk.jumlah), 0) 
+                                   FROM laporan_kerusakan lk 
+                                   WHERE lk.id_sarana = sarana.id_sarana 
+                                   AND lk.tipe_aset = 'Sarana' 
+                                   AND lk.status_laporan IN ('Diajukan', 'Diproses'))";
+
+                $dataSarana = $this->saranaModel
+                    ->select('sarana.kode_sarana, sarana.nama_sarana, kategori.nama_kategori, lokasi.nama_lokasi')
+                    ->select('sarana.jumlah as total_stok')
+                    ->select("$subQueryRusak as stok_rusak")
+                    ->join('kategori', 'kategori.id_kategori = sarana.id_kategori')
+                    ->join('lokasi', 'lokasi.id_lokasi = sarana.id_lokasi')
+                    ->where("DATE_FORMAT(sarana.created_at, '%Y-%m') <=", $bulan)
+                    ->findAll();
+
+                foreach ($dataSarana as $item) {
+                    $total = $item['total_stok'];
+                    $rusak = $item['stok_rusak'];
+                    $baik  = $total - $rusak;
+                    $statusStok = "{$total} Unit ({$baik} Baik / {$rusak} Rusak)";
+
+                    $rows[] = [
+                        'kode'      => $item['kode_sarana'],
+                        'nama'      => $item['nama_sarana'],
+                        'kategori'  => $item['nama_kategori'],
+                        'lokasi'    => $item['nama_lokasi'],
+                        'stok_info' => $statusStok
+                    ];
+                }
+
+                $columns = ['Kode', 'Nama Aset', 'Kategori', 'Lokasi', 'Kondisi / Stok'];
+                break;
+
+            case 'peminjaman':
+                // A. Ambil Data Sarana
+                $builderSarana = $db->table('detail_peminjaman_sarana')
+                    ->select('users.nama_lengkap, sarana.nama_sarana as nama_item, detail_peminjaman_sarana.foto_sebelum, detail_peminjaman_sarana.foto_sesudah, peminjaman.tgl_pinjam_dimulai, peminjaman.tgl_pinjam_selesai, detail_peminjaman_sarana.kondisi_akhir')
+                    ->join('peminjaman', 'peminjaman.id_peminjaman = detail_peminjaman_sarana.id_peminjaman')
+                    ->join('users', 'users.id = peminjaman.id_peminjam')
+                    ->join('sarana', 'sarana.id_sarana = detail_peminjaman_sarana.id_sarana')
+                    ->like('peminjaman.tgl_pinjam_dimulai', $bulan);
+
+                // B. Ambil Data Prasarana
+                $builderPrasarana = $db->table('detail_peminjaman_prasarana')
+                    ->select('users.nama_lengkap, prasarana.nama_prasarana as nama_item, detail_peminjaman_prasarana.foto_sebelum, detail_peminjaman_prasarana.foto_sesudah, peminjaman.tgl_pinjam_dimulai, peminjaman.tgl_pinjam_selesai, detail_peminjaman_prasarana.kondisi_akhir')
+                    ->join('peminjaman', 'peminjaman.id_peminjaman = detail_peminjaman_prasarana.id_peminjaman')
+                    ->join('users', 'users.id = peminjaman.id_peminjam')
+                    ->join('prasarana', 'prasarana.id_prasarana = detail_peminjaman_prasarana.id_prasarana')
+                    ->like('peminjaman.tgl_pinjam_dimulai', $bulan);
+
+                $rows = $builderSarana->union($builderPrasarana)->get()->getResultArray();
+                $columns = ['Peminjam', 'Barang', 'Tgl Pinjam', 'Foto Awal', 'Foto Akhir', 'Kondisi'];
+                break;
+
+            case 'kerusakan':
+                $rows = $this->laporanModel
+                    ->select('users.nama_lengkap, laporan_kerusakan.judul_laporan, laporan_kerusakan.tipe_aset, laporan_kerusakan.status_laporan, laporan_kerusakan.created_at, laporan_kerusakan.tindak_lanjut')
+                    ->join('users', 'users.id = laporan_kerusakan.id_pelapor') 
+                    ->like('laporan_kerusakan.created_at', $bulan)
+                    ->orderBy('laporan_kerusakan.created_at', 'ASC')
+                    ->findAll();
+                $columns = ['Pelapor', 'Masalah', 'Tipe Aset', 'Status', 'Tanggal', 'Tindak Lanjut'];
+                break;
+        }
+
+        return ['rows' => $rows, 'columns' => $columns];
     }
 }
