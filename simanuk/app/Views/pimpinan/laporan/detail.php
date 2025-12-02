@@ -1,5 +1,9 @@
 <?= $this->extend('layout/template'); ?>
 
+<?= $this->section('title'); ?>
+<?= esc($title); ?>
+<?= $this->endSection(); ?>
+
 <?= $this->section('content'); ?>
 <div class="flex min-h-screen bg-gray-50">
     <div class="flex-1 flex flex-col overflow-hidden">
@@ -18,8 +22,6 @@
                 </a>
             </div>
 
-            
-
             <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="w-full text-left border-collapse">
@@ -27,7 +29,9 @@
                             <tr>
                                 <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">No</th>
                                 <?php foreach ($columns as $col) : ?>
-                                    <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider"><?= esc($col) ?></th>
+                                    <th class="px-6 py-3 text-xs font-medium text-gray-500 uppercase tracking-wider">
+                                        <?= esc($col) ?>
+                                    </th>
                                 <?php endforeach; ?>
                             </tr>
                         </thead>
@@ -37,15 +41,16 @@
                                     <td colspan="<?= count($columns) + 1 ?>" class="px-6 py-8 text-center text-gray-500 text-sm">Data detail tidak tersedia.</td>
                                 </tr>
                             <?php else: ?>
-                                <?php $no = 1; foreach ($rows as $row) : ?>
+                                <?php $no = 1;
+                                foreach ($rows as $row) : ?>
                                     <tr class="hover:bg-gray-50">
                                         <td class="px-6 py-4 text-sm text-gray-500"><?= $no++ ?></td>
-                                        
+
                                         <?php foreach ($row as $key => $val) : ?>
                                             <?php if (strpos($key, 'id_') !== false) continue; ?>
-                                            
+
                                             <td class="px-6 py-4 text-sm text-gray-700">
-                                                <?php 
+                                                <?php
                                                 // Format Tanggal jika string terlihat seperti tanggal
                                                 if (strtotime($val) && strlen($val) > 10) {
                                                     echo date('d/m/Y H:i', strtotime($val));

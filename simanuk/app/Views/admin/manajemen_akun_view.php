@@ -57,7 +57,6 @@
 
                                     <form action="<?= site_url('admin/manajemen-akun/delete/' . $user->id) ?>" method="post" class="inline-block" onsubmit="return confirm('Apakah Anda yakin ingin menghapus akun ini?');">
                                         <?= csrf_field() ?>
-                                        <input type="hidden" name="_method" value="DELETE">
                                         <button type="submit" class="inline-flex items-center px-1 py-1 text-red-500 rounded hover:bg-red-100">
                                             <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
