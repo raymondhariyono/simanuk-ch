@@ -1,3 +1,16 @@
+<?php
+// Logika Hitung Keterlambatan per Item
+$today = date('Y-m-d');
+$deadline = date('Y-m-d', strtotime($h['tgl_pinjam_selesai']));
+
+// Telat Biasa (Hari ini > Deadline)
+$isLate = ($today > $deadline) && ($h['status_peminjaman_global'] == 'Dipinjam');
+
+// Telat Parah (Hari ini > Deadline + 3 Hari) -> Pemicu Blokir
+$toleranceDate = date('Y-m-d', strtotime($h['tgl_pinjam_selesai'] . ' + 3 days'));
+$isBlocking = ($today > $toleranceDate) && ($h['status_peminjaman_global'] == 'Dipinjam');
+?>
+
 <div class="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden hover:shadow-md transition-shadow duration-300">
 
    <details class="group">
@@ -34,6 +47,26 @@
                   <?= count($h['items_sarana']) + count($h['items_prasarana']) ?> Aset
                </span>
             </div>
+
+            <p class="mt-2 text-xs text-gray-500">
+               Tenggat Pengembalian Maksimal: <span class="font-bold"><?= $toleranceDate ?></span>
+
+               <?php if ($isBlocking): ?>
+                  <span class="ml-2 bg-red-600 text-white px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide">
+                     TERLAMBAT!
+                  </span>
+               <?php endif; ?>
+            </p>
+
+            <div class="hidden p-4 bg-gray-50 border-t border-gray-100">
+               <?php if ($isBlocking): ?>
+                  <div class="mb-4 p-3 bg-red-50 border border-red-200 rounded text-xs text-red-700 flex items-start gap-2">
+                     <span class="text-lg">⛔</span>
+                     <p>Peminjaman ini telah melewati batas toleransi 3 hari. Segera kembalikan untuk membuka blokir akun Anda.</p>
+                  </div>
+               <?php endif; ?>
+            </div>
+
          </div>
          <div class="ml-4 flex-shrink-0">
             <svg class="h-6 w-6 text-gray-400 transform group-open:-rotate-180 transition-transform duration-200" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -148,13 +181,19 @@
 
                            <?php if (in_array($item['status'], ['Disetujui', 'Dipinjam'])): ?>
                               <?php if (!empty($item['catatan_penolakan']) && empty($item['foto_sebelum'])): ?>
-                                 <button type="button" data-reason="<?= esc($item['catatan_penolakan']) ?>" onclick="openRejectionModal(this)" class="text-red-600 text-xs underline">Lihat Revisi</button>
+                                 <button type="button" data-reason="<?= esc($item['catatan_penolakan']) ?>" onclick="openRejectionModal(this)" class="text-red-600 text-xs underline">
+                                    Lihat Revisi
+                                 </button>
                               <?php endif; ?>
 
                               <?php if (empty($item['foto_sebelum'])): ?>
-                                 <button onclick="openUploadModal('sebelum', 'Prasarana', '<?= $item['id_detail_prasarana'] ?>', '<?= esc($item['nama_prasarana']) ?>')" class="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded border border-yellow-300 hover:bg-yellow-200">Upload Foto SEBELUM</button>
+                                 <button onclick="openUploadModal('sebelum', 'Prasarana', '<?= $item['id_detail_prasarana'] ?>', '<?= esc($item['nama_prasarana']) ?>')" class="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded border border-yellow-300 hover:bg-yellow-200">
+                                    Upload Foto SEBELUM
+                                 </button>
                               <?php elseif (empty($item['foto_sesudah'])): ?>
-                                 <button onclick="openUploadModal('sesudah', 'Prasarana', '<?= $item['id_detail_prasarana'] ?>', '<?= esc($item['nama_prasarana']) ?>')" class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded border border-green-300 hover:bg-green-200">Kembalikan</button>
+                                 <button onclick="openUploadModal('sesudah', 'Prasarana', '<?= $item['id_detail_prasarana'] ?>', '<?= esc($item['nama_prasarana']) ?>')" class="text-xs bg-green-100 text-green-700 px-2 py-1 rounded border border-green-300 hover:bg-green-200">
+                                    Kembalikan
+                                 </button>
                               <?php else: ?>
                                  <span class="text-xs text-gray-400 italic">Menunggu Verifikasi</span>
                               <?php endif; ?>

@@ -42,9 +42,9 @@
                         </td>
                         <td class="px-4 py-3 text-sm"><?= esc($row['kegiatan']) ?></td>
                         <td class="px-4 py-3 text-sm">
-                           <?= date('d M Y', strtotime($row['tgl_pinjam_selesai'])) ?>
+                           <?= date('d M Y', strtotime($row['tgl_pinjam_selesai'])) . ' - ' . date('d M Y', strtotime($row['tgl_pinjam_selesai'] . ' + 3 days')) ?>
 
-                           <?php if (date('Y-m-d') > $row['tgl_pinjam_selesai']) : ?>
+                           <?php if (date('Y-m-d', strtotime($row['tgl_pinjam_selesai'])) > date('Y-m-d', strtotime($row['tgl_pinjam_selesai'] . ' + 3 days'))) : ?>
                               <span class="ml-2 text-xs text-red-600 font-bold">(Terlambat)</span>
                            <?php endif; ?>
                         </td>

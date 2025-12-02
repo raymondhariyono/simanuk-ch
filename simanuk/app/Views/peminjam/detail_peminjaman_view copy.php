@@ -116,7 +116,7 @@
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                                                 </svg>
                                                 <div>
-                                                    <p class="font-semibold text-sm">Barang telah diserahkan</p>
+                                                    <p class="font-semibold text-sm">Sarana telah diserahkan</p>
                                                     <p class="text-xs">Menunggu verifikasi admin.</p>
                                                 </div>
                                             </div>
@@ -251,7 +251,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                             </svg>
                             <div>
-                                <p class="font-bold text-sm">Barang telah diserahkan</p>
+                                <p class="font-bold text-sm">Sarana telah diserahkan</p>
                                 <p class="text-xs">Menunggu verifikasi admin untuk penyelesaian akhir.</p>
                             </div>
                         </div>
