@@ -100,10 +100,9 @@ $routes->group('peminjam', ['filter' => ['session', 'role:Peminjam']], static fu
    $routes->get('sarpras/filter', 'Peminjam\KatalogSarprasController::index');
 
    // --- HISTORI PEMINJAMAN ---
-   $routes->get('histori-peminjaman', 'Peminjam\HistoriPeminjamanController::index');
+   $routes->get('histori-peminjaman', 'Peminjam\HistoriPeminjamanController::index2');
 
-   $routes->get('histori-peminjaman2', 'Peminjam\HistoriPeminjamanController::index2');
-
+   // $routes->get('histori-peminjaman2', 'Peminjam\HistoriPeminjamanController::index2');
 
    // detail histori peminjaman
    // Untuk melihat halaman detail

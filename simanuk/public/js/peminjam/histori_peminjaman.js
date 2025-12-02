@@ -55,7 +55,7 @@ function openUploadModal(jenis, tipeItem, idDetail, namaItem) {
       form.action = `${SITE_URL}peminjam/peminjaman/upload-bukti-sebelum/${tipeItem}/${idDetail}`;
       title.innerText = 'Bukti Pengambilan';
       desc.innerText = 'Upload foto kondisi ' + namaItem + ' saat Anda mengambilnya.';
-      kondisiDiv.classList.add('hidden');
+      kondisiDiv.classList.remove('hidden');
       kondisiInput.required = false;
    } else {
       form.action = `${SITE_URL}peminjam/peminjaman/upload-bukti-sesudah/${tipeItem}/${idDetail}`;

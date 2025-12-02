@@ -10,7 +10,7 @@ use App\Models\Sarpras\SaranaModel;
 use App\Models\Sarpras\PrasaranaModel;
 
 use App\Services\PeminjamanService;
-
+use Config\Database;
 
 class PeminjamanController extends BaseController
 {
@@ -234,6 +234,12 @@ class PeminjamanController extends BaseController
                'mime_in'  => 'Format foto harus JPG, JPEG, atau PNG.',
                'max_size' => 'Ukuran foto maksimal 2 MB.'
             ]
+         ],
+         'kondisi' => [
+            'rules' => 'required',
+            'errors' => [
+               'required' => 'Kondisi awal sarana/prasarana harus diisi'
+            ]
          ]
       ])) {
          return redirect()->back()->with('error', 'Gagal upload: ' . $this->validator->getError('foto_bukti'));
@@ -250,14 +256,22 @@ class PeminjamanController extends BaseController
       // 3. Update Database Detail
       $idPeminjaman = null;
 
+      // update kondisi_akhir
+      $kondisi = $this->request->getPost('kondisi');
+
+      $dataUpdate = [
+         'foto_sebelum' => $pathFoto,
+         'kondisi_awal' => $kondisi,
+      ];
+
       if ($tipe == 'Sarana') {
          $detail = $this->detailSaranaModel->find($idDetail);
-         $this->detailSaranaModel->update($idDetail, ['foto_sebelum' => $pathFoto]);
+         $this->detailSaranaModel->update($idDetail, $dataUpdate);
          $idPeminjaman = $detail['id_peminjaman'];
       } else {
          // Logic Prasarana
          $detail = $this->detailPrasaranaModel->find($idDetail); // Pastikan model di-load
-         $this->detailPrasaranaModel->update($idDetail, ['foto_sebelum' => $pathFoto]);
+         $this->detailSaranaModel->update($idDetail, $dataUpdate);
          $idPeminjaman = $detail['id_peminjaman'];
       }
 
@@ -304,7 +318,7 @@ class PeminjamanController extends BaseController
                'max_size' => 'Ukuran foto maksimal 2 MB.'
             ]
          ],
-         'kondisi_akhir' => 'required'
+         'kondisi' => 'required'
       ])) {
          return redirect()->back()->withInput()->with('error', $this->validator->getError('foto_bukti')); // Ambil error spesifik foto
       }
@@ -318,7 +332,7 @@ class PeminjamanController extends BaseController
       }
 
       // update kondisi_akhir
-      $kondisi = $this->request->getPost('kondisi_akhir');
+      $kondisi = $this->request->getPost('kondisi');
 
       // 3. Update Database Detail Sesuai Tipe
       $dataUpdate = [
@@ -344,8 +358,17 @@ class PeminjamanController extends BaseController
    {
       // 1. Validasi
       if (!$this->validate([
-         'foto_bukti' => 'uploaded[foto_bukti]|is_image[foto_bukti]|max_size[foto_bukti,2048]',
-         'kondisi_akhir' => 'required'
+         'foto_bukti' => [
+            'label' => 'Foto Bukti',
+            'rules' => 'uploaded[foto_bukti]|is_image[foto_bukti]|mime_in[foto_bukti,image/jpg,image/jpeg,image/png]|max_size[foto_bukti,2048]',
+            'errors' => [
+               'uploaded' => 'Foto bukti wajib diupload.',
+               'is_image' => 'File harus berupa gambar.',
+               'mime_in'  => 'Format foto harus JPG, JPEG, atau PNG.',
+               'max_size' => 'Ukuran foto maksimal 2 MB.'
+            ]
+         ],
+         'kondisi' => 'required'
       ])) {
          return redirect()->back()->withInput()->with('error', 'Data tidak valid.');
       }
@@ -360,7 +383,7 @@ class PeminjamanController extends BaseController
       }
 
       // update kondisi_akhir
-      $kondisi = $this->request->getPost('kondisi_akhir');
+      $kondisi = $this->request->getPost('kondisi');
 
       // Variabel untuk Auto-Report
       $itemDetail = null;
