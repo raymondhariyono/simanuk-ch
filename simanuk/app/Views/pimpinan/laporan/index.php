@@ -1,5 +1,9 @@
 <?= $this->extend('layout/template'); ?>
 
+<?= $this->section('title'); ?>
+<?= esc($title); ?>
+<?= $this->endSection(); ?>
+
 <?= $this->section('content'); ?>
 <div class="flex min-h-screen bg-gray-50">
     <div class="flex-1 flex flex-col overflow-hidden">
