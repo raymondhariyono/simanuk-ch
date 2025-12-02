@@ -74,10 +74,10 @@
 
                                     <?php if (strtolower($row['nama_role']) === 'admin'): ?>
 
+                                       <p class="text-xs text-gray-500 mt-1">Oleh: <?= esc($row['nama_lengkap']) ?></p>
                                        <span class="bg-purple-100 text-purple-800 text-xs font-bold px-2 py-1 rounded border border-purple-200">
                                           INTERNAL (Cek Rutin)
                                        </span>
-                                       <p class="text-xs text-gray-500 mt-1">Oleh: <?= esc($row['nama_lengkap']) ?></p>
 
                                     <?php else: ?>
 
@@ -175,10 +175,10 @@
 
                                     <?php if (strtolower($row['nama_role']) === 'admin'): ?>
 
+                                       <p class="text-xs text-gray-500 mt-1">Oleh: <?= esc($row['nama_lengkap']) ?></p>
                                        <span class="bg-purple-100 text-purple-800 text-xs font-bold px-2 py-1 rounded border border-purple-200">
                                           INTERNAL (Cek Rutin)
                                        </span>
-                                       <p class="text-xs text-gray-500 mt-1">Oleh: <?= esc($row['nama_lengkap']) ?></p>
 
                                     <?php else: ?>
 
