@@ -56,7 +56,7 @@
                 <div class="bg-white rounded-xl p-6 border border-red-100 shadow-sm group hover:shadow-md transition">
                     <div class="flex justify-between items-start">
                         <div>
-                            <p class="text-xs font-semibold text-red-500 uppercase tracking-wider">Aset Rusak</p>
+                            <p class="text-xs font-semibold text-red-500 uppercase tracking-wider">Laporan Aset Rusak</p>
                             <h3 class="text-3xl font-bold text-gray-900 mt-2"><?= esc($stats['laporan_rusak'] ?? 0) ?></h3>
                         </div>
                         <div class="p-3 bg-red-50 rounded-lg text-red-600 group-hover:bg-red-100 transition">

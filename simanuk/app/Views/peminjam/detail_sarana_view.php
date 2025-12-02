@@ -13,7 +13,7 @@
 <?php endif; ?>
 
 <div class="max-w-7xl mx-auto p-4 md:p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
-   
+
    <div class="lg:col-span-2 flex flex-col gap-6 order-2 lg:order-1">
 
       <div class="bg-white rounded-xl p-4 md:p-5 shadow-sm border border-gray-100">
@@ -54,23 +54,23 @@
 
          <div class="flex flex-wrap gap-2 mb-6">
             <span class="px-3 py-1 bg-blue-50 text-blue-700 font-semibold rounded-full text-xs md:text-sm border border-blue-100">
-                <?= esc($sarana['nama_kategori']) ?>
+               <?= esc($sarana['nama_kategori']) ?>
             </span>
-            
-            <?php 
-            $statusClass = match($sarana['status_ketersediaan']) {
-                'Tersedia' => 'bg-green-100 text-green-700 border-green-200',
-                'Dipinjam' => 'bg-yellow-100 text-yellow-700 border-yellow-200',
-                'Perawatan' => 'bg-orange-100 text-orange-700 border-orange-200',
-                default => 'bg-red-100 text-red-700 border-red-200'
+
+            <?php
+            $statusClass = match ($sarana['status_ketersediaan']) {
+               'Tersedia' => 'bg-green-100 text-green-700 border-green-200',
+               'Dipinjam' => 'bg-yellow-100 text-yellow-700 border-yellow-200',
+               'Perawatan' => 'bg-orange-100 text-orange-700 border-orange-200',
+               default => 'bg-red-100 text-red-700 border-red-200'
             };
             ?>
             <span class="px-3 py-1 font-semibold rounded-full text-xs md:text-sm border <?= $statusClass ?>">
-                <?= esc($sarana['status_ketersediaan']) ?>
+               <?= esc($sarana['status_ketersediaan']) ?>
             </span>
 
             <span class="px-3 py-1 bg-gray-100 text-gray-700 font-semibold rounded-full text-xs md:text-sm border border-gray-200">
-                <i class="fas fa-map-marker-alt mr-1"></i> <?= esc($sarana['nama_lokasi']) ?>
+               <i class="fas fa-map-marker-alt mr-1"></i> <?= esc($sarana['nama_lokasi']) ?>
             </span>
          </div>
 

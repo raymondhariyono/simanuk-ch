@@ -56,7 +56,7 @@
                 <div class="bg-white rounded-xl p-6 border border-red-100 shadow-sm group hover:shadow-md transition">
                     <div class="flex justify-between items-start">
                         <div>
-                            <p class="text-xs font-semibold text-red-500 uppercase tracking-wider">Aset Rusak</p>
+                            <p class="text-xs font-semibold text-red-500 uppercase tracking-wider">Laporan Aset Rusak</p>
                             <h3 class="text-3xl font-bold text-gray-900 mt-2"><?= esc($stats['laporan_rusak'] ?? 0) ?></h3>
                         </div>
                         <div class="p-3 bg-red-50 rounded-lg text-red-600 group-hover:bg-red-100 transition">
@@ -130,7 +130,7 @@
                                     <?php else: ?>
                                         <tr>
                                             <td colspan="4" class="px-6 py-8 text-center text-gray-400 italic">
-                                                Tidak ada permintaan pending saat ini.
+                                                Tidak ada permintaan 'pending' saat ini.
                                             </td>
                                         </tr>
                                     <?php endif; ?>
@@ -151,7 +151,17 @@
                                 </div>
                                 <div class="ml-3">
                                     <p class="text-sm font-semibold">Tambah Sarana</p>
-                                    <p class="text-xs text-gray-500">Input barang baru</p>
+                                    <p class="text-xs text-gray-500">Input sarana baru</p>
+                                </div>
+                            </a>
+                            
+                            <a href="<?= site_url('admin/inventaris/prasarana/create') ?>" class="flex items-center p-3 rounded-lg bg-gray-50 hover:bg-blue-50 hover:text-blue-600 transition group border border-transparent hover:border-blue-100">
+                                <div class="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-500 group-hover:text-blue-500 transition">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                                </div>
+                                <div class="ml-3">
+                                    <p class="text-sm font-semibold">Tambah Prasarana</p>
+                                    <p class="text-xs text-gray-500">Input prasarana baru</p>
                                 </div>
                             </a>
 
