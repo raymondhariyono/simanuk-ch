@@ -44,11 +44,11 @@
         </div>
     </div>
 
-    <h3 class="text-lg font-bold text-gray-700 mb-4">Daftar Barang</h3>
+    <h3 class="text-lg font-bold text-gray-700 mb-4">Daftar Sarana</h3>
     <div class="grid grid-cols-1 gap-6">
         <?php if (!empty($itemsSarana)): ?>
             <?php foreach ($itemsSarana as $item) : ?>
-                <div class="bg-white rounded-lg shadow p-6 border-l-4 
+                <div class="bg-white rounded-lg shadow p-6
                 <?= empty($item['foto_sesudah']) ? 'border-indigo-500' : 'border-green-500' ?>">
 
                     <div class="flex flex-col md:flex-row justify-between mb-4">
@@ -98,8 +98,6 @@
 
                     <?php endif; ?>
 
-                    <hr class="my-4 border-gray-100">
-
                     <?php if ($peminjaman['status_peminjaman_global'] == 'Dipinjam' && empty($item['foto_sesudah'])) : ?>
                         <div class="mt-2">
                             <a href="<?= site_url('peminjam/laporan-kerusakan/new') ?>?tipe=Sarana&id=<?= $item['id_sarana'] ?>&peminjaman=<?= $peminjaman['id_peminjaman'] ?>"
@@ -107,34 +105,8 @@
                                 <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                                 </svg>
-                                Lapor Kerusakan Barang Ini
+                                Lapor Kerusakan Sarana Ini
                             </a>
-                        </div>
-
-                        <div class="bg-indigo-50 p-4 rounded-md">
-                            <h5 class="font-bold text-indigo-800 text-sm mb-2">Form Pengembalian Barang</h5>
-                            <form action="<?= site_url('peminjam/peminjaman/kembalikan-item/sarana/' . $item['id_detail_sarana']) ?>" method="post" enctype="multipart/form-data">
-                                <?= csrf_field() ?>
-
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
-                                    <div>
-                                        <label class="block text-xs font-medium text-gray-700 mb-1">Foto Bukti (Kondisi Akhir)</label>
-                                        <input type="file" name="foto_sesudah" required accept="image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-indigo-100 file:text-indigo-700 hover:file:bg-indigo-200">
-                                    </div>
-                                    <div>
-                                        <label class="block text-xs font-medium text-gray-700 mb-1">Kondisi Barang</label>
-                                        <select name="kondisi_akhir" class="block w-full text-sm border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
-                                            <option value="Baik">Baik</option>
-                                            <option value="Rusak Ringan">Rusak Ringan</option>
-                                            <option value="Rusak Berat">Rusak Berat</option>
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded text-sm w-full md:w-auto shadow">
-                                    📤 Kirim Bukti & Kembalikan
-                                </button>
-                            </form>
                         </div>
 
                     <?php elseif (!empty($item['foto_sesudah'])) : ?>
@@ -143,7 +115,7 @@
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                             </svg>
                             <div>
-                                <p class="font-bold text-sm">Barang telah diserahkan</p>
+                                <p class="font-bold text-sm">Sarana telah diserahkan</p>
                                 <p class="text-xs">Menunggu verifikasi admin untuk penyelesaian akhir.</p>
                             </div>
                         </div>
@@ -153,12 +125,14 @@
 
                 </div>
             <?php endforeach; ?>
+        <?php else: ?>
+            <p class="text-sm text-gray-400 italic">Tidak ada sarana yang dipinjam.</p>
         <?php endif; ?>
 
         <?php if (!empty($itemsPrasarana)) : ?>
-            <h4 class="font-bold text-gray-700 mt-6 mb-3">Daftar Prasarana</h4>
+            <h3 class="text-lg font-bold text-gray-700 mt-6 mb-2">Daftar Prasarana</h3>
             <?php foreach ($itemsPrasarana as $item) : ?>
-                <div class="bg-white rounded-lg shadow p-6 border-l-4 border-purple-500">
+                <div class="bg-white rounded-lg shadow p-6">
                     <h4 class="text-lg font-bold"><?= esc($item['nama_prasarana']) ?></h4>
 
                     <?php if ($peminjaman['status_peminjaman_global'] == 'Selesai') : ?>
@@ -200,39 +174,13 @@
 
                     <?php if ($peminjaman['status_peminjaman_global'] == 'Dipinjam' && empty($item['foto_sesudah'])) : ?>
                         <div class="mt-2">
-                            <a href="<?= site_url('peminjam/laporan-kerusakan/new') ?>?tipe=Sarana&id=<?= $item['id_sarana'] ?>&peminjaman=<?= $peminjaman['id_peminjaman'] ?>"
+                            <a href="<?= site_url('peminjam/laporan-kerusakan/new') ?>"
                                 class="text-xs text-red-600 hover:text-red-800 hover:underline flex items-center gap-1">
                                 <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                                 </svg>
-                                Lapor Kerusakan Barang Ini
+                                Lapor Kerusakan Prasarana Ini
                             </a>
-                        </div>
-
-                        <div class="bg-indigo-50 p-4 rounded-md">
-                            <h5 class="font-bold text-indigo-800 text-sm mb-2">Form Pengembalian Barang</h5>
-                            <form action="<?= site_url('peminjam/peminjaman/kembalikan-item/sarana/' . $item['id_detail_sarana']) ?>" method="post" enctype="multipart/form-data">
-                                <?= csrf_field() ?>
-
-                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
-                                    <div>
-                                        <label class="block text-xs font-medium text-gray-700 mb-1">Foto Bukti (Kondisi Akhir)</label>
-                                        <input type="file" name="foto_sesudah" required accept="image/*" class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-indigo-100 file:text-indigo-700 hover:file:bg-indigo-200">
-                                    </div>
-                                    <div>
-                                        <label class="block text-xs font-medium text-gray-700 mb-1">Kondisi Barang</label>
-                                        <select name="kondisi_akhir" class="block w-full text-sm border-gray-300 rounded-md focus:ring-indigo-500 focus:border-indigo-500">
-                                            <option value="Baik">Baik</option>
-                                            <option value="Rusak Ringan">Rusak Ringan</option>
-                                            <option value="Rusak Berat">Rusak Berat</option>
-                                        </select>
-                                    </div>
-                                </div>
-
-                                <button type="submit" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded text-sm w-full md:w-auto shadow">
-                                    📤 Kirim Bukti & Kembalikan
-                                </button>
-                            </form>
                         </div>
 
                     <?php elseif (!empty($item['foto_sesudah'])) : ?>
@@ -255,8 +203,17 @@
                     <?php endif; ?>
                 </div>
             <?php endforeach; ?>
+        <?php else: ?>
+            <p class="text-sm text-gray-400 italic">Tidak ada prasarana yang dipinjam.</p>
         <?php endif; ?>
 
     </div>
 </div>
+
+<script>
+    const SITE_URL = "<?= site_url() ?>";
+</script>
+
+<script src="<?= base_url('js/peminjam/histori_peminjaman.js') ?>"></script>
+
 <?= $this->endSection(); ?>

@@ -133,9 +133,10 @@
                                  <?php endif; ?>
                               </td>
                               <td class="px-4 py-3 text-sm">
-                                 <?= date('d M Y', strtotime($row['tgl_pinjam_selesai'])) ?>
-                                 <?php if (date('Y-m-d') > $row['tgl_pinjam_selesai']): ?>
-                                    <span class="text-red-600 font-bold text-xs block">Telat!</span>
+                                 <?= date('d M Y', strtotime($row['tgl_pinjam_selesai'])) . ' - ' . date('d M Y', strtotime($row['tgl_pinjam_selesai'] . ' + 3 days')) ?>
+                                 
+                                 <?php if (date('Y-m-d', strtotime($row['tgl_pinjam_selesai'])) > date('Y-m-d', strtotime($row['tgl_pinjam_selesai'] . ' + 3 days'))) : ?>
+                                    <span class="ml-2 text-xs text-red-600 font-bold">(Terlambat)</span>
                                  <?php endif; ?>
                               </td>
                               <td class="px-4 py-3">
@@ -213,7 +214,7 @@
       document.getElementById(tabName + '-panel').classList.remove('hidden');
 
       const activeBtn = document.getElementById(tabName + '-tab');
-      
+
       activeBtn.className = "inline-block p-4 border-b-2 text-blue-600 border-blue-600 rounded-t-lg active whitespace-nowrap";
       if (tabName === 'pending') {
          activeBtn.className = "inline-block p-4 border-b-2 text-red-600 border-red-600 rounded-t-lg active whitespace-nowrap";

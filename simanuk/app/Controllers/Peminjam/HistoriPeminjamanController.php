@@ -27,6 +27,9 @@ class HistoriPeminjamanController extends BaseController
         // Konfigurasi jumlah item per halaman
         $perPage = 5;
 
+        // Menggunakan method hasOverdueLoans yang sudah ada di Model
+        $overdueCount = $this->peminjamanModel->hasOverdueLoans($userId);
+
         // --- A. DATA PEMINJAMAN AKTIF (Grup: 'active') ---
         $activeTransactions = $this->peminjamanModel
             ->where('id_peminjam', $userId)
@@ -104,6 +107,7 @@ class HistoriPeminjamanController extends BaseController
             'title' => 'Histori Peminjaman',
             'activeLoans' => $activeTransactions,
             'historyLoans' => $historyTransactions,
+            'overdueCount' => $overdueCount,
             'showSidebar' => true,
             'pager' => $this->peminjamanModel->pager,
         ];

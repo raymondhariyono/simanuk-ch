@@ -54,16 +54,10 @@
                                     <?= esc($row['kegiatan']) ?>
                                 </td>
                                 <td class="px-4 py-3 text-sm">
-                                    <?php 
-                                        $tglSelesai = strtotime($row['tgl_pinjam_selesai']);
-                                        $now = time();
-                                        $isLate = $now > $tglSelesai;
-                                    ?>
-                                    <span class="<?= $isLate ? 'text-red-600 font-bold' : '' ?>">
-                                        <?= date('d M Y H:i', $tglSelesai) ?>
-                                    </span>
-                                    <?php if($isLate): ?>
-                                        <span class="text-xs text-red-500 block">(Terlambat)</span>
+                                    <?= date('d M Y', strtotime($row['tgl_pinjam_selesai'])) . ' - ' . date('d M Y', strtotime($row['tgl_pinjam_selesai'] . ' + 3 days')) ?>
+
+                                    <?php if (date('Y-m-d', strtotime($row['tgl_pinjam_selesai'])) > date('Y-m-d', strtotime($row['tgl_pinjam_selesai'] . ' + 3 days'))) : ?>
+                                        <span class="ml-2 text-xs text-red-600 font-bold">(Terlambat)</span>
                                     <?php endif; ?>
                                 </td>
                                 <td class="px-4 py-3 text-xs">
@@ -73,7 +67,7 @@
                                 </td>
                                 <td class="px-4 py-3 text-center">
                                     <a href="<?= site_url('tu/pengembalian/detail/' . $row['id_peminjaman']) ?>"
-                                       class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none shadow-sm transition-colors duration-150">
+                                        class="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none shadow-sm transition-colors duration-150">
                                         Proses Kembali
                                     </a>
                                 </td>

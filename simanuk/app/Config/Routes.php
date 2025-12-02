@@ -111,6 +111,7 @@ $routes->group('peminjam', ['filter' => ['session', 'role:Peminjam']], static fu
 
    // Untuk proses aksi form pengembalian
    $routes->post('peminjaman/kembalikan-item/(:segment)/(:num)', 'Peminjam\PeminjamanController::kembalikanItem/$1/$2');
+
    // CRUD peminjaman
    $routes->get('peminjaman/new', 'Peminjam\PeminjamanController::new'); // Form view
    $routes->post('peminjaman/create', 'Peminjam\PeminjamanController::create'); // Save
