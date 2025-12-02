@@ -32,7 +32,7 @@
    <?php endif; ?>
 
    <?php if (session()->has('error')) : ?>
-      <div class="bg-red-100 border-l-4 border-red-500 text-red-700 p-4 mb-6 rounded shadow-sm relative" role="alert">
+      <div class="bg-red-100 text-red-700 p-4 mb-6 rounded shadow-sm relative" role="alert">
          <strong class="font-bold">Gagal Upload!</strong>
          <span class="block sm:inline"><?= session('error') ?></span>
          <span class="absolute top-0 bottom-0 right-0 px-4 py-3" onclick="this.parentElement.remove();">
@@ -44,7 +44,7 @@
       </div>
    <?php endif; ?>
 
-   <div class="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6 rounded-r-lg shadow-sm">
+   <div class="bg-yellow-50 bo p-4 mb-6 rounded-r-lg shadow-sm">
       <div class="flex">
          <div class="flex-shrink-0">
             <svg class="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
@@ -81,7 +81,7 @@
    </div>
 
    <?php if (isset($overdueCount) && $overdueCount > 0) : ?>
-      <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-6 rounded shadow-sm animate-pulse">
+      <div class="bg-red-50 p-4 mb-6 rounded shadow-sm animate-pulse">
          <div class="flex">
             <div class="flex-shrink-0">
                <svg class="h-5 w-5 text-red-500" viewBox="0 0 20 20" fill="currentColor">
@@ -214,7 +214,7 @@
    <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
       <div class="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" onclick="closeRejectionModal()"></div>
       <span class="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-      <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full border-l-4 border-red-500">
+      <div class="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg w-full">
          <div class="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
             <div class="sm:flex sm:items-start">
                <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
