@@ -20,7 +20,7 @@ class HistoriPeminjamanController extends BaseController
         $this->detailPrasaranaModel = new DetailPeminjamanPrasaranaModel();
     }
 
-    public function index2()
+    public function index()
     {
         $userId = auth()->id();
 
@@ -112,10 +112,10 @@ class HistoriPeminjamanController extends BaseController
             'pager' => $this->peminjamanModel->pager,
         ];
 
-        return view('peminjam/histori_peminjaman_view2', $data);
+        return view('peminjam/histori_peminjaman_view', $data);
     }
 
-    public function index()
+    public function index2()
     {
         $userId = auth()->user()->id;
 
@@ -226,7 +226,7 @@ class HistoriPeminjamanController extends BaseController
         ];
 
         // Memuat file view yang akan kita buat selanjutnya
-        return view('peminjam/histori_peminjaman_view', $data);
+        return view('peminjam/histori_peminjaman_view2', $data);
     }
 
     public function detail($id)
