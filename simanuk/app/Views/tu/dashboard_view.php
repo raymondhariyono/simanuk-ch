@@ -35,7 +35,7 @@
                             </svg>
                         </div>
                     </div>
-                    <a href="<?= site_url('tu/verifikasi-peminjaman') ?>" class="text-xs text-orange-600 mt-4 inline-block hover:underline">Lihat pengajuan &rarr;</a>
+                    <a href="<?= site_url('tu/peminjaman') ?>" class="text-xs text-orange-600 mt-4 inline-block hover:underline">Lihat pengajuan &rarr;</a>
                 </div>
 
                 <div class="bg-white rounded-xl p-6 border border-blue-100 shadow-sm group hover:shadow-md transition">
@@ -126,7 +126,7 @@
                                 <h3 class="font-bold text-gray-800">Permintaan Perlu Verifikasi</h3>
                                 <p class="text-xs text-gray-500">Daftar pengajuan terbaru yang menunggu persetujuan Anda.</p>
                             </div>
-                            <a href="<?= site_url('tu/verifikasi-peminjaman') ?>" class="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center group">
+                            <a href="<?= site_url('tu/peminjaman') ?>" class="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center group">
                                 Lihat Semua <span class="ml-1 group-hover:translate-x-1 transition-transform">&rarr;</span>
                             </a>
                         </div>
@@ -154,7 +154,7 @@
                                                 </td>
                                                 <td class="px-6 py-4 text-gray-600 whitespace-nowrap"><?= esc($item['tgl_ajukan']) ?></td>
                                                 <td class="px-6 py-4 text-center">
-                                                    <a href="<?= site_url('tu/verifikasi-peminjaman/detail/' . $item['id']) ?>" class="inline-flex items-center justify-center px-3 py-1 bg-blue-50 text-blue-600 rounded-md hover:bg-blue-100 transition text-xs font-bold border border-blue-200">
+                                                    <a href="<?= site_url('tu/peminjaman/detail/' . $item['id']) ?>" class="inline-flex items-center justify-center px-3 py-1 bg-blue-50 text-blue-600 rounded-md hover:bg-blue-100 transition text-xs font-bold border border-blue-200">
                                                         Verifikasi
                                                     </a>
                                                 </td>
@@ -178,7 +178,7 @@
                         <h3 class="font-bold text-gray-800 mb-4 border-b pb-2">Akses Cepat</h3>
                         <div class="space-y-3">
                             
-                            <a href="<?= site_url('tu/verifikasi-peminjaman') ?>" class="flex items-center p-3 rounded-lg bg-gray-50 hover:bg-blue-50 hover:text-blue-600 transition group border border-transparent hover:border-blue-100">
+                            <a href="<?= site_url('tu/peminjaman') ?>" class="flex items-center p-3 rounded-lg bg-gray-50 hover:bg-blue-50 hover:text-blue-600 transition group border border-transparent hover:border-blue-100">
                                 <div class="w-10 h-10 rounded-full bg-white border border-gray-200 flex items-center justify-center text-gray-500 group-hover:text-blue-500 transition">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                                 </div>

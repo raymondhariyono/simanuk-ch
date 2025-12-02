@@ -3,6 +3,7 @@
 namespace App\Controllers\TU;
 
 use App\Controllers\BaseController;
+use App\Models\LaporanKerusakanModel;
 use App\Models\Peminjaman\PeminjamanModel;
 use App\Models\Peminjaman\DetailPeminjamanSaranaModel;
 use App\Models\Peminjaman\DetailPeminjamanPrasaranaModel;
@@ -17,6 +18,8 @@ class PengembalianController extends BaseController
     protected $saranaModel;
     protected $prasaranaModel;
 
+    protected $laporanModel;
+
     public function __construct()
     {
         $this->peminjamanModel = new PeminjamanModel();
@@ -24,6 +27,8 @@ class PengembalianController extends BaseController
         $this->detailPrasaranaModel = new DetailPeminjamanPrasaranaModel();
         $this->saranaModel = new SaranaModel();
         $this->prasaranaModel = new PrasaranaModel();
+
+        $this->laporanModel = new LaporanKerusakanModel();
     }
 
     public function index()
@@ -128,85 +133,121 @@ class PengembalianController extends BaseController
 
     public function prosesKembali($id)
     {
-        // Cek data peminjaman
+        // 1. Cek Validitas Data Peminjaman
         $peminjaman = $this->peminjamanModel->find($id);
-
         if (!$peminjaman || $peminjaman['status_peminjaman_global'] != 'Dipinjam') {
             return redirect()->back()->with('error', 'Data tidak valid atau sudah diproses.');
         }
 
-        // Ambil Input Kondisi Akhir dari Form
-        // Format array: [id_detail => kondisi]
+        // 2. Ambil Input Kondisi dari Form
         $kondisiAkhirSarana = $this->request->getPost('kondisi_akhir_sarana');
         $kondisiAkhirPrasarana = $this->request->getPost('kondisi_akhir_prasarana');
+
+        // Validasi: Pastikan admin memilih kondisi
+        if (empty($kondisiAkhirSarana) && empty($kondisiAkhirPrasarana)) {
+            return redirect()->back()->with('error', 'Mohon konfirmasi kondisi barang pada form.');
+        }
 
         $db = \Config\Database::connect();
         $db->transStart();
 
         try {
-            // 1. PROSES PENGEMBALIAN SARANA (BARANG)
+            // --- PROSES SARANA (BARANG) ---
             $itemsSarana = $this->detailSaranaModel->where('id_peminjaman', $id)->findAll();
 
-            foreach ($itemsSarana as $item) {
-                // A. Update Kondisi di Tabel Detail
-                $kondisi = isset($kondisiAkhirSarana[$item['id_detail_sarana']])
-                    ? $kondisiAkhirSarana[$item['id_detail_sarana']]
-                    : 'Baik';
+            // Gunakan Model Laporan yang sudah di-init di constructor
+            $laporanModel = $this->laporanModel;
 
+            foreach ($itemsSarana as $item) {
+                // A. Validasi Input per Item
+                if (!isset($kondisiAkhirSarana[$item['id_detail_sarana']])) {
+                    // Skip jika input tidak ada, jangan set default 'Baik' sembarangan
+                    continue;
+                }
+
+                $kondisi = $kondisiAkhirSarana[$item['id_detail_sarana']];
+
+                // B. Update Status Detail Peminjaman (Database Transaksi)
                 $this->detailSaranaModel->update($item['id_detail_sarana'], [
                     'kondisi_akhir' => $kondisi
                 ]);
 
-                // B. Kembalikan Stok ke Master Sarana
+                // C. LOGIKA RETURN GATE PRIORITY (PINTU UTAMA STOK)
                 $sarana = $this->saranaModel->find($item['id_sarana']);
+
                 if ($sarana) {
-                    $newStok = $sarana['jumlah'] + $item['jumlah'];
+                    if ($kondisi === 'Baik') {
+                        // KASUS 1: BARANG BAIK -> KEMBALIKAN STOK
+                        $newStok = $sarana['jumlah'] + $item['jumlah'];
 
-                    $updateData = ['jumlah' => $newStok];
-                    // Jika status sebelumnya 'Tidak Tersedia'/'Dipinjam' dan sekarang stok ada, set 'Tersedia'
-                    if ($newStok > 0) {
-                        $updateData['status_ketersediaan'] = 'Tersedia';
+                        $this->saranaModel->update($item['id_sarana'], [
+                            'jumlah' => $newStok,
+                            'status_ketersediaan' => ($newStok > 0) ? 'Tersedia' : 'Tidak Tersedia'
+                        ]);
+                    } else {
+                        // KASUS 2: BARANG RUSAK -> TAHAN STOK
+                        // Jangan tambahkan stok.
+
+                        // Cari Laporan Kerusakan (Hapus filter 'Diajukan' agar lebih robust)
+                        $laporan = $laporanModel->where('id_peminjaman', $id)
+                            ->where('id_sarana', $item['id_sarana'])
+                            ->first();
+
+                        if ($laporan) {
+                            // OPSI A: LAPORAN SUDAH ADA (Dari Peminjam)
+                            // Update status jadi 'Diproses'
+                            $laporanModel->update($laporan['id_laporan'], [
+                                'status_laporan' => 'Diproses',
+                                'tindak_lanjut'  => 'Diverifikasi Admin saat pengembalian: ' . $kondisi,
+                                'updated_at'     => date('Y-m-d H:i:s')
+                            ]);
+                        } else {
+                            // OPSI B: LAPORAN BELUM ADA (Kasus Peminjam Lupa/Salah Lapor)
+                            // BUAT LAPORAN BARU OTOMATIS
+                            $laporanModel->save([
+                                'id_pelapor'          => auth()->user()->id, // Admin sebagai pelapor sistem
+                                'tipe_aset'           => 'Sarana',
+                                'id_peminjaman'       => $id,
+                                'id_sarana'           => $item['id_sarana'],
+                                'judul_laporan'       => "Kerusakan ditemukan saat Pengembalian ($kondisi)",
+                                'deskripsi_kerusakan' => "Barang ditemukan dalam kondisi $kondisi saat verifikasi pengembalian oleh Admin.",
+                                'bukti_foto'          => $item['foto_sesudah'] ?? null, // Pakai foto dari detail jika ada
+                                'status_laporan'      => 'Diproses', // Langsung Diproses
+                                'jumlah'              => $item['jumlah'],
+                                'tindak_lanjut'       => 'Menunggu perbaikan/penggantian.'
+                            ]);
+                        }
                     }
-
-                    $this->saranaModel->update($item['id_sarana'], $updateData);
                 }
             }
 
-            // 2. PROSES PENGEMBALIAN PRASARANA (RUANGAN)
+            // --- PROSES PRASARANA (RUANGAN) ---
             $itemsPrasarana = $this->detailPrasaranaModel->where('id_peminjaman', $id)->findAll();
-
             foreach ($itemsPrasarana as $item) {
-                // A. Update Kondisi di Tabel Detail
-                $kondisi = isset($kondisiAkhirPrasarana[$item['id_detail_prasarana']])
-                    ? $kondisiAkhirPrasarana[$item['id_detail_prasarana']]
-                    : 'Baik';
+                $kondisiP = $kondisiAkhirPrasarana[$item['id_detail_prasarana']] ?? 'Baik';
 
-                $this->detailPrasaranaModel->update($item['id_detail_prasarana'], [
-                    'kondisi_akhir' => $kondisi
-                ]);
+                $this->detailPrasaranaModel->update($item['id_detail_prasarana'], ['kondisi_akhir' => $kondisiP]);
 
-                // B. Ubah Status Ruangan menjadi 'Tersedia'
-                $this->prasaranaModel->update($item['id_prasarana'], [
-                    'status_ketersediaan' => 'Tersedia'
-                ]);
+                // Ruangan selalu kembali tersedia
+                $this->prasaranaModel->update($item['id_prasarana'], ['status_ketersediaan' => 'Tersedia']);
             }
 
-            // 3. UPDATE STATUS GLOBAL PEMINJAMAN
+            // 3. Finalisasi Status Peminjaman Global
             $this->peminjamanModel->update($id, [
-                'status_peminjaman_global' => PeminjamanModel::STATUS_SELESAI,
-                'updated_at'               => date('Y-m-d H:i:s')
+                'status_peminjaman_global' => 'Selesai',
+                'updated_at' => date('Y-m-d H:i:s')
             ]);
 
             $db->transComplete();
 
             if ($db->transStatus() === false) {
-                return redirect()->back()->with('error', 'Gagal memproses pengembalian. Transaksi dibatalkan.');
+                return redirect()->back()->with('error', 'Gagal memproses transaksi.');
             }
 
-            return redirect()->to(site_url('tu/verifikasi-pengembalian'))->with('message', 'Pengembalian berhasil diverifikasi. Stok dan status telah diperbarui.');
+            return redirect()->to(site_url('admin/pengembalian'))->with('message', 'Pengembalian selesai. Stok barang BAIK telah dikembalikan, barang RUSAK tercatat di laporan.');
         } catch (\Exception $e) {
             $db->transRollback();
-            return redirect()->back()->with('error', 'Terjadi kesalahan sistem: ' . $e->getMessage());
+            return redirect()->back()->with('error', $e->getMessage());
         }
     }
 
