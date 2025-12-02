@@ -266,12 +266,14 @@ class PeminjamanController extends BaseController
 
       if ($tipe == 'Sarana') {
          $detail = $this->detailSaranaModel->find($idDetail);
+         // dd($dataUpdate);
          $this->detailSaranaModel->update($idDetail, $dataUpdate);
          $idPeminjaman = $detail['id_peminjaman'];
       } else {
          // Logic Prasarana
          $detail = $this->detailPrasaranaModel->find($idDetail); // Pastikan model di-load
-         $this->detailSaranaModel->update($idDetail, $dataUpdate);
+         // dd($dataUpdate);
+         $this->detailPrasaranaModel->update($idDetail, $dataUpdate);
          $idPeminjaman = $detail['id_peminjaman'];
       }
 

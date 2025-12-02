@@ -173,7 +173,7 @@
                   </div>
 
                   <div id="kondisiInputContainer" class="hidden">
-                     <label class="block text-sm font-medium text-gray-700">Kondisi Sarana/Prasarana Saat Ini i</label>
+                     <label class="block text-sm font-medium text-gray-700">Kondisi Sarana/Prasarana Saat Ini</label>
                      <select name="kondisi" class="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm sm:text-sm">
                         <option value="Baik">Baik</option>
                         <option value="Rusak Ringan">Rusak Ringan</option>
