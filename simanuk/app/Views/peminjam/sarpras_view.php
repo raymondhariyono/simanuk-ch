@@ -113,6 +113,19 @@
                               <p class="text-xs text-gray-400 font-mono bg-gray-50 inline-block px-1 rounded">
                                  <?= esc($s['kode_sarana']) ?>
                               </p>
+
+                              <div class="text-xs mt-2 space-y-1">
+                                 <div class="flex justify-between text-green-700 font-medium">
+                                    <span>Jumlah Tersedia:</span>
+                                    <span><?= $s['jumlah'] ?> Unit</span>
+                                 </div>
+                                 <?php if (isset($s['stok_rusak']) && $s['stok_rusak'] > 0): ?>
+                                    <div class="flex justify-between text-orange-600">
+                                       <span>Dalam Perbaikan:</span>
+                                       <span><?= $s['stok_rusak'] ?> Unit</span>
+                                    </div>
+                                 <?php endif; ?>
+                              </div>
                            </div>
                            <a href="<?= site_url('/peminjam/sarpras/detail/' . esc($s['kode_sarana'])) ?>"
                               class="mt-4 block w-full text-center bg-white border border-blue-600 text-blue-600 py-2 rounded-lg hover:bg-blue-600 hover:text-white font-medium transition-all text-sm">

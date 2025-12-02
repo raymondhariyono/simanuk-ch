@@ -260,8 +260,9 @@
                <option value="Ditolak">Ditolak (Laporan Palsu)</option>
             </select>
             <p class="text-xs text-gray-500 mt-1">
-               *Status 'Diproses' akan mengubah aset jadi 'Tidak Tersedia'.<br>
-               *Status 'Selesai' akan mengubah aset jadi 'Tersedia'.
+               * <b>Diproses:</b> Stok sarana akan <b>berkurang</b> sementara atau prasarana akan <b>tidak tersedia</b>.<br>
+               * <b>Selesai:</b> Stok sarana akan <b>bertambah</b> kembali atau prasarana akan <b>tersedia</b>.<br>
+               * Prasarana akan berubah status menjadi Perawatan/Tersedia.
             </p>
          </div>
          <div class="mb-4">

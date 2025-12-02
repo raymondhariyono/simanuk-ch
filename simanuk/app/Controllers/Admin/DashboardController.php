@@ -9,6 +9,7 @@ use App\Models\Peminjaman\DetailPeminjamanPrasaranaModel;
 use App\Models\Sarpras\SaranaModel;
 use App\Models\Sarpras\PrasaranaModel;
 use App\Models\ExtendedUserModel;
+use App\Models\LaporanKerusakanModel;
 
 class DashboardController extends BaseController
 {
@@ -18,6 +19,7 @@ class DashboardController extends BaseController
    protected $detailSaranaModel;
    protected $detailPrasaranaModel;
    protected $userModel;
+   protected $laporanModel;
 
    public function __construct()
    {
@@ -27,6 +29,7 @@ class DashboardController extends BaseController
       $this->detailSaranaModel    = new DetailPeminjamanSaranaModel();
       $this->detailPrasaranaModel = new DetailPeminjamanPrasaranaModel();
       $this->userModel            = model(ExtendedUserModel::class);
+      $this->laporanModel         = new LaporanKerusakanModel();
    }
 
    public function index()
@@ -43,10 +46,10 @@ class DashboardController extends BaseController
          ->countAllResults();
 
       // Menghitung Aset Rusak (Kondisi selain Baik)
-      $countRusak = $this->saranaModel
-         ->whereIn('kondisi', ['Rusak Ringan', 'Rusak Berat'])
+      $countRusak = $this->laporanModel
+         ->where('status_laporan', 'Diproses')
          ->countAllResults();
-
+      
       // Menghitung Total User (Khusus Admin)
       $countUser = $this->userModel->countAllResults();
 

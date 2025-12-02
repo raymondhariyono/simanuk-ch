@@ -36,7 +36,7 @@ class DashboardController extends BaseController
         $this->prasaranaModel       = new PrasaranaModel();
         $this->detailSaranaModel    = new DetailPeminjamanSaranaModel();
         $this->detailPrasaranaModel = new DetailPeminjamanPrasaranaModel();
-        $this->laporanModel         = new LaporanKerusakanModel(); // Inisialisasi LaporanKerusakanModel
+        $this->laporanModel         = new LaporanKerusakanModel();
     }
 
     public function index()
@@ -53,8 +53,9 @@ class DashboardController extends BaseController
             ->countAllResults();
 
         // KPI Laporan Kerusakan
-        $countRusak = $this->saranaModel
-            ->whereIn('kondisi', ['Rusak Ringan', 'Rusak Berat'])
+        // Menghitung Aset Rusak (Kondisi selain Baik)
+        $countRusak = $this->laporanModel
+            ->where('status_laporan', 'Diproses')
             ->countAllResults();
 
         // KPI Total Aset
@@ -153,7 +154,7 @@ class DashboardController extends BaseController
         $filename = "Laporan_TU_" . date('F_Y', strtotime($bulan)) . ".pdf";
         $dompdf->stream($filename, ["Attachment" => true]);
         exit();
-      }
+    }
     private function getDataLaporan($tipe, $bulan)
     {
         $rows = [];
@@ -197,8 +198,8 @@ class DashboardController extends BaseController
             case 'peminjaman':
                 $builderSarana = $db->table('detail_peminjaman_sarana')
                     ->select('users.nama_lengkap, sarana.nama_sarana as nama_item, detail_peminjaman_sarana.foto_sebelum, detail_peminjaman_sarana.foto_sesudah, peminjaman.tgl_pinjam_dimulai, peminjaman.tgl_pinjam_selesai, detail_peminjaman_sarana.kondisi_akhir')
-                    ->join('peminjaman', 'peminjaman.id_peminjaman = detail_peminjaman_sarana.id_peminjaman') 
-                    ->join('users', 'users.id = peminjaman.id_peminjam') 
+                    ->join('peminjaman', 'peminjaman.id_peminjaman = detail_peminjaman_sarana.id_peminjaman')
+                    ->join('users', 'users.id = peminjaman.id_peminjam')
                     ->join('sarana', 'sarana.id_sarana = detail_peminjaman_sarana.id_sarana')
                     ->like('peminjaman.tgl_pinjam_dimulai', $bulan);
 
@@ -216,7 +217,7 @@ class DashboardController extends BaseController
             case 'kerusakan':
                 $rows = $this->laporanModel
                     ->select('users.nama_lengkap, laporan_kerusakan.judul_laporan, laporan_kerusakan.tipe_aset, laporan_kerusakan.status_laporan, laporan_kerusakan.created_at, laporan_kerusakan.tindak_lanjut')
-                    ->join('users', 'users.id = laporan_kerusakan.id_pelapor') 
+                    ->join('users', 'users.id = laporan_kerusakan.id_pelapor')
                     ->like('laporan_kerusakan.created_at', $bulan)
                     ->orderBy('laporan_kerusakan.created_at', 'ASC')
                     ->findAll();

@@ -32,7 +32,7 @@ class LaporanKerusakanController extends BaseController
          ->join('roles', 'roles.id_role = users.id_role')             // Join ke role
          ->orderBy('created_at', 'DESC')
          ->findAll();
-      
+
       // Pisahkan data untuk Tab Sarana & Prasarana
       $laporanSarana = [];
       $laporanPrasarana = [];
@@ -75,38 +75,84 @@ class LaporanKerusakanController extends BaseController
       $statusBaru    = $this->request->getPost('status_laporan');
       $tindakLanjut  = $this->request->getPost('tindak_lanjut');
 
+      $statusLama    = $laporan['status_laporan'];
+      $jumlahRusak   = $laporan['jumlah'] ?? 1;
+
       // Validasi Input
       if (!in_array($statusBaru, ['Diproses', 'Selesai', 'Ditolak'])) {
          return redirect()->back()->with('error', 'Status tidak valid.');
       }
 
-      // 1. Update Laporan Kerusakan
-      $this->laporanModel->update($idLaporan, [
-         'status_laporan' => $statusBaru,
-         'tindak_lanjut'  => $tindakLanjut,
-         'updated_at'     => date('Y-m-d H:i:s')
-      ]);
+      $db = \Config\Database::connect();
+      $db->transStart();
 
-      // 2. SINKRONISASI STATUS MASTER DATA (Best Practice Integrity)
-      // Jika 'Diproses' -> Set aset jadi 'Tidak Tersedia' (Maintenance)
-      // Jika 'Selesai'  -> Set aset jadi 'Tersedia' (Fixed)
+      try {
+         // 1. Update Data Laporan
+         $this->laporanModel->update($idLaporan, [
+            'status_laporan' => $statusBaru,
+            'tindak_lanjut'  => $tindakLanjut,
+            'updated_at'     => date('Y-m-d H:i:s')
+         ]);
 
-      $statusAset = null;
-      if ($statusBaru == 'Diproses') {
-         $statusAset = 'Tidak Tersedia'; // Atau 'Dalam Perbaikan' jika ada enum-nya
-      } elseif ($statusBaru == 'Selesai') {
-         $statusAset = 'Tersedia';
-      }
-
-      if ($statusAset) {
+         // 2. LOGIKA STOK SARANA (Hanya untuk Sarana)
          if ($laporan['tipe_aset'] == 'Sarana') {
-            $this->saranaModel->update($laporan['id_sarana'], ['status_ketersediaan' => $statusAset]);
-         } else {
-            $this->prasaranaModel->update($laporan['id_prasarana'], ['status_ketersediaan' => $statusAset]);
-         }
-      }
+            $sarana = $this->saranaModel->find($laporan['id_sarana']);
+            $stokSekarang = $sarana['jumlah'];
 
-      return redirect()->back()->with('message', "Laporan diperbarui. Status aset disesuaikan menjadi '$statusAset'.");
+            // A. Transisi: DIAJUKAN -> DIPROSES (Barang masuk bengkel/gudang rusak)
+            // Kurangi stok tersedia
+            if ($statusLama == 'Diajukan' && $statusBaru == 'Diproses') {
+               $stokSekarang -= $jumlahRusak;
+            }
+
+            // B. Transisi: DIPROSES -> SELESAI (Barang selesai diperbaiki)
+            // Kembalikan ke stok tersedia
+            elseif ($statusLama == 'Diproses' && $statusBaru == 'Selesai') {
+               $stokSekarang += $jumlahRusak;
+            }
+
+            // C. Transisi: DIPROSES -> DITOLAK (Barang dikembalikan ke stok tanpa perbaikan)
+            elseif ($statusLama == 'Diproses' && $statusBaru == 'Ditolak') {
+               $stokSekarang += $jumlahRusak;
+            }
+
+            // Pastikan stok tidak minus
+            if ($stokSekarang < 0) $stokSekarang = 0;
+
+            // Tentukan Status Ketersediaan Baru
+            $statusKetersediaan = ($stokSekarang > 0) ? 'Tersedia' : 'Tidak Tersedia';
+
+            // Update Master Sarana
+            $this->saranaModel->update($laporan['id_sarana'], [
+               'jumlah' => $stokSekarang,
+               'status_ketersediaan' => $statusKetersediaan
+            ]);
+         }
+         // 3. LOGIKA PRASARANA (Tetap Status Based karena jumlahnya 1)
+         else {
+            $statusAset = null;
+            if ($statusBaru == 'Diproses') {
+               $statusAset = 'Perawatan'; // Gunakan 'Perawatan' agar lebih spesifik
+            } elseif ($statusBaru == 'Selesai' || $statusBaru == 'Ditolak') {
+               $statusAset = 'Tersedia';
+            }
+
+            if ($statusAset) {
+               $this->prasaranaModel->update($laporan['id_prasarana'], ['status_ketersediaan' => $statusAset]);
+            }
+         }
+
+         $db->transComplete();
+
+         if ($db->transStatus() === false) {
+            return redirect()->back()->with('error', 'Gagal mengupdate status.');
+         }
+
+         return redirect()->back()->with('message', 'Status laporan diperbarui. Stok/Status aset telah disesuaikan.');
+      } catch (\Exception $e) {
+         $db->transRollback();
+         return redirect()->back()->with('error', $e->getMessage());
+      }
    }
 
    /**
